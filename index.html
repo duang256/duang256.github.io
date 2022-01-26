@@ -892,7 +892,7 @@
 </ul>
 <p>JDBC是java访问数据库的基石，<font color=red > JDO, Hibernate等只是更好的封装了JDBC。</font><br>JDBC(Java Database Connectivity)<font color=blue>是一个独立于特定数据库管理系统、通用的SQL数据库存取和操作的公共接口（一组API）</font>，定义了用来访问数据库的标准Java类库，（java.sql,javax.sql）使用这个类库可以以一种标准的方法、方便地访问数据库资源。JDBC为访问不同的数据库提供了一种<font color=blue>统一的途径，</font>为开发者屏蔽了一些细节问题。JDBC的目标是使Java程序员使用JDBC可以连接任何提供了JDBC驱动程序的数据库系统，这样就使得程序员无需对特定的数据库系统的特点有过多的了解，从而大大简化和加快了开发过程。<br><img src="https://img-blog.csdnimg.cn/20210201184602461.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>当然也可以不使用统一的JDBC接口分别使用不同的数据库厂商各自的驱动，但这样就不能体现Java的可移植性了。<br>JDBC是sun公司提供一套用于数据库操作的接口，java程序员只需要面向这套接口编程即可。不同的数据库厂商，需要针对这套接口，提供不同实现。不同的实现的集合，即为不同数据库的驱动。—–面向接口编程</p>
 <p>即<br>JDBC:一套用于数据库操作的接口<br>JDBC驱动：需要针对这套接口，提供不同实现。不同的实现的集合，即为不同数据库的驱动,比如使用mysql就需要mysql驱动的jar包</p>
-<p> <font  color=blue> 数据库连接池c3p0、dbcp（还有durid）<font><br>在使用开发基于数据库的web程序时，传统的模式(JDBC)基本是按以下步骤：　　</p>
+<p> <font  color=blue> 数据库连接池c3p0、dbcp（还有durid）</font><br>在使用开发基于数据库的web程序时，传统的模式(JDBC)基本是按以下步骤：　　</p>
 <ol>
 <li>在主程序（如servlet、beans）中建立数据库连接</li>
 <li>进行sql操作</li>
