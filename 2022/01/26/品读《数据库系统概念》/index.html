@@ -176,7 +176,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/deb3dce030624da5b8915f2b0eec0234.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/3c5eab250b4549c6ace15b9bc8a5d484.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_8,color_FFFFFF,t_70,g_se,x_16">
 <meta property="article:published_time" content="2022-01-26T05:14:32.306Z">
-<meta property="article:modified_time" content="2022-01-26T05:20:52.141Z">
+<meta property="article:modified_time" content="2022-01-26T05:26:39.968Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/f3a6972ca02741bf8e7fc0cc1d6558cf.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16">
@@ -431,7 +431,7 @@
 <li>主码：代表被数据库设计者选中的，主要用来在一个关系中区分不同元组的候选码。习惯上把一个关系模式的主码属性列在其他属性前面。主码属性划上下划线。</li>
 <li>外码：一个关系模式r1可能在它的属性中包括另一个关系模式r2的主码，这个属性在r1上称作参照r2的外码。</li>
 </ul>
-<h1 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h1><p><font color=blue><strong>SQL、中级SQL、高级SQL三章内容由于联系紧密，并于一章中。所有的语法都是MYSQL</strong></font></p>
+<h1 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h1><p><strong>SQL、中级SQL、高级SQL三章内容由于联系紧密，并于一章中。所有的语法都是MYSQL</strong></p>
 <h2 id="语言简介"><a href="#语言简介" class="headerlink" title="语言简介"></a>语言简介</h2><blockquote>
 <p>MYSQL、ORACLE以及SQL SERVER是基于客户机-服务器的数据库。</p>
 </blockquote>
@@ -621,7 +621,7 @@
 
 <p><img src="https://img-blog.csdnimg.cn/c2772db2367f4059b2ffcf423f0e673c.png" alt="在这里插入图片描述"></p>
 <p>表示从第1个元组开始（0开始计数）查询2个元组</p>
-<h3 id="REGEXP"><a href="#REGEXP" class="headerlink" title="REGEXP"></a>REGEXP</h3><p><font color= blue><strong>注意：mysql仅支持少部分正则！前半部分介绍标准正则，后面单独介绍mysql正则！</strong></font></p>
+<h3 id="REGEXP"><a href="#REGEXP" class="headerlink" title="REGEXP"></a>REGEXP</h3><p><strong>注意：mysql仅支持少部分正则！前半部分介绍标准正则，后面单独介绍mysql正则！</strong></p>
 <p>常用正则 <a target="_blank" rel="noopener" href="https://c.runoob.com/front-end/854/">https://c.runoob.com/front-end/854/</a></p>
 <p>转义字符(<strong>多数正则表达式实现使用单个反斜杠转义特殊字符，以便能使用这些字符本身。但mysql要求两个反斜杠！</strong>)</p>
 <p><img src="https://img-blog.csdnimg.cn/8ae7204585d246b0be0c5600072870b2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
@@ -849,7 +849,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> TRANSACTION</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;jack&#x27;</span>;</span><br><span class="line">update  student <span class="keyword">set</span> name<span class="operator">=</span><span class="string">&#x27;jimmy&#x27;</span> <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;jim&#x27;</span>; </span><br><span class="line"><span class="keyword">rollback</span></span><br></pre></td></tr></table></figure>
 <p>rollback success! rollback或commit之后，事务会自动结束</p>
 <p>for example4:</p>
-<p>如果事务中sql有错误，到错误处就停止执行了，直接执行以下语句，在第三行停并回滚前面操作，不执行commit，如果单独执行commit，依然会提交，第二行被提交，且无法rollback。<font color = blue><strong>这个地方我想过既然有自动回滚为什么在做JDBC的时候为什么还需要在catch中rollback，因为不手动回滚事务不会结束，这样可能会导致锁表之类的问题</strong></font></p>
+<p>如果事务中sql有错误，到错误处就停止执行了，直接执行以下语句，在第三行停并回滚前面操作，不执行commit，如果单独执行commit，依然会提交，第二行被提交，且无法rollback。<strong>这个地方我想过既然有自动回滚为什么在做JDBC的时候为什么还需要在catch中rollback，因为不手动回滚事务不会结束，这样可能会导致锁表之类的问题</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> TRANSACTION;</span><br><span class="line"><span class="keyword">delete</span>  <span class="keyword">from</span>  student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;cindy&#x27;</span> ;</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> student <span class="keyword">where</span> name<span class="string">&#x27;charlie&#x27;</span>;</span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
 <p>for example5：<br><img src="https://img-blog.csdnimg.cn/2a6f4202adb74c36886f885180f80705.png" alt="在这里插入图片描述"></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> TRANSACTION;</span><br><span class="line"><span class="keyword">savepoint</span> delete1;</span><br><span class="line"><span class="keyword">delete</span>  <span class="keyword">from</span>  student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;cindy&#x27;</span> ;</span><br><span class="line"><span class="keyword">savepoint</span> delete2;</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;charlie&#x27;</span>;</span><br></pre></td></tr></table></figure>
@@ -1055,7 +1055,7 @@
 </ul>
 <p>JDBC是java访问数据库的基石，<font color=red > JDO, Hibernate等只是更好的封装了JDBC。</font><br>JDBC(Java Database Connectivity)<font color=blue>是一个独立于特定数据库管理系统、通用的SQL数据库存取和操作的公共接口（一组API）</font>，定义了用来访问数据库的标准Java类库，（java.sql,javax.sql）使用这个类库可以以一种标准的方法、方便地访问数据库资源。JDBC为访问不同的数据库提供了一种<font color=blue>统一的途径，</font>为开发者屏蔽了一些细节问题。JDBC的目标是使Java程序员使用JDBC可以连接任何提供了JDBC驱动程序的数据库系统，这样就使得程序员无需对特定的数据库系统的特点有过多的了解，从而大大简化和加快了开发过程。<br><img src="https://img-blog.csdnimg.cn/20210201184602461.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br>当然也可以不使用统一的JDBC接口分别使用不同的数据库厂商各自的驱动，但这样就不能体现Java的可移植性了。<br>JDBC是sun公司提供一套用于数据库操作的接口，java程序员只需要面向这套接口编程即可。不同的数据库厂商，需要针对这套接口，提供不同实现。不同的实现的集合，即为不同数据库的驱动。—–面向接口编程</p>
 <p>即<br>JDBC:一套用于数据库操作的接口<br>JDBC驱动：需要针对这套接口，提供不同实现。不同的实现的集合，即为不同数据库的驱动,比如使用mysql就需要mysql驱动的jar包</p>
-<p> <font  color=blue> 数据库连接池c3p0、dbcp（还有durid）</font><br>在使用开发基于数据库的web程序时，传统的模式(JDBC)基本是按以下步骤：　　</p>
+<p> <strong>数据库连接池c3p0、dbcp（还有durid）</strong><br>在使用开发基于数据库的web程序时，传统的模式(JDBC)基本是按以下步骤：　　</p>
 <ol>
 <li>在主程序（如servlet、beans）中建立数据库连接</li>
 <li>进行sql操作</li>
