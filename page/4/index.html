@@ -195,19 +195,19 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Linux目录和路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Linux简介与安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">Linux目录和路径</a>
+      <a class="article-title" href="/2020/01/21/Linux%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%AE%89%E8%A3%85/">Linux简介与安装</a>
     </h1>
   
 
         
-        <a href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/" class="archive-article-date">
+        <a href="/2020/01/21/Linux%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%AE%89%E8%A3%85/" class="archive-article-date">
   	<time datetime="2020-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-21</time>
 </a>
 		
@@ -224,14 +224,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>cd ..(注意中间有空格,到达上一层目录)，到达linux目录结构的最顶层（Linux只有一个硬盘，一个根，没有C、D这样分盘）<br><img src="https://img-blog.csdnimg.cn/2021052115053637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>ls查看底层目录<br><img src="https://img-blog.csdnimg.cn/20210521151100321.png" alt="在这里插入图片描述"></p>
-<p><strong>bin</strong></p>
-<p>系统常用的命令目录，包括控制台命令（命令对应的可执行脚本），系统可执行文件，系统的核心二进制文件等<br><strong>etc</strong><br>发布目录，相当于windows中的windows目录，保存系统中所有核心内容（后面配置环境变量就在这个目录里面）<br><strong>usr</strong><br>相当于windows中的program files目录，用于安装系统所有用户共用软件，资源<br><strong>root</strong><br>root根用户的用户目录，相当于windows系统中的administrator目录（进入该目录 命令行的盘符会变成~）<br><strong>home</strong><br>保存其他用户主目录的目录<br>Linux系统中有wityy用户，就一定有/home/wityy目录存在，代表用户主目录<br><strong>var</strong><br>系统运行过程中的数据目录</p>
-<h1 id="路径"><a href="#路径" class="headerlink" title="路径"></a>路径</h1><p><strong>全路径</strong><br>从根目录开始寻找文件<br>写法：以/开头   比如 /usr/local(其中cd . .表示到上一层目录，pwd表示当前路径)<br><img src="https://img-blog.csdnimg.cn/20210521152847624.png" alt="在这里插入图片描述"><br><strong>相对路径</strong><br>从当前资源路径开始寻找，找到其他资源</p>
-<p>写法：找当前目录的子目录，直接写子目录名字<br>比如当前在usr目录下，cd local/进入到local目录</p>
-<p>比如从local（usr下的）调到bin（usr下的）下<br>cd ../lib(到上一级目录再查找，上一级目录子目录，即为查找同级目录)</p>
-<p><strong>特殊路径</strong></p>
-<p>/表示磁盘根 cd /<br>~表示root根目录  cd root/</p>
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Linux是服务器操作系统，也就是说我们以后写的项目在Linux系统上来运行，而不是windows</p>
+<p>为什么选择Linux？<br>稳定性和安全性远远高于windows，在linux上项目能够稳健的运行。</p>
+<p>历史：<br>Ken Tompson 和Dennis Ritchie（C语言之父）一起用C语言开发除了Unix（Mac是由Unix衍生出来的），后来Linus带领Unix的团队一起开发了Linux（后面Linux又衍生了Android系统） </p>
+<p>Linux有很多产品：Ubuntu、Fedora、CentOS、RedHat、Android等</p>
+<p><img src="https://img-blog.csdnimg.cn/20210521103236533.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>Red Hat:收费版本 目前全球最大的Linux供应商<br>Cent OS:Red Hat退出的免费版本（后面用这个）<br>Ubuntu：与Red Hat是两种不同的版本，命令差异较大。</p>
+<h1 id="VMWare"><a href="#VMWare" class="headerlink" title="VMWare"></a>VMWare</h1><p>VMWare是虚拟机工具，帮助我们在windows系统中运行Linux系统<br>如果在低版本的VMWare中运行Linux CentOS 8（我们即将用的版本）</p>
+<p>选择VMWare Workstation pro15 </p>
+<p>安装步骤：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/15jKIZnVOkTcuy_dKNtnX9A">百度云：jhph</a><br>下载后双击<br><img src="https://img-blog.csdnimg.cn/20210521105213744.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>下一步<br><img src="https://img-blog.csdnimg.cn/20210521105234941.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>路径走默认就好（不要有中文）<br><img src="https://img-blog.csdnimg.cn/20210521105326833.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>去掉勾选<br><img src="https://img-blog.csdnimg.cn/2021052110542280.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521105455402.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521105501961.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>安装完成后会有下面这样一个页面<br><img src="https://img-blog.csdnimg.cn/20210521105622391.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>输入许可信息（我用第一个就成功了）<br>YG5H2-ANZ0H-M8ERY-TXZZZ-YKRV8<br>UG5J2-0ME12-M89WY-NPWXX-WQH88<br>UA5DR-2ZD4H-089FY-6YQ5T-YPRX6<br>GA590-86Y05-4806Y-X4PEE-ZV8E0<br>ZF582-0NW5N-H8D2P-0XZEE-Z22VA<br>YA18K-0WY8P-H85DY-L4NZG-X7RAD</p>
+<p><strong>VMWare的卸载</strong></p>
+<p>使用windows没法卸载干净，双击安装时的那个安装包就会出现卸载的选项。<br><img src="https://img-blog.csdnimg.cn/20210521111132915.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1><p>打开VMWare<br><img src="https://img-blog.csdnimg.cn/20210521134003131.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521134019518.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521134035204.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>配置linux镜像文件位置，这里使用的是Cent OS8<br><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/14yOuv81zW8c_nEaJfuQW-w">镜像文件下载：6gom</a><br><img src="https://img-blog.csdnimg.cn/20210521134233411.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>设置安装信息（wityy 123456）不过这个账号密码好像在linux中用不到<br><img src="https://img-blog.csdnimg.cn/20210521143929253.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>取名无所谓，选择linux虚拟机安装路径（放在空间比较大的磁盘）<br><img src="https://img-blog.csdnimg.cn/20210521134705373.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521134846925.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>点击完成</p>
+<p>如果出现<strong>启动无响应</strong>的问题（我就遇到过），删除虚拟机之后重新导入</p>
+<p>像下面这样就是正常的<br><img src="https://img-blog.csdnimg.cn/20210521142304144.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>关闭弹出来的黑窗口，选择关机</strong></p>
+<p>设置镜像文件<br><img src="https://img-blog.csdnimg.cn/20210521135332107.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选择刚才安装过程中的镜像文件<br><img src="https://img-blog.csdnimg.cn/2021052113543293.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>启动<br><img src="https://img-blog.csdnimg.cn/20210521142432330.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>等待一下<br><img src="https://img-blog.csdnimg.cn/20210521142550118.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521142744940.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选择安装过程中的语言<br><img src="https://img-blog.csdnimg.cn/2021052114283433.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143031222.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143048821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选择是否带界面GUI（GUI不好用，而且导致安装很慢，所以不选择）<br><img src="https://img-blog.csdnimg.cn/2021052114333859.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143419479.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143457409.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以创建用户（这里不进行创建，使用默认用户）<br><img src="https://img-blog.csdnimg.cn/20210521144037250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>123456（点击两次完成）<br><img src="https://img-blog.csdnimg.cn/20210521144054893.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong>安装的过程有点漫长，耐心等一下</strong><br><img src="https://img-blog.csdnimg.cn/20210521144552436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>输入账号密码（root 123456 上一步设置的密码，这个是设置的root用户的密码，用于登录linux），这样就可以使用了</p>
+<p><img src="https://img-blog.csdnimg.cn/20210521145558407.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 
       
 
@@ -255,7 +267,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/01/21/Linux%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%AE%89%E8%A3%85/">展开全文 >></a>
         </p>
       
 
@@ -719,15 +731,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">

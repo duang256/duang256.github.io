@@ -901,19 +901,19 @@
 
 
   
-    <article id="post-Spring MVC" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-SpringMVC" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/26/Spring%20MVC/">Spring MVC</a>
+      <a class="article-title" href="/2021/01/26/SpringMVC/">SpringMVC</a>
     </h1>
   
 
         
-        <a href="/2021/01/26/Spring%20MVC/" class="archive-article-date">
+        <a href="/2021/01/26/SpringMVC/" class="archive-article-date">
   	<time datetime="2021-01-26T02:51:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-26</time>
 </a>
 		
@@ -1042,7 +1042,7 @@
 <h3 id="默认加载的组件"><a href="#默认加载的组件" class="headerlink" title="默认加载的组件"></a>默认加载的组件</h3><p>我们没有做任何配置，就可以使用这些组件</p>
 <p>因为框架已经默认加载这些组件了，配置文件位置如下图：</p>
 <p><img src="https://cdn.nlark.com/yuque/0/2021/png/12418439/1619452661154-2215882a-4ff4-4b94-95fd-cae3fc913dd1.png" alt="img"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Default implementation classes for DispatcherServlet&#x27;s strategy interfaces.</span><br><span class="line"># Used as fallback when no matching beans are found in the DispatcherServlet context.</span><br><span class="line"># Not meant to be customized by application developers.</span><br><span class="line">org.springframework.web.servlet.LocaleResolver=org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver</span><br><span class="line">org.springframework.web.servlet.ThemeResolver=org.springframework.web.servlet.theme.FixedThemeResolver</span><br><span class="line">org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping</span><br><span class="line">org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter</span><br><span class="line">org.springframework.web.servlet.HandlerExceptionResolver=org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver</span><br><span class="line">org.springframework.web.servlet.RequestToViewNameTranslator=org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator</span><br><span class="line">org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResourceViewResolver</span><br><span class="line">org.springframework.web.servlet.FlashMapManager=org.springframework.web.servlet.support.SessionFlashMapManager</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Default implementation classes for DispatcherServlet&#x27;s strategy interfaces.</span><br><span class="line"># Used as fallback when no matching beans are found in the DispatcherServlet context.</span><br><span class="line"># Not meant to be customized by application developers.</span><br><span class="line">org.springframework.web.servlet.LocaleResolver=org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver</span><br><span class="line">org.springframework.web.servlet.ThemeResolver=org.springframework.web.servlet.theme.FixedThemeResolver</span><br><span class="line">org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping</span><br><span class="line">org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter</span><br><span class="line">org.springframework.web.servlet.HandlerExceptionResolver=org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver</span><br><span class="line">org.springframework.web.servlet.RequestToViewNameTranslator=org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator</span><br><span class="line">org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResourceViewResolver</span><br><span class="line">org.springframework.web.servlet.FlashMapManager=org.springframework.web.servlet.support.SessionFlashMapManager</span><br></pre></td></tr></table></figure>
 
 
 
@@ -1556,7 +1556,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/26/Spring%20MVC/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/01/26/SpringMVC/">展开全文 >></a>
         </p>
       
 
@@ -1673,7 +1673,7 @@
 <h2 id="如何避免冲突？"><a href="#如何避免冲突？" class="headerlink" title="如何避免冲突？"></a>如何避免冲突？</h2><p>尽量避免一个文件被多人开发。<br>在进行push操作之前都pull一下将别人的拉取下来，就不会冲突了</p>
 <h1 id="gitee"><a href="#gitee" class="headerlink" title="gitee"></a>gitee</h1><p>打开 [git官网] <a target="_blank" rel="noopener" href="https://git-scm.com/%EF%BC%8C%E4%B8%8B%E8%BD%BDgit%E5%AF%B9%E5%BA%94%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%89%88%E6%9C%AC%E3%80%82%EF%BC%88%E7%9B%B4%E6%8E%A5%E4%B8%8B%E8%BD%BD%E5%BE%88%E6%85%A2%EF%BC%8C%E5%BB%BA%E8%AE%AE%E5%B0%86%E9%93%BE%E6%8E%A5%E6%94%BE%E5%88%B0%E8%BF%85%E9%9B%B7%E4%B8%8B%E8%BD%BD%EF%BC%89">https://git-scm.com/，下载git对应操作系统的版本。（直接下载很慢，建议将链接放到迅雷下载）</a><br>安装：无脑下一步即可！安装完毕就可以使用了！<br>安装成功后在开始菜单中会有Git项，菜单下有3个程序：任意文件夹下右键也可以看到对应的程序！在任意一个文件夹里面，右键也可以看到</p>
 <p>Git Bash：Unix与Linux风格的命令行,我们的命令都在这个下面进行 </p>
-<p>设置用户名与邮箱（用户标识，必要）<br>当你安装Git后首先要做的事情是设置你的用户名称和e-mail地址。这是非常重要的，因为每次Git提交都会使用该信息。它被永远的嵌入到了你的提交中：<br>进入git bash中：<br>git config –global user.name “xx”  #名称<br>git config –global user.email <a href="mailto:&#120;&#x78;&#64;&#113;&#113;&#x2e;&#99;&#x6f;&#x6d;">&#120;&#x78;&#64;&#113;&#113;&#x2e;&#99;&#x6f;&#x6d;</a>   #邮箱<br>只需要做一次这个设置，如果你传递了–global 选项，因为Git将总是会使用该信息来处理你在系统中所做的一切操作。如果你希望在一个特定的项目中使用不同的名称或e-mail地址，你可以在该项目中运行该命令而不要–global选项。总之–global为全局配置，不加为某个项目的特定配置。</p>
+<p>设置用户名与邮箱（用户标识，必要）<br>当你安装Git后首先要做的事情是设置你的用户名称和e-mail地址。这是非常重要的，因为每次Git提交都会使用该信息。它被永远的嵌入到了你的提交中：<br>进入git bash中：<br>git config –global user.name “xx”  #名称<br>git config –global user.email <a href="mailto:&#120;&#120;&#x40;&#113;&#x71;&#x2e;&#x63;&#111;&#109;">&#120;&#120;&#x40;&#113;&#x71;&#x2e;&#x63;&#111;&#109;</a>   #邮箱<br>只需要做一次这个设置，如果你传递了–global 选项，因为Git将总是会使用该信息来处理你在系统中所做的一切操作。如果你希望在一个特定的项目中使用不同的名称或e-mail地址，你可以在该项目中运行该命令而不要–global选项。总之–global为全局配置，不加为某个项目的特定配置。</p>
 <p>输入git config –global –list可以查看成功没有。</p>
 <p>使用码云<br>1、注册登录码云，完善个人信息</p>
 <p>2、设置本机绑定SSH公钥，实现免密码登录！（免密码登录，这一步挺重要的，码云是远程仓库，我们是平时工作在本地仓库！)</p>
@@ -2209,19 +2209,19 @@
 
 
   
-    <article id="post-Linux简介与安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Linux目录和路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/21/Linux%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%AE%89%E8%A3%85/">Linux简介与安装</a>
+      <a class="article-title" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">Linux目录和路径</a>
     </h1>
   
 
         
-        <a href="/2020/01/21/Linux%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%AE%89%E8%A3%85/" class="archive-article-date">
+        <a href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/" class="archive-article-date">
   	<time datetime="2020-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-21</time>
 </a>
 		
@@ -2238,26 +2238,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Linux是服务器操作系统，也就是说我们以后写的项目在Linux系统上来运行，而不是windows</p>
-<p>为什么选择Linux？<br>稳定性和安全性远远高于windows，在linux上项目能够稳健的运行。</p>
-<p>历史：<br>Ken Tompson 和Dennis Ritchie（C语言之父）一起用C语言开发除了Unix（Mac是由Unix衍生出来的），后来Linus带领Unix的团队一起开发了Linux（后面Linux又衍生了Android系统） </p>
-<p>Linux有很多产品：Ubuntu、Fedora、CentOS、RedHat、Android等</p>
-<p><img src="https://img-blog.csdnimg.cn/20210521103236533.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>Red Hat:收费版本 目前全球最大的Linux供应商<br>Cent OS:Red Hat退出的免费版本（后面用这个）<br>Ubuntu：与Red Hat是两种不同的版本，命令差异较大。</p>
-<h1 id="VMWare"><a href="#VMWare" class="headerlink" title="VMWare"></a>VMWare</h1><p>VMWare是虚拟机工具，帮助我们在windows系统中运行Linux系统<br>如果在低版本的VMWare中运行Linux CentOS 8（我们即将用的版本）</p>
-<p>选择VMWare Workstation pro15 </p>
-<p>安装步骤：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/15jKIZnVOkTcuy_dKNtnX9A">百度云：jhph</a><br>下载后双击<br><img src="https://img-blog.csdnimg.cn/20210521105213744.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>下一步<br><img src="https://img-blog.csdnimg.cn/20210521105234941.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>路径走默认就好（不要有中文）<br><img src="https://img-blog.csdnimg.cn/20210521105326833.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>去掉勾选<br><img src="https://img-blog.csdnimg.cn/2021052110542280.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521105455402.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521105501961.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>安装完成后会有下面这样一个页面<br><img src="https://img-blog.csdnimg.cn/20210521105622391.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>输入许可信息（我用第一个就成功了）<br>YG5H2-ANZ0H-M8ERY-TXZZZ-YKRV8<br>UG5J2-0ME12-M89WY-NPWXX-WQH88<br>UA5DR-2ZD4H-089FY-6YQ5T-YPRX6<br>GA590-86Y05-4806Y-X4PEE-ZV8E0<br>ZF582-0NW5N-H8D2P-0XZEE-Z22VA<br>YA18K-0WY8P-H85DY-L4NZG-X7RAD</p>
-<p><strong>VMWare的卸载</strong></p>
-<p>使用windows没法卸载干净，双击安装时的那个安装包就会出现卸载的选项。<br><img src="https://img-blog.csdnimg.cn/20210521111132915.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1><p>打开VMWare<br><img src="https://img-blog.csdnimg.cn/20210521134003131.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521134019518.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521134035204.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>配置linux镜像文件位置，这里使用的是Cent OS8<br><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/14yOuv81zW8c_nEaJfuQW-w">镜像文件下载：6gom</a><br><img src="https://img-blog.csdnimg.cn/20210521134233411.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>设置安装信息（wityy 123456）不过这个账号密码好像在linux中用不到<br><img src="https://img-blog.csdnimg.cn/20210521143929253.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>取名无所谓，选择linux虚拟机安装路径（放在空间比较大的磁盘）<br><img src="https://img-blog.csdnimg.cn/20210521134705373.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521134846925.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>点击完成</p>
-<p>如果出现<strong>启动无响应</strong>的问题（我就遇到过），删除虚拟机之后重新导入</p>
-<p>像下面这样就是正常的<br><img src="https://img-blog.csdnimg.cn/20210521142304144.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>关闭弹出来的黑窗口，选择关机</strong></p>
-<p>设置镜像文件<br><img src="https://img-blog.csdnimg.cn/20210521135332107.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选择刚才安装过程中的镜像文件<br><img src="https://img-blog.csdnimg.cn/2021052113543293.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>启动<br><img src="https://img-blog.csdnimg.cn/20210521142432330.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>等待一下<br><img src="https://img-blog.csdnimg.cn/20210521142550118.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521142744940.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选择安装过程中的语言<br><img src="https://img-blog.csdnimg.cn/2021052114283433.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143031222.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143048821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选择是否带界面GUI（GUI不好用，而且导致安装很慢，所以不选择）<br><img src="https://img-blog.csdnimg.cn/2021052114333859.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143419479.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210521143457409.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以创建用户（这里不进行创建，使用默认用户）<br><img src="https://img-blog.csdnimg.cn/20210521144037250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>123456（点击两次完成）<br><img src="https://img-blog.csdnimg.cn/20210521144054893.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p><strong>安装的过程有点漫长，耐心等一下</strong><br><img src="https://img-blog.csdnimg.cn/20210521144552436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>输入账号密码（root 123456 上一步设置的密码，这个是设置的root用户的密码，用于登录linux），这样就可以使用了</p>
-<p><img src="https://img-blog.csdnimg.cn/20210521145558407.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>cd ..(注意中间有空格,到达上一层目录)，到达linux目录结构的最顶层（Linux只有一个硬盘，一个根，没有C、D这样分盘）<br><img src="https://img-blog.csdnimg.cn/2021052115053637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>ls查看底层目录<br><img src="https://img-blog.csdnimg.cn/20210521151100321.png" alt="在这里插入图片描述"></p>
+<p><strong>bin</strong></p>
+<p>系统常用的命令目录，包括控制台命令（命令对应的可执行脚本），系统可执行文件，系统的核心二进制文件等<br><strong>etc</strong><br>发布目录，相当于windows中的windows目录，保存系统中所有核心内容（后面配置环境变量就在这个目录里面）<br><strong>usr</strong><br>相当于windows中的program files目录，用于安装系统所有用户共用软件，资源<br><strong>root</strong><br>root根用户的用户目录，相当于windows系统中的administrator目录（进入该目录 命令行的盘符会变成~）<br><strong>home</strong><br>保存其他用户主目录的目录<br>Linux系统中有wityy用户，就一定有/home/wityy目录存在，代表用户主目录<br><strong>var</strong><br>系统运行过程中的数据目录</p>
+<h1 id="路径"><a href="#路径" class="headerlink" title="路径"></a>路径</h1><p><strong>全路径</strong><br>从根目录开始寻找文件<br>写法：以/开头   比如 /usr/local(其中cd . .表示到上一层目录，pwd表示当前路径)<br><img src="https://img-blog.csdnimg.cn/20210521152847624.png" alt="在这里插入图片描述"><br><strong>相对路径</strong><br>从当前资源路径开始寻找，找到其他资源</p>
+<p>写法：找当前目录的子目录，直接写子目录名字<br>比如当前在usr目录下，cd local/进入到local目录</p>
+<p>比如从local（usr下的）调到bin（usr下的）下<br>cd ../lib(到上一级目录再查找，上一级目录子目录，即为查找同级目录)</p>
+<p><strong>特殊路径</strong></p>
+<p>/表示磁盘根 cd /<br>~表示root根目录  cd root/</p>
 
       
 
@@ -2281,7 +2269,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/21/Linux%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%AE%89%E8%A3%85/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">展开全文 >></a>
         </p>
       
 
@@ -2443,15 +2431,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">

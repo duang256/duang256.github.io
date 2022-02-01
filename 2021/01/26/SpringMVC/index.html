@@ -6,12 +6,12 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Spring MVC | yueyan</title>
+  <title>SpringMVC | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Spring MVCSpring入门回顾MVC架构MVC是一种架构模型，本身没有什么功能，只是让我们的项目结构更加合理，流程控制更加清晰，一般包含三个组件： Model（模型）：数据模型，用于提供要展示的数据。一般包含数据和行为（也就是业务），在JavaWEB中，数据和业务往往是分离开的。 View（视图）：负责对模型数据进行展示，例如我们看到的网页。概念比较广泛，可以是：html、JSP、exc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring MVC">
-<meta property="og:url" content="http://example.com/2021/01/26/Spring%20MVC/index.html">
+<meta property="og:title" content="SpringMVC">
+<meta property="og:url" content="http://example.com/2021/01/26/SpringMVC/index.html">
 <meta property="og:site_name" content="yueyan">
 <meta property="og:description" content="Spring MVCSpring入门回顾MVC架构MVC是一种架构模型，本身没有什么功能，只是让我们的项目结构更加合理，流程控制更加清晰，一般包含三个组件： Model（模型）：数据模型，用于提供要展示的数据。一般包含数据和行为（也就是业务），在JavaWEB中，数据和业务往往是分离开的。 View（视图）：负责对模型数据进行展示，例如我们看到的网页。概念比较广泛，可以是：html、JSP、exc">
 <meta property="og:locale" content="en_US">
@@ -68,7 +68,7 @@
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1619624393481-c7ed64b8-db05-4538-868b-a1ce76a5190d.png">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1619627434249-a191affd-498c-4079-8ab5-02359b9f8bb1.png">
 <meta property="article:published_time" content="2021-01-26T02:51:49.000Z">
-<meta property="article:modified_time" content="2022-02-01T09:02:17.788Z">
+<meta property="article:modified_time" content="2022-02-01T09:05:45.485Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="spring">
 <meta name="twitter:card" content="summary">
@@ -251,19 +251,19 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Spring MVC" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-SpringMVC" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Spring MVC
+      SpringMVC
     </h1>
   
 
         
-        <a href="/2021/01/26/Spring%20MVC/" class="archive-article-date">
+        <a href="/2021/01/26/SpringMVC/" class="archive-article-date">
   	<time datetime="2021-01-26T02:51:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-26</time>
 </a>
 		
@@ -396,7 +396,7 @@
 <h3 id="默认加载的组件"><a href="#默认加载的组件" class="headerlink" title="默认加载的组件"></a>默认加载的组件</h3><p>我们没有做任何配置，就可以使用这些组件</p>
 <p>因为框架已经默认加载这些组件了，配置文件位置如下图：</p>
 <p><img src="https://cdn.nlark.com/yuque/0/2021/png/12418439/1619452661154-2215882a-4ff4-4b94-95fd-cae3fc913dd1.png" alt="img"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Default implementation classes for DispatcherServlet&#x27;s strategy interfaces.</span><br><span class="line"># Used as fallback when no matching beans are found in the DispatcherServlet context.</span><br><span class="line"># Not meant to be customized by application developers.</span><br><span class="line">org.springframework.web.servlet.LocaleResolver=org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver</span><br><span class="line">org.springframework.web.servlet.ThemeResolver=org.springframework.web.servlet.theme.FixedThemeResolver</span><br><span class="line">org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping</span><br><span class="line">org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter</span><br><span class="line">org.springframework.web.servlet.HandlerExceptionResolver=org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver</span><br><span class="line">org.springframework.web.servlet.RequestToViewNameTranslator=org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator</span><br><span class="line">org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResourceViewResolver</span><br><span class="line">org.springframework.web.servlet.FlashMapManager=org.springframework.web.servlet.support.SessionFlashMapManager</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Default implementation classes for DispatcherServlet&#x27;s strategy interfaces.</span><br><span class="line"># Used as fallback when no matching beans are found in the DispatcherServlet context.</span><br><span class="line"># Not meant to be customized by application developers.</span><br><span class="line">org.springframework.web.servlet.LocaleResolver=org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver</span><br><span class="line">org.springframework.web.servlet.ThemeResolver=org.springframework.web.servlet.theme.FixedThemeResolver</span><br><span class="line">org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping</span><br><span class="line">org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter</span><br><span class="line">org.springframework.web.servlet.HandlerExceptionResolver=org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver,\</span><br><span class="line">org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver</span><br><span class="line">org.springframework.web.servlet.RequestToViewNameTranslator=org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator</span><br><span class="line">org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResourceViewResolver</span><br><span class="line">org.springframework.web.servlet.FlashMapManager=org.springframework.web.servlet.support.SessionFlashMapManager</span><br></pre></td></tr></table></figure>
 
 
 
@@ -977,7 +977,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/26/Spring%20MVC/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/01/26/SpringMVC/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -1046,7 +1046,7 @@
   
 
   
-  <div id="SOHUCS" sid="Spring MVC" ></div> 
+  <div id="SOHUCS" sid="SpringMVC" ></div> 
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js" ></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -1187,15 +1187,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
