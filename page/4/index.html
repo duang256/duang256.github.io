@@ -195,6 +195,122 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux部署相关" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/21/Linux%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3/">Linux部署相关</a>
+    </h1>
+  
+
+        
+        <a href="/2020/01/21/Linux%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3/" class="archive-article-date">
+  	<time datetime="2020-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-21</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="maven远程热部署Linux"><a href="#maven远程热部署Linux" class="headerlink" title="maven远程热部署Linux"></a>maven远程热部署Linux</h1><p>热部署是指，在外部的tomcat容器运行过程中，动态实现war工程的部署，或者重新部署的功能。<br>使用maven的tomcat插件可以实现远程热部署，具体命令为：tomcat7:deploy或者tomcat7:redeploy，前者代表第一次部署war工程，后者代表重新部署同名war工程</p>
+<p><img src="https://img-blog.csdnimg.cn/20210523112918585.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>热部署tomcat必须拥有红框里的两个角色gui 和script</p>
+<p>xshell 进入/usr/local/tomcat/conf</p>
+<p>编辑tomcat -user.xml文件,创建用户，该用户能访问gui和tomcat特定接口(账户密码都是tomcat) ，下面代码应该在tomcat-user标签里边（<strong>否则即使输出正确密码也会一直提示登录</strong>）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;role rolename=<span class="string">&quot;manager-gui&quot;</span>/&gt; &lt;role rolename=<span class="string">&quot;manager-script&quot;</span>/&gt; &lt;user username=<span class="string">&quot;tomcat&quot;</span> password=<span class="string">&quot;tomcat&quot;</span> roles=<span class="string">&quot;manager-gui,manager-script&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p>重启tomcat<br>./shutdown.sh<br>./startup.sh</p>
+<p>进入tomcat</p>
+<p><img src="https://img-blog.csdnimg.cn/20210523122112339.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>输入账户密码（都是tomcat）<br><img src="https://img-blog.csdnimg.cn/20210523122131508.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210523124408698.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>tomcat插件进行热部署（<a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/115771659">将该ssm项目部署到远程tomcat</a>）</p>
+<p>更改pom文件中的插件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 添加tomcat插件 --&gt;</span><br><span class="line">   &lt;plugins&gt;</span><br><span class="line">     &lt;!-- tomcat插件控制 --&gt;</span><br><span class="line">     &lt;plugin&gt;</span><br><span class="line">       &lt;groupId&gt;org.apache.tomcat.maven&lt;/groupId&gt;</span><br><span class="line">       &lt;artifactId&gt;tomcat7-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">       &lt;version&gt;<span class="number">2.2</span>&lt;/version&gt;</span><br><span class="line">       &lt;configuration&gt;</span><br><span class="line">         &lt;!-- path: 上传的 war 包解压后的路径命名，放到tomcat目录下的/webapps/ROOT文件夹(ROOT中已经存放的是tomcat首页的内容) --&gt;</span><br><span class="line">         &lt;path&gt;/ROOT&lt;/path&gt;</span><br><span class="line">         &lt;!-- url : 上传 war 包到什么位置,除 IP 和端口可以修改外其他不变，manager/text是tomcat提供的接口，使用该接口必须要拥有script权限 --&gt;</span><br><span class="line">         &lt;url&gt;http:<span class="comment">//192.168.231.128:8080/manager/text&lt;/url&gt;</span></span><br><span class="line">         &lt;!-- 为 tomcat 配置的管理用户名和密码. --&gt;</span><br><span class="line">         &lt;username&gt;tomcat&lt;/username&gt;</span><br><span class="line">         &lt;password&gt;tomcat&lt;/password&gt;</span><br><span class="line">       &lt;/configuration&gt;</span><br><span class="line">     &lt;/plugin&gt;</span><br><span class="line">   &lt;/plugins&gt;</span><br></pre></td></tr></table></figure>
+<p>因为/ROOT在tomcat中已经存在，所以应该执行redeploy</p>
+<p><strong>查看下日志</strong><br><img src="https://img-blog.csdnimg.cn/20210523125834459.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>执行redeploy<br><img src="https://img-blog.csdnimg.cn/20210523125902862.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>控制台变化，完成热部署（其实是将war包进行了解压，替换掉了原来ROOT的内容）<br><img src="https://img-blog.csdnimg.cn/2021052312593535.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210523130130943.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>但是现在项目中mysql还是用的windows中的mysql<br>解决方案是将db.properties中localhost改成本机windows的 ip<br>更改tomcat用户<br><img src="https://img-blog.csdnimg.cn/20210523130536594.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>成功<br><img src="https://img-blog.csdnimg.cn/20210523130632864.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="springboot部署到Linux"><a href="#springboot部署到Linux" class="headerlink" title="springboot部署到Linux"></a>springboot部署到Linux</h1><p>打包<br><img src="https://img-blog.csdnimg.cn/20210523165128759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>server.sh脚本文件<br>主要就是两个位置的配置，一个是jar包名称JAR_NAME<br>还有一个就是多环境配置（注释写的很清楚）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">cd `dirname $0`</span><br><span class="line"> </span><br><span class="line">CUR_SHELL_DIR=`pwd`</span><br><span class="line">CUR_SHELL_NAME=`basename $&#123;BASH_SOURCE&#125;`</span><br><span class="line"> </span><br><span class="line">JAR_NAME=&quot;shiro2-0.0.1-SNAPSHOT.jar&quot;</span><br><span class="line">JAR_PATH=$CUR_SHELL_DIR/$JAR_NAME</span><br><span class="line"> </span><br><span class="line">#JAVA_MEM_OPTS=&quot; -server -Xms1024m -Xmx1024m -XX:PermSize=128m&quot;</span><br><span class="line">JAVA_MEM_OPTS=&quot;&quot;</span><br><span class="line"></span><br><span class="line">#如果是多环境配置需要在该选项中指定profile</span><br><span class="line">#SPRING_PROFILES_ACTIV=&quot;-Dspring.profiles.active=配置文件profile名称&quot;</span><br><span class="line">#如果没有多环境配置将 SPRING_PROFILES_ACTIV注释掉，将SPRING_PROFILES_ACTIV=&quot;&quot;释放开</span><br><span class="line">SPRING_PROFILES_ACTIV=&quot;&quot;</span><br><span class="line">LOG_DIR=$CUR_SHELL_DIR/logs</span><br><span class="line">LOG_PATH=$LOG_DIR/$&#123;JAR_NAME%..log</span><br><span class="line"> </span><br><span class="line">echo_help()</span><br><span class="line">&#123;</span><br><span class="line">    echo -e &quot;syntax: sh $CUR_SHELL_NAME start|stop&quot;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">if [ -z $1 ];then</span><br><span class="line">    echo_help</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"> </span><br><span class="line">if [ ! -d &quot;$LOG_DIR&quot; ];then</span><br><span class="line">    mkdir &quot;$LOG_DIR&quot;</span><br><span class="line">fi</span><br><span class="line"> </span><br><span class="line">if [ ! -f &quot;$LOG_PATH&quot; ];then</span><br><span class="line">    touch &quot;$LOG_DIR&quot;</span><br><span class="line">fi</span><br><span class="line"> </span><br><span class="line">if [ &quot;$1&quot; == &quot;start&quot; ];then</span><br><span class="line"> </span><br><span class="line">    # check server</span><br><span class="line">    PIDS=`ps --no-heading -C java -f --width 1000 | grep $JAR_NAME | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line">    if [ -n &quot;$PIDS&quot; ]; then</span><br><span class="line">        echo -e &quot;ERROR: The $JAR_NAME already started and the PID is $&#123;PIDS&#125;.&quot;</span><br><span class="line">        exit 1</span><br><span class="line">    fi</span><br><span class="line"> </span><br><span class="line">    echo &quot;Starting the $JAR_NAME...&quot;</span><br><span class="line"> </span><br><span class="line">    # start</span><br><span class="line">    nohup java $JAVA_MEM_OPTS -jar $SPRING_PROFILES_ACTIV $JAR_PATH &gt;&gt; $LOG_PATH 2&gt;&amp;1 &amp;</span><br><span class="line"> </span><br><span class="line">    COUNT=0</span><br><span class="line">    while [ $COUNT -lt 1 ]; do</span><br><span class="line">        sleep 1</span><br><span class="line">        COUNT=`ps  --no-heading -C java -f --width 1000 | grep &quot;$JAR_NAME&quot; | awk &#x27;&#123;print $2&#125;&#x27; | wc -l`</span><br><span class="line">        if [ $COUNT -gt 0 ]; then</span><br><span class="line">            break</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">    PIDS=`ps  --no-heading -C java -f --width 1000 | grep &quot;$JAR_NAME&quot; | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line">    echo &quot;$&#123;JAR_NAME&#125; Started and the PID is $&#123;PIDS&#125;.&quot;</span><br><span class="line">    echo &quot;You can check the log file in $&#123;LOG_PATH&#125; for details.&quot;</span><br><span class="line"> </span><br><span class="line">elif [ &quot;$1&quot; == &quot;stop&quot; ];then</span><br><span class="line"> </span><br><span class="line">    PIDS=`ps --no-heading -C java -f --width 1000 | grep $JAR_NAME | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line">    if [ -z &quot;$PIDS&quot; ]; then</span><br><span class="line">        echo &quot;ERROR:The $JAR_NAME does not started!&quot;</span><br><span class="line">        exit 1</span><br><span class="line">    fi</span><br><span class="line"> </span><br><span class="line">    echo -e &quot;Stopping the $JAR_NAME...&quot;</span><br><span class="line"> </span><br><span class="line">    for PID in $PIDS; do</span><br><span class="line">        kill $PID &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">    done</span><br><span class="line"> </span><br><span class="line">    COUNT=0</span><br><span class="line">    while [ $COUNT -lt 1 ]; do</span><br><span class="line">        sleep 1</span><br><span class="line">        COUNT=1</span><br><span class="line">        for PID in $PIDS ; do</span><br><span class="line">            PID_EXIST=`ps --no-heading -p $PID`</span><br><span class="line">            if [ -n &quot;$PID_EXIST&quot; ]; then</span><br><span class="line">                COUNT=0</span><br><span class="line">                break</span><br><span class="line">            fi</span><br><span class="line">        done</span><br><span class="line">    done</span><br><span class="line"> </span><br><span class="line">    echo -e &quot;$&#123;JAR_NAME&#125; Stopped and the PID is $&#123;PIDS&#125;.&quot;</span><br><span class="line">else</span><br><span class="line">    echo_help</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上传放在local下<br><img src="https://img-blog.csdnimg.cn/20210523165449557.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>分配权限（chmod可读可写可执行）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="meta">@localhost</span> local]# chmod <span class="number">777</span> server.sh </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>启动脚本(因为是脚本中项目名是相对路径，所以当前脚本和启动项目jar包必须在同一级目录下) ./server.sh start</p>
+<p>停止脚本(因为是脚本中项目名是相对路径，所以当前脚本和启动项目jar包必须在同一级目录下) ./server.sh stop</p>
+</blockquote>
+<p>启动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="meta">@localhost</span> local]# ./server.sh start</span><br><span class="line">Starting the shiro2-<span class="number">0.0</span><span class="number">.1</span>-SNAPSHOT.jar...</span><br><span class="line">shiro2-<span class="number">0.0</span><span class="number">.1</span>-SNAPSHOT.jar Started and the PID is <span class="number">7503.</span></span><br><span class="line">You can check the log file in /usr/local/logs/shiro2-<span class="number">0.0</span><span class="number">.1</span>-SNAPSHOT.jar <span class="keyword">for</span> details.</span><br><span class="line">[root<span class="meta">@localhost</span> local]# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>成功（注意springboot项目中数据库应该写ip而不是localhost才能使得Linux访问得到本机数据库）<br><img src="https://img-blog.csdnimg.cn/2021052317032947.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>多环境的话就在Linux中修改server.sh脚本文件</p>
+<p>比如配置文件是application-dev.properties application-dev.properties<br>这里就填dev或test（通过修改来选择环境）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#如果是多环境配置需要在该选项中指定profile</span><br><span class="line">#SPRING_PROFILES_ACTIV=&quot;-Dspring.profiles.active=配置文件profile名称&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#SPRING_PROFILES_ACTIV=&quot;-Dspring.profiles.active=dev&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#SPRING_PROFILES_ACTIV=&quot;-Dspring.profiles.active=test&quot;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/21/Linux%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-XShell和Xftp使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -515,15 +631,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
             
             <div class="clearfix"></div>
