@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>springboot-异常处理 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="自定义错误页面现在这有个controller，里边有算数异常 12345678910@Controllerpublic class TestController &amp;#123;    @RequestMapping(&quot;&#x2F;test&quot;)    public String test()&amp;#123;        int a&#x3D;3&#x2F;0;        return &quot;ok&amp;quo">
+  <meta name="description" content="自定义错误页面">
 <meta property="og:type" content="article">
 <meta property="og:title" content="springboot-异常处理">
 <meta property="og:url" content="http://example.com/2022/01/21/springboot-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="自定义错误页面现在这有个controller，里边有算数异常 12345678910@Controllerpublic class TestController &amp;#123;    @RequestMapping(&quot;&#x2F;test&quot;)    public String test()&amp;#123;        int a&#x3D;3&#x2F;0;        return &quot;ok&amp;quo">
+<meta property="og:description" content="自定义错误页面">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210505095834221.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210505104350231.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210505112551598.png">
 <meta property="article:published_time" content="2022-01-21T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-02-01T11:32:23.664Z">
+<meta property="article:modified_time" content="2022-02-05T17:02:53.750Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="spring">
 <meta name="twitter:card" content="summary">
@@ -65,33 +65,9 @@
 		<nav class="header-menu">
 			<ul>
 			
-				<li><a href="/2050/01/01/%E9%A6%96%E9%A1%B5/">主页</a></li>
+				<li><a href="/">主页</a></li>
 	        
-				<li><a href="/tags/%E7%BD%91%E7%BB%9C">网络</a></li>
-	        
-				<li><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-	        
-				<li><a href="/tags/spring">spring</a></li>
-	        
-				<li><a href="/tags/%E5%89%8D%E7%AB%AF">前端</a></li>
-	        
-				<li><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
-	        
-				<li><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95">数据结构与算法</a></li>
-	        
-				<li><a href="/tags/Javaweb">Javaweb</a></li>
-	        
-				<li><a href="/tags/Linux">Linux</a></li>
-	        
-				<li><a href="/tags/Mybatis">Mybatis</a></li>
-	        
-				<li><a href="/tags/git">git</a></li>
-	        
-				<li><a href="/tags/maven">maven</a></li>
-	        
-				<li><a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6">密码学</a></li>
-	        
-				<li><a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a></li>
+				<li><a href="/tags/">分类</a></li>
 	        
 			</ul>
 		</nav>
@@ -101,8 +77,6 @@
     			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
     			
             
-    			
-    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
     			
             
     			
@@ -143,30 +117,6 @@
 			
 				
 			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
 			
 			
 			<nav class="header-nav">
@@ -176,36 +126,12 @@
 			</nav>
 
 			<nav class="header-menu js-header-menu">
-				<ul style="width: 70%">
+				<ul style="width: 50%">
 				
 				
-					<li style="width: 7.142857142857143%"><a href="/2050/01/01/%E9%A6%96%E9%A1%B5/">主页</a></li>
+					<li style="width: 50%"><a href="/">主页</a></li>
 		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E7%BD%91%E7%BB%9C">网络</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/spring">spring</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E5%89%8D%E7%AB%AF">前端</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95">数据结构与算法</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Javaweb">Javaweb</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Linux">Linux</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Mybatis">Mybatis</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/git">git</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/maven">maven</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6">密码学</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a></li>
+					<li style="width: 50%"><a href="/tags/">分类</a></li>
 		        
 				</ul>
 			</nav>
@@ -253,7 +179,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="自定义错误页面"><a href="#自定义错误页面" class="headerlink" title="自定义错误页面"></a>自定义错误页面</h1><p>现在这有个controller，里边有算数异常</p>
+        <h1 id="自定义错误页面"><a href="#自定义错误页面" class="headerlink" title="自定义错误页面"></a>自定义错误页面</h1><span id="more"></span>
+<p>现在这有个controller，里边有算数异常</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/test&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a=<span class="number">3</span>/<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>浏览器会这样报错（当出现错误时，程序自动寻找error界面，当找不到时，就只能用它自己的错误页面）<br><img src="https://img-blog.csdnimg.cn/20210505095834221.png" alt="在这里插入图片描述"><br>加一个error.html，程序出错时就会使用这个页面进行报错</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">ERROR</span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -484,11 +411,11 @@
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
-		open_in_new: false,
+		open_in_new: true,
 		toc_hide_index: true,
 		root: "/",
 		innerArchive: true,
-		showTags: true
+		showTags: false
 	}
 </script>
 
@@ -508,8 +435,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
       
     
       
-      
-      
     
       
       
@@ -521,15 +446,13 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
-      
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -554,11 +477,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -578,7 +501,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -590,7 +513,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -598,11 +521,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
             
             <div class="clearfix"></div>
@@ -648,18 +571,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     	</section>
     
 
-    
-    	<section class="tools-section tools-section-friends" q-show="friends">
-  		
-        <ul class="search-ul">
-          
-            <li class="search-li">
-              <a href="https://blog.csdn.net/WA_MC?spm=1000.2115.3001.5343" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>我的csdn blog</a>
-            </li>
-          
-        </ul>
-  		
-    	</section>
     
 
     

@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Springboot整合Mybatis | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="demo样式 搭建环境（pom文件）项目创建在创建项目时，应当选择web、thymeleaf、mybatis（我这边是阿里云的镜像，所以都是中文选项，自己可以对号入座）我使用阿里云的镜像选择之后还是要自己手动导入thymeleaf（如果使用官网的应该没有这个bug） 注意：选择JDBC时，如果不进行配置文件中数据库配置，程序会报错（dataSource连接不成功什么的），所以一般不使用mybati">
+  <meta name="description" content="demo样式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Springboot整合Mybatis">
 <meta property="og:url" content="http://example.com/2022/01/25/springboot%E6%95%B4%E5%90%88Mybatis/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="demo样式 搭建环境（pom文件）项目创建在创建项目时，应当选择web、thymeleaf、mybatis（我这边是阿里云的镜像，所以都是中文选项，自己可以对号入座）我使用阿里云的镜像选择之后还是要自己手动导入thymeleaf（如果使用官网的应该没有这个bug） 注意：选择JDBC时，如果不进行配置文件中数据库配置，程序会报错（dataSource连接不成功什么的），所以一般不使用mybati">
+<meta property="og:description" content="demo样式">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210504233352173.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210504231240939.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70">
@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210504233311214.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210504234505885.png">
 <meta property="article:published_time" content="2022-01-25T10:46:40.000Z">
-<meta property="article:modified_time" content="2022-02-01T11:24:10.189Z">
+<meta property="article:modified_time" content="2022-02-05T17:02:46.276Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="spring">
 <meta name="twitter:card" content="summary">
@@ -70,33 +70,9 @@
 		<nav class="header-menu">
 			<ul>
 			
-				<li><a href="/2050/01/01/%E9%A6%96%E9%A1%B5/">主页</a></li>
+				<li><a href="/">主页</a></li>
 	        
-				<li><a href="/tags/%E7%BD%91%E7%BB%9C">网络</a></li>
-	        
-				<li><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-	        
-				<li><a href="/tags/spring">spring</a></li>
-	        
-				<li><a href="/tags/%E5%89%8D%E7%AB%AF">前端</a></li>
-	        
-				<li><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
-	        
-				<li><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95">数据结构与算法</a></li>
-	        
-				<li><a href="/tags/Javaweb">Javaweb</a></li>
-	        
-				<li><a href="/tags/Linux">Linux</a></li>
-	        
-				<li><a href="/tags/Mybatis">Mybatis</a></li>
-	        
-				<li><a href="/tags/git">git</a></li>
-	        
-				<li><a href="/tags/maven">maven</a></li>
-	        
-				<li><a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6">密码学</a></li>
-	        
-				<li><a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a></li>
+				<li><a href="/tags/">分类</a></li>
 	        
 			</ul>
 		</nav>
@@ -106,8 +82,6 @@
     			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
     			
             
-    			
-    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
     			
             
     			
@@ -148,30 +122,6 @@
 			
 				
 			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
 			
 			
 			<nav class="header-nav">
@@ -181,36 +131,12 @@
 			</nav>
 
 			<nav class="header-menu js-header-menu">
-				<ul style="width: 70%">
+				<ul style="width: 50%">
 				
 				
-					<li style="width: 7.142857142857143%"><a href="/2050/01/01/%E9%A6%96%E9%A1%B5/">主页</a></li>
+					<li style="width: 50%"><a href="/">主页</a></li>
 		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E7%BD%91%E7%BB%9C">网络</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/spring">spring</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E5%89%8D%E7%AB%AF">前端</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95">数据结构与算法</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Javaweb">Javaweb</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Linux">Linux</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Mybatis">Mybatis</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/git">git</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/maven">maven</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6">密码学</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a></li>
+					<li style="width: 50%"><a href="/tags/">分类</a></li>
 		        
 				</ul>
 			</nav>
@@ -258,7 +184,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="demo样式"><a href="#demo样式" class="headerlink" title="demo样式"></a>demo样式</h1><p><img src="https://img-blog.csdnimg.cn/20210504233352173.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+        <h1 id="demo样式"><a href="#demo样式" class="headerlink" title="demo样式"></a>demo样式</h1><span id="more"></span>
+<p><img src="https://img-blog.csdnimg.cn/20210504233352173.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <h1 id="搭建环境（pom文件）"><a href="#搭建环境（pom文件）" class="headerlink" title="搭建环境（pom文件）"></a>搭建环境（pom文件）</h1><h2 id="项目创建"><a href="#项目创建" class="headerlink" title="项目创建"></a>项目创建</h2><p>在创建项目时，应当选择web、thymeleaf、mybatis（我这边是阿里云的镜像，所以都是中文选项，自己可以对号入座）<br><img src="https://img-blog.csdnimg.cn/20210504231240939.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>我使用阿里云的镜像选择之后还是要自己手动导入thymeleaf（如果使用官网的应该没有这个bug）</p>
 <p><img src="https://img-blog.csdnimg.cn/20210504231227422.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>注意：选择JDBC时，如果不进行配置文件中数据库配置，程序会报错（dataSource连接不成功什么的），所以一般不使用mybatis时，不选JDBC，自己手动配置比较好</strong><br><img src="https://img-blog.csdnimg.cn/20210504231259530.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <h2 id="导入依赖和插件"><a href="#导入依赖和插件" class="headerlink" title="导入依赖和插件"></a>导入依赖和插件</h2><h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><p>在项目已经创建好的基础上，还需要加入下列依赖(我前面说了，thymeleaf依赖可能创建后就有了)，这里我用的druid连接池，你也可以用原生的（只要配置文件中对应好就行）</p>
@@ -394,11 +321,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/01/25/springboot-%E6%95%B4%E5%90%88shiro/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Springboot-整合shiro
+          Springboot-项目打包
         
       </div>
     </a>
@@ -500,11 +427,11 @@
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
-		open_in_new: false,
+		open_in_new: true,
 		toc_hide_index: true,
 		root: "/",
 		innerArchive: true,
-		showTags: true
+		showTags: false
 	}
 </script>
 
@@ -524,8 +451,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
       
     
       
-      
-      
     
       
       
@@ -537,15 +462,13 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
-      
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -570,11 +493,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -594,7 +517,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -606,7 +529,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -614,11 +537,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
             
             <div class="clearfix"></div>
@@ -664,18 +587,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     	</section>
     
 
-    
-    	<section class="tools-section tools-section-friends" q-show="friends">
-  		
-        <ul class="search-ul">
-          
-            <li class="search-li">
-              <a href="https://blog.csdn.net/WA_MC?spm=1000.2115.3001.5343" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>我的csdn blog</a>
-            </li>
-          
-        </ul>
-  		
-    	</section>
     
 
     

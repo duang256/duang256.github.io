@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Mybatis | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="MybatisMybatis 介绍ORM - Object Relational Mapping - Hibernate - 完全的ORM - 通过对象操作  - MyBatis  - 基于sql语句 - ORM MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBa">
+  <meta name="description" content="MybatisMybatis 介绍ORM - Object Relational Mapping - Hibernate - 完全的ORM - 通过对象操作  - MyBatis  - 基于sql语句 - ORM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mybatis">
 <meta property="og:url" content="http://example.com/2021/07/10/Mybatis/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="MybatisMybatis 介绍ORM - Object Relational Mapping - Hibernate - 完全的ORM - 通过对象操作  - MyBatis  - 基于sql语句 - ORM MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBa">
+<meta property="og:description" content="MybatisMybatis 介绍ORM - Object Relational Mapping - Hibernate - 完全的ORM - 通过对象操作  - MyBatis  - 基于sql语句 - ORM">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1634553849127-13f1e3f4-7dbd-4892-abc2-61752cfe7dbe.png">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1634553898242-69106cbf-03a7-40ad-a094-d6d82b2f233e.png">
@@ -81,7 +81,7 @@
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1634660724466-9e11b653-242d-45a3-a4a2-6c251d592153.png">
 <meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1634660772795-1195b869-e03e-4ab7-8789-55b964e83bf3.png">
 <meta property="article:published_time" content="2021-07-10T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-02-01T02:09:32.945Z">
+<meta property="article:modified_time" content="2022-02-05T17:04:01.501Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="Mybatis">
 <meta name="twitter:card" content="summary">
@@ -127,33 +127,9 @@
 		<nav class="header-menu">
 			<ul>
 			
-				<li><a href="/2050/01/01/%E9%A6%96%E9%A1%B5/">主页</a></li>
+				<li><a href="/">主页</a></li>
 	        
-				<li><a href="/tags/%E7%BD%91%E7%BB%9C">网络</a></li>
-	        
-				<li><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-	        
-				<li><a href="/tags/spring">spring</a></li>
-	        
-				<li><a href="/tags/%E5%89%8D%E7%AB%AF">前端</a></li>
-	        
-				<li><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
-	        
-				<li><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95">数据结构与算法</a></li>
-	        
-				<li><a href="/tags/Javaweb">Javaweb</a></li>
-	        
-				<li><a href="/tags/Linux">Linux</a></li>
-	        
-				<li><a href="/tags/Mybatis">Mybatis</a></li>
-	        
-				<li><a href="/tags/git">git</a></li>
-	        
-				<li><a href="/tags/maven">maven</a></li>
-	        
-				<li><a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6">密码学</a></li>
-	        
-				<li><a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a></li>
+				<li><a href="/tags/">分类</a></li>
 	        
 			</ul>
 		</nav>
@@ -163,8 +139,6 @@
     			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
     			
             
-    			
-    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
     			
             
     			
@@ -205,30 +179,6 @@
 			
 				
 			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
-				
-			
 			
 			
 			<nav class="header-nav">
@@ -238,36 +188,12 @@
 			</nav>
 
 			<nav class="header-menu js-header-menu">
-				<ul style="width: 70%">
+				<ul style="width: 50%">
 				
 				
-					<li style="width: 7.142857142857143%"><a href="/2050/01/01/%E9%A6%96%E9%A1%B5/">主页</a></li>
+					<li style="width: 50%"><a href="/">主页</a></li>
 		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E7%BD%91%E7%BB%9C">网络</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/spring">spring</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E5%89%8D%E7%AB%AF">前端</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95">数据结构与算法</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Javaweb">Javaweb</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Linux">Linux</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/Mybatis">Mybatis</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/git">git</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/maven">maven</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6">密码学</a></li>
-		        
-					<li style="width: 7.142857142857143%"><a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a></li>
+					<li style="width: 50%"><a href="/tags/">分类</a></li>
 		        
 				</ul>
 			</nav>
@@ -318,6 +244,7 @@
         <h1 id="Mybatis"><a href="#Mybatis" class="headerlink" title="Mybatis"></a>Mybatis</h1><h2 id="Mybatis-介绍"><a href="#Mybatis-介绍" class="headerlink" title="Mybatis 介绍"></a>Mybatis 介绍</h2><p>ORM - Object Relational Mapping</p>
 <p>- Hibernate - 完全的ORM - 通过对象操作 </p>
 <p>- MyBatis  - 基于sql语句 - ORM</p>
+<span id="more"></span>
 <p>MyBatis 本是apache的一个开源项目iBatis, 2010年这个项目由apache software foundation 迁移到了google code，并且改名为MyBatis 。2013年11月迁移到Github。</p>
 <p>MyBatis是一个优秀的持久层框架，它对jdbc的操作数据库的过程进行封装，使开发者只需要关注SQL 本身，而不需要花费精力去处理例如注册驱动、创建connection、创建statement、手动设置参数、结果集检索等jdbc繁杂的过程代码。</p>
 <p>Mybatis通过xml或注解的方式将要执行的各种statement（statement、preparedStatemnt、CallableStatement）配置起来，并通过java对象和statement中的sql进行映射生成最终执行的sql语句，最后由mybatis框架执行sql并将结果映射成java对象并返回。</p>
@@ -1403,11 +1330,11 @@
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
-		open_in_new: false,
+		open_in_new: true,
 		toc_hide_index: true,
 		root: "/",
 		innerArchive: true,
-		showTags: true
+		showTags: false
 	}
 </script>
 
@@ -1427,8 +1354,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
       
     
       
-      
-      
     
       
       
@@ -1440,15 +1365,13 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
-      
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -1473,11 +1396,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1497,7 +1420,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1509,7 +1432,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1517,11 +1440,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
             
             <div class="clearfix"></div>
@@ -1567,18 +1490,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     	</section>
     
 
-    
-    	<section class="tools-section tools-section-friends" q-show="friends">
-  		
-        <ul class="search-ul">
-          
-            <li class="search-li">
-              <a href="https://blog.csdn.net/WA_MC?spm=1000.2115.3001.5343" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>我的csdn blog</a>
-            </li>
-          
-        </ul>
-  		
-    	</section>
     
 
     
