@@ -1193,6 +1193,100 @@
 
 
   
+    <article id="post-springboot-项目打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/">Springboot-项目打包</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/" class="archive-article-date">
+  	<time datetime="2022-01-25T10:46:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><p>这个是打包用的插件，如果用脚手架工具创建的会自动有这个插件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">                &lt;version&gt;<span class="number">2.3</span><span class="number">.7</span>.RELEASE&lt;/version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;mainClass&gt;cn.wit.demo.DemoApplication&lt;/mainClass&gt;</span><br><span class="line">                &lt;/configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;repackage&lt;/id&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;repackage&lt;/goal&gt;</span><br><span class="line">                        &lt;/goals&gt;</span><br><span class="line">                    &lt;/execution&gt;</span><br><span class="line">                &lt;/executions&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210507202610638.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如果不想将测试也打包进去，点击红框里这个，就不会将test打包进去<br><img src="https://img-blog.csdnimg.cn/20210507202640992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>点击install（这个打包是将所有的jar包全部下载集成到打的这个包中了，并且内嵌tomcat，所以只需要java环境进行执行就可以了）<br><img src="https://img-blog.csdnimg.cn/2021050720273162.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="多环境配置"><a href="#多环境配置" class="headerlink" title="多环境配置"></a>多环境配置</h2><p>开发阶段可能使用开发环境<br>测试阶段使用测试环境<br>上线使用上线环境</p>
+<p>所以会有多环境配置的需求</p>
+<p><img src="https://img-blog.csdnimg.cn/20210507210135754.png" alt="在这里插入图片描述"></p>
+<p>java -jar  jar包名字  –spring.profiles.active=profile（这里profile对应配置文件-后边）</p>
+<p>dev</p>
+<p><img src="https://img-blog.csdnimg.cn/20210507210731735.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><a target="_blank" rel="noopener" href="http://localhost:8080/logback/showInfo">http://localhost:8080/logback/showInfo</a><br><img src="https://img-blog.csdnimg.cn/20210507210713801.png" alt="在这里插入图片描述"></p>
+<p>test<br><img src="https://img-blog.csdnimg.cn/20210507210912648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210507210947339.png" alt="在这里插入图片描述"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-springboot-整合shiro" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1349,100 +1443,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/25/springboot-%E6%95%B4%E5%90%88shiro/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-springboot-项目打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/">Springboot-项目打包</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2022-01-25T10:46:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><p>这个是打包用的插件，如果用脚手架工具创建的会自动有这个插件</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">                &lt;version&gt;<span class="number">2.3</span><span class="number">.7</span>.RELEASE&lt;/version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;mainClass&gt;cn.wit.demo.DemoApplication&lt;/mainClass&gt;</span><br><span class="line">                &lt;/configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;repackage&lt;/id&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;repackage&lt;/goal&gt;</span><br><span class="line">                        &lt;/goals&gt;</span><br><span class="line">                    &lt;/execution&gt;</span><br><span class="line">                &lt;/executions&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img-blog.csdnimg.cn/20210507202610638.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如果不想将测试也打包进去，点击红框里这个，就不会将test打包进去<br><img src="https://img-blog.csdnimg.cn/20210507202640992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>点击install（这个打包是将所有的jar包全部下载集成到打的这个包中了，并且内嵌tomcat，所以只需要java环境进行执行就可以了）<br><img src="https://img-blog.csdnimg.cn/2021050720273162.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h2 id="多环境配置"><a href="#多环境配置" class="headerlink" title="多环境配置"></a>多环境配置</h2><p>开发阶段可能使用开发环境<br>测试阶段使用测试环境<br>上线使用上线环境</p>
-<p>所以会有多环境配置的需求</p>
-<p><img src="https://img-blog.csdnimg.cn/20210507210135754.png" alt="在这里插入图片描述"></p>
-<p>java -jar  jar包名字  –spring.profiles.active=profile（这里profile对应配置文件-后边）</p>
-<p>dev</p>
-<p><img src="https://img-blog.csdnimg.cn/20210507210731735.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><a target="_blank" rel="noopener" href="http://localhost:8080/logback/showInfo">http://localhost:8080/logback/showInfo</a><br><img src="https://img-blog.csdnimg.cn/20210507210713801.png" alt="在这里插入图片描述"></p>
-<p>test<br><img src="https://img-blog.csdnimg.cn/20210507210912648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210507210947339.png" alt="在这里插入图片描述"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/">展开全文 >></a>
         </p>
       
 
@@ -1902,11 +1902,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1926,6 +1926,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
@@ -1934,15 +1938,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
