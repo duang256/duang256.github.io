@@ -480,6 +480,98 @@
 
 
   
+    <article id="post-Linux目录和路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">Linux目录和路径</a>
+    </h1>
+  
+
+        
+        <a href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/" class="archive-article-date">
+  	<time datetime="2020-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-21</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>cd ..(注意中间有空格,到达上一层目录)，到达linux目录结构的最顶层（Linux只有一个硬盘，一个根，没有C、D这样分盘）<br><img src="https://img-blog.csdnimg.cn/2021052115053637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>ls查看底层目录<br><img src="https://img-blog.csdnimg.cn/20210521151100321.png" alt="在这里插入图片描述"></p>
+<p><strong>bin</strong></p>
+<p>系统常用的命令目录，包括控制台命令（命令对应的可执行脚本），系统可执行文件，系统的核心二进制文件等<br><strong>etc</strong><br>发布目录，相当于windows中的windows目录，保存系统中所有核心内容（后面配置环境变量就在这个目录里面）<br><strong>usr</strong><br>相当于windows中的program files目录，用于安装系统所有用户共用软件，资源<br><strong>root</strong><br>root根用户的用户目录，相当于windows系统中的administrator目录（进入该目录 命令行的盘符会变成~）<br><strong>home</strong><br>保存其他用户主目录的目录<br>Linux系统中有wityy用户，就一定有/home/wityy目录存在，代表用户主目录<br><strong>var</strong><br>系统运行过程中的数据目录</p>
+<h1 id="路径"><a href="#路径" class="headerlink" title="路径"></a>路径</h1><p><strong>全路径</strong><br>从根目录开始寻找文件<br>写法：以/开头   比如 /usr/local(其中cd . .表示到上一层目录，pwd表示当前路径)<br><img src="https://img-blog.csdnimg.cn/20210521152847624.png" alt="在这里插入图片描述"><br><strong>相对路径</strong><br>从当前资源路径开始寻找，找到其他资源</p>
+<p>写法：找当前目录的子目录，直接写子目录名字<br>比如当前在usr目录下，cd local/进入到local目录</p>
+<p>比如从local（usr下的）调到bin（usr下的）下<br>cd ../lib(到上一级目录再查找，上一级目录子目录，即为查找同级目录)</p>
+<p><strong>特殊路径</strong></p>
+<p>/表示磁盘根 cd /<br>~表示root根目录  cd root/</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-Linux常用配置" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -559,98 +651,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/01/21/Linux%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-Linux目录和路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">Linux目录和路径</a>
-    </h1>
-  
-
-        
-        <a href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-  	<time datetime="2020-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-21</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>cd ..(注意中间有空格,到达上一层目录)，到达linux目录结构的最顶层（Linux只有一个硬盘，一个根，没有C、D这样分盘）<br><img src="https://img-blog.csdnimg.cn/2021052115053637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>ls查看底层目录<br><img src="https://img-blog.csdnimg.cn/20210521151100321.png" alt="在这里插入图片描述"></p>
-<p><strong>bin</strong></p>
-<p>系统常用的命令目录，包括控制台命令（命令对应的可执行脚本），系统可执行文件，系统的核心二进制文件等<br><strong>etc</strong><br>发布目录，相当于windows中的windows目录，保存系统中所有核心内容（后面配置环境变量就在这个目录里面）<br><strong>usr</strong><br>相当于windows中的program files目录，用于安装系统所有用户共用软件，资源<br><strong>root</strong><br>root根用户的用户目录，相当于windows系统中的administrator目录（进入该目录 命令行的盘符会变成~）<br><strong>home</strong><br>保存其他用户主目录的目录<br>Linux系统中有wityy用户，就一定有/home/wityy目录存在，代表用户主目录<br><strong>var</strong><br>系统运行过程中的数据目录</p>
-<h1 id="路径"><a href="#路径" class="headerlink" title="路径"></a>路径</h1><p><strong>全路径</strong><br>从根目录开始寻找文件<br>写法：以/开头   比如 /usr/local(其中cd . .表示到上一层目录，pwd表示当前路径)<br><img src="https://img-blog.csdnimg.cn/20210521152847624.png" alt="在这里插入图片描述"><br><strong>相对路径</strong><br>从当前资源路径开始寻找，找到其他资源</p>
-<p>写法：找当前目录的子目录，直接写子目录名字<br>比如当前在usr目录下，cd local/进入到local目录</p>
-<p>比如从local（usr下的）调到bin（usr下的）下<br>cd ../lib(到上一级目录再查找，上一级目录子目录，即为查找同级目录)</p>
-<p><strong>特殊路径</strong></p>
-<p>/表示磁盘根 cd /<br>~表示root根目录  cd root/</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/21/Linux%E7%9B%AE%E5%BD%95%E5%92%8C%E8%B7%AF%E5%BE%84/">展开全文 >></a>
         </p>
       
 
@@ -1198,11 +1198,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
