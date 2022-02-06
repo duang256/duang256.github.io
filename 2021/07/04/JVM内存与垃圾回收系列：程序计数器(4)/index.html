@@ -6,12 +6,12 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>JVM内存与垃圾回收系列：虚拟机栈(4) | yueyan</title>
+  <title>JVM内存与垃圾回收系列：程序计数器(4) | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="JVM（4）">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM内存与垃圾回收系列：虚拟机栈(4)">
-<meta property="og:url" content="http://example.com/2021/07/04/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88(4)/index.html">
+<meta property="og:title" content="JVM内存与垃圾回收系列：程序计数器(4)">
+<meta property="og:url" content="http://example.com/2021/07/04/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8(4)/index.html">
 <meta property="og:site_name" content="yueyan">
 <meta property="og:description" content="JVM（4）">
 <meta property="og:locale" content="en_US">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/985a7ca7ea06465cb42c0fde15840fe5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/63253e76087e44fd86c327a2e7e14a40.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16">
 <meta property="article:published_time" content="2021-07-04T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-02-06T07:10:01.100Z">
+<meta property="article:modified_time" content="2022-02-06T07:24:04.434Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -220,19 +220,19 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-JVM内存与垃圾回收系列：虚拟机栈(4)" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-JVM内存与垃圾回收系列：程序计数器(4)" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      JVM内存与垃圾回收系列：虚拟机栈(4)
+      JVM内存与垃圾回收系列：程序计数器(4)
     </h1>
   
 
         
-        <a href="/2021/07/04/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88(4)/" class="archive-article-date">
+        <a href="/2021/07/04/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8(4)/" class="archive-article-date">
   	<time datetime="2021-07-04T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-04</time>
 </a>
 		
@@ -371,7 +371,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/07/04/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88(4)/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/07/04/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8(4)/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -440,7 +440,7 @@
   
 
   
-  <div id="SOHUCS" sid="JVM内存与垃圾回收系列：虚拟机栈(4)" ></div> 
+  <div id="SOHUCS" sid="JVM内存与垃圾回收系列：程序计数器(4)" ></div> 
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js" ></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -593,11 +593,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
