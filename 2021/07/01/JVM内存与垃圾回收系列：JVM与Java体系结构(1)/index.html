@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/7682c20475ec53ef11b1ae93ca4268f4.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/fcb49375ef4a2b978c3c49d3d9900122.png">
 <meta property="article:published_time" content="2021-07-01T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-02-06T07:36:52.080Z">
+<meta property="article:modified_time" content="2022-02-09T15:08:36.923Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="JVM">
 <meta property="article:tag" content="他人好文">
@@ -118,26 +118,6 @@
             
 		</nav>
 		
-		<!-- 具体修改的内容在下面 -->
-		<script type="text/javascript" src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-		<form id="search-form"> <!-- 搜索框相关 -->
-			<input type="text" id="local-search-input" name="q" results="0" style="text-align:center" placeholder="站内搜索..." class="search form-control" autocomplete="off" autocorrect="off"/>
-			<i class="fa fa-times" onclick="resetSearch()"></i> <!-- 清空/重置搜索框 -->
-		</form>
-		<div id="local-search-result"></div> <!-- 搜索结果区 -->
-		<p class='no-result'>没找到。。。</p> <!-- 无匹配时显示，注意请在 CSS 中设置默认隐藏 -->
-		<script type="text/javascript" src="/search.js"></script>
-		<script>
-		var inputArea = document.querySelector("#local-search-input");
-		var getSearchFile = function(){
-			var path = "/search.xml";
-			searchFunc(path, 'local-search-input', 'local-search-result');
-		}
-		inputArea.onfocus = function(){ getSearchFile() }
-
-		</script>
-
-				
 		
 		<nav class="header-nav">
 			<div class="social">
@@ -285,7 +265,6 @@
         <p>JVM（1）</p>
 <span id="more"></span>
 
-
 <div id="content_views" class="markdown_views prism-atom-one-dark">
 <h1>JVM与Java体系结构</h1> 
 <h2><a name="t1"></a><a id="_2"></a>前言</h2> 
@@ -366,137 +345,154 @@
 <h3><a name="t17"></a><a id="_194"></a>举例</h3> 
 <p>同样执行2+3这种逻辑操作，其指令分别如下：</p> 
 <p>基于栈的计算流程（以Java虚拟机为例）：</p> 
-<pre class="prettyprint"><code class="prism language-bash has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">iconst_2 //常量2入栈
-istore_1
-iconst_3 // 常量3入栈
-istore_2
-iload_1
-iload_2
-iadd //常量2/3出栈，执行相加
-istore_0 // 结果5入栈
 
 
 
-<p>而基于寄存器的计算流程</p> 
-<pre class="prettyprint"><code class="prism language-bash has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">mov eax,2 //将eax寄存器的值设为1
-add eax,3 //使eax寄存器的值加3
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">iconst_2 <span class="comment">//常量2入栈</span></span><br><span class="line">istore_1</span><br><span class="line">iconst_3 <span class="comment">// 常量3入栈</span></span><br><span class="line">istore_2</span><br><span class="line">iload_1</span><br><span class="line">iload_2</span><br><span class="line">iadd <span class="comment">//常量2/3出栈，执行相加</span></span><br><span class="line">istore_0 <span class="comment">// 结果5入栈</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<p>而基于寄存器的计算流程</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov eax,2 //将eax寄存器的值设为1</span><br><span class="line">add eax,3 //使eax寄存器的值加3</span><br></pre></td></tr></table></figure>
 
-<h3><a name="t18"></a><a id="_218"></a>字节码反编译</h3> 
-<p>我们编写一个简单的代码，然后查看一下字节码的反编译后的结果</p> 
-<pre class="prettyprint"><code class="prism language-java has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token comment">/**
- * @author: 陌溪
- * @create: 2020-07-04-21:17
- */</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">StackStruTest</span> <span class="token punctuation">{<!-- --></span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{<!-- --></span>
-        <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span> <span class="token operator">+</span> <span class="token number">3</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+<h3 id="字节码反编译"><a href="#字节码反编译" class="headerlink" title="字节码反编译"></a>字节码反编译</h3><p>我们编写一个简单的代码，然后查看一下字节码的反编译后的结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: 陌溪</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@create</span>: 2020-07-04-21:17</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StackStruTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">2</span> + <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<p>然后我们找到编译后的 class文件，使用下列命令进行反编译</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javap -v StackStruTest.class</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
 
-<p>然后我们找到编译后的 class文件，使用下列命令进行反编译</p> 
-<pre class="prettyprint"><code class="prism language-bash has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">javap -v StackStruTest.class
+<p>得到的文件为:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">  descriptor: ([Ljava/lang/String;)V</span><br><span class="line">  flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">2</span>, locals=<span class="number">4</span>, args_size=<span class="number">1</span></span><br><span class="line">       <span class="number">0</span>: iconst_2</span><br><span class="line">       <span class="number">1</span>: istore_1</span><br><span class="line">       <span class="number">2</span>: iconst_3</span><br><span class="line">       <span class="number">3</span>: istore_2</span><br><span class="line">       <span class="number">4</span>: iload_1</span><br><span class="line">       <span class="number">5</span>: iload_2</span><br><span class="line">       <span class="number">6</span>: iadd</span><br><span class="line">       <span class="number">7</span>: istore_3</span><br><span class="line">       <span class="number">8</span>: <span class="keyword">return</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">9</span>: <span class="number">0</span></span><br><span class="line">      line <span class="number">10</span>: <span class="number">2</span></span><br><span class="line">      line <span class="number">11</span>: <span class="number">4</span></span><br><span class="line">      line <span class="number">12</span>: <span class="number">8</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">9</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">          <span class="number">2</span>       <span class="number">7</span>     <span class="number">1</span>     i   I</span><br><span class="line">          <span class="number">4</span>       <span class="number">5</span>     <span class="number">2</span>     j   I</span><br><span class="line">          <span class="number">8</span>       <span class="number">1</span>     <span class="number">3</span>     k   I</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于跨平台性的设计，Java的指令都是根据栈来设计的。不同平台CPU架构不同，所以不能设计为基于寄存器的。优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。</p>
+<p>时至今日，尽管嵌入式平台已经不是Java程序的主流运行平台了（准确来说应该是HotSpotVM的宿主环境已经不局限于嵌入式平台了），那么为什么不将架构更换为基于寄存器的架构呢？</p>
+<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><ul>
+<li>跨平台性</li>
+<li>指令集小</li>
+<li>指令多</li>
+<li>执行性能比寄存器差</li>
+</ul>
+<h2 id="JVM生命周期"><a href="#JVM生命周期" class="headerlink" title="JVM生命周期"></a>JVM生命周期</h2><h3 id="虚拟机的启动"><a href="#虚拟机的启动" class="headerlink" title="虚拟机的启动"></a>虚拟机的启动</h3><p>Java虚拟机的启动是通过引导类加载器（bootstrap class loader）创建一个初始类（initial class）来完成的，这个类是由虚拟机的具体实现指定的。</p>
+<h3 id="虚拟机的执行"><a href="#虚拟机的执行" class="headerlink" title="虚拟机的执行"></a>虚拟机的执行</h3><ul>
+<li>一个运行中的Java虚拟机有着一个清晰的任务：执行Java程序。</li>
+<li>程序开始执行时他才运行，程序结束时他就停止。</li>
+<li>执行一个所谓的Java程序的时候，真真正正在执行的是一个叫做Java虚拟机的进程。</li>
+</ul>
+<h3 id="虚拟机的退出"><a href="#虚拟机的退出" class="headerlink" title="虚拟机的退出"></a>虚拟机的退出</h3><p>有如下的几种情况：</p>
+<ul>
+<li>程序正常执行结束</li>
+<li>程序在执行过程中遇到了异常或错误而异常终止</li>
+<li>由于操作系统用现错误而导致Java虚拟机进程终止</li>
+<li>某线程调用Runtime类或system类的exit方法，或Runtime类的halt方法，并且Java安全管理器也允许这次exit或halt操作。</li>
+<li>除此之外，JNI（Java Native Interface）规范描述了用JNI Invocation API来加载或卸载 Java虚拟机时，Java虚拟机的退出情况。</li>
+</ul>
+<h2 id="JVM发展历程"><a href="#JVM发展历程" class="headerlink" title="JVM发展历程"></a>JVM发展历程</h2><h3 id="Sun-Classic-VM"><a href="#Sun-Classic-VM" class="headerlink" title="Sun Classic VM"></a>Sun Classic VM</h3><ul>
+<li>早在1996年Java1.0版本的时候，Sun公司发布了一款名为sun classic VM的Java虚拟机，它同时也是世界上第一款商用Java虚拟机，JDK1.4时完全被淘汰。</li>
+<li>这款虚拟机内部只提供解释器。现在还有及时编译器，因此效率比较低，而及时编译器会把热点代码缓存起来，那么以后使用热点代码的时候，效率就比较高。</li>
+<li>如果使用JIT编译器，就需要进行外挂。但是一旦使用了JIT编译器，JIT就会接管虚拟机的执行系统。解释器就不再工作。解释器和编译器不能配合工作。</li>
+<li>现在hotspot内置了此虚拟机。</li>
+</ul>
+<h3 id="Exact-VM"><a href="#Exact-VM" class="headerlink" title="Exact VM"></a>Exact VM</h3><p>为了解决上一个虚拟机问题，jdk1.2时，sun提供了此虚拟机。<br>Exact Memory Management：准确式内存管理</p>
+<ul>
+<li>也可以叫Non-Conservative/Accurate Memory Management</li>
+<li>虚拟机可以知道内存中某个位置的数据具体是什么类型。|</li>
+</ul>
+<p>具备现代高性能虚拟机的维形</p>
+<ul>
+<li>热点探测（寻找出热点代码进行缓存）</li>
+<li>编译器与解释器混合工作模式</li>
+</ul>
+<p>只在solaris平台短暂使用，其他平台上还是classic vm，英雄气短，终被Hotspot虚拟机替换</p>
+<h3 id="HotSpot-VM"><a href="#HotSpot-VM" class="headerlink" title="HotSpot VM"></a>HotSpot VM</h3><p>HotSpot历史</p>
+<ul>
+<li>最初由一家名为“Longview Technologies”的小公司设计</li>
+<li>1997年，此公司被sun收购；2009年，Sun公司被甲骨文收购。</li>
+<li>JDK1.3时，HotSpot VM成为默认虚拟机</li>
+</ul>
+<p>目前Hotspot占有绝对的市场地位，称霸武林。</p>
+<ul>
+<li><p>不管是现在仍在广泛使用的JDK6，还是使用比例较多的JDK8中，默认的虚拟机都是HotSpot</p>
+</li>
+<li><p>Sun/oracle JDK和openJDK的默认虚拟机</p>
+</li>
+<li><p>因此本课程中默认介绍的虚拟机都是HotSpot，相关机制也主要是指HotSpot的Gc机制。（比如其他两个商用虚机都没有方法区的概念）</p>
+</li>
+</ul>
+<p>从服务器、桌面到移动端、嵌入式都有应用。</p>
+<p>名称中的HotSpot指的就是它的热点代码探测技术。</p>
+<ul>
+<li>通过计数器找到最具编译价值代码，触发即时编译或栈上替换</li>
+<li>通过编译器与解释器协同工作，在最优化的程序响应时间与最佳执行性能中取得平衡</li>
+</ul>
+<h3 id="JRockit"><a href="#JRockit" class="headerlink" title="JRockit"></a>JRockit</h3><p>专注于服务器端应用</p>
+<ul>
+<li>它可以不太关注程序启动速度，因此JRockit内部不包含解析器实现，全部代码都靠即时编译器编译后执行。</li>
+</ul>
+<p>大量的行业基准测试显示，JRockit JVM是世界上最快的JVM。</p>
+<ul>
+<li>使用JRockit产品，客户已经体验到了显著的性能提高（一些超过了70%）和硬件成本的减少（达50%）。</li>
+</ul>
+<p>优势：全面的Java运行时解决方案组合</p>
+<ul>
+<li>JRockit面向延迟敏感型应用的解决方案JRockit Real Time提供以毫秒或微秒级的JVM响应时间，适合财务、军事指挥、电信网络的需要</li>
+<li>MissionControl服务套件，它是一组以极低的开销来监控、管理和分析生产环境中的应用程序的工具。</li>
+</ul>
+<p>2008年，JRockit被oracle收购。</p>
+<p>oracle表达了整合两大优秀虚拟机的工作，大致在JDK8中完成。整合的方式是在HotSpot的基础上，移植JRockit的优秀特性。</p>
+<p>高斯林：目前就职于谷歌，研究人工智能和水下机器人</p>
+<h3 id="IBM的J9"><a href="#IBM的J9" class="headerlink" title="IBM的J9"></a>IBM的J9</h3><p>全称：IBM Technology for Java Virtual Machine，简称IT4J，内部代号：J9</p>
+<p>市场定位与HotSpot接近，服务器端、桌面应用、嵌入式等多用途VM广泛用于IBM的各种Java产品。</p>
+<p>目前，有影响力的三大商用虚拟机之一，也号称是世界上最快的Java虚拟机。</p>
+<p>2017年左右，IBM发布了开源J9VM，命名为openJ9，交给EClipse基金会管理，也称为Eclipse OpenJ9</p>
+<p>OpenJDK -&gt; 是JDK开源了，包括了虚拟机</p>
+<h3 id="KVM和CDC-CLDC-Hotspot"><a href="#KVM和CDC-CLDC-Hotspot" class="headerlink" title="KVM和CDC / CLDC Hotspot"></a>KVM和CDC / CLDC Hotspot</h3><p>oracle在Java ME产品线上的两款虚拟机为：CDC/CLDC HotSpot Implementation VM KVM（Kilobyte）是CLDC-HI早期产品目前移动领域地位尴尬，智能机被Angroid和ioS二分天下。</p>
+<p>KVM简单、轻量、高度可移植，面向更低端的设备上还维持自己的一片市场</p>
+<p>KVM简单、轻量、高度可移植，面向更低端的设备上还维持自己的一片市场</p>
+<ul>
+<li>智能控制器、传感器</li>
+<li>老人手机、经济欠发达地区的功能手机</li>
+</ul>
+<p>所有的虚拟机的原则：一次编译，到处运行。</p>
+<h3 id="Azul-VM"><a href="#Azul-VM" class="headerlink" title="Azul VM"></a>Azul VM</h3><p>前面三大“高性能Java虚拟机”使用在通用硬件平台上这里Azu1VW和BEALiquid VM是与特定硬件平台绑定、软硬件配合的专有虚拟机I</p>
+<ul>
+<li>高性能Java虚拟机中的战斗机。</li>
+</ul>
+<p>Azul VM是Azu1Systems公司在HotSpot基础上进行大量改进，运行于Azul Systems公司的专有硬件Vega系统上的ava虚拟机。</p>
+<p>每个Azu1VM实例都可以管理至少数十个CPU和数百GB内存的硬件资源，并提供在巨大内存范围内实现可控的GC时间的垃圾收集器、专有硬件优化的线程调度等优秀特性。</p>
+<p>2010年，AzulSystems公司开始从硬件转向软件，发布了自己的zing JVM，可以在通用x86平台上提供接近于Vega系统的特性。</p>
+<h3 id="Liquid-VM"><a href="#Liquid-VM" class="headerlink" title="Liquid VM"></a>Liquid VM</h3><p>高性能Java虚拟机中的战斗机。</p>
+<p>BEA公司开发的，直接运行在自家Hypervisor系统上Liquid VM即是现在的JRockit VE（Virtual Edition），</p>
+<p>Liquid VM不需要操作系统的支持，或者说它自己本身实现了一个专用操作系统的必要功能，如线程调度、文件系统、网络支持等。</p>
+<p>随着JRockit虚拟机终止开发，Liquid vM项目也停止了。</p>
+<h3 id="Apache-Marmony"><a href="#Apache-Marmony" class="headerlink" title="Apache Marmony"></a>Apache Marmony</h3><p>Apache也曾经推出过与JDK1.5和JDK1.6兼容的Java运行平台Apache Harmony。</p>
+<p>它是IElf和Inte1联合开发的开源JVM，受到同样开源的openJDK的压制，Sun坚决不让Harmony获得JCP认证，最终于2011年退役，IBM转而参与OpenJDK</p>
+<p>虽然目前并没有Apache Harmony被大规模商用的案例，但是它的Java类库代码吸纳进了Android SDK。</p>
+<h3 id="Micorsoft-JVM"><a href="#Micorsoft-JVM" class="headerlink" title="Micorsoft JVM"></a>Micorsoft JVM</h3><p>微软为了在IE3浏览器中支持Java Applets，开发了Microsoft JVM。</p>
+<p>只能在window平台下运行。但确是当时Windows下性能最好的Java VM。</p>
+<p>1997年，sun以侵犯商标、不正当竞争罪名指控微软成功，赔了sun很多钱。微软windowsXPSP3中抹掉了其VM。现在windows上安装的jdk都是HotSpot。</p>
+<h3 id="Taobao-JVM"><a href="#Taobao-JVM" class="headerlink" title="Taobao JVM"></a>Taobao JVM</h3><p>由AliJVM团队发布。阿里，国内使用Java最强大的公司，覆盖云计算、金融、物流、电商等众多领域，需要解决高并发、高可用、分布式的复合问题。有大量的开源产品。</p>
+<p>基于openJDK开发了自己的定制版本AlibabaJDK，简称AJDK。是整个阿里Java体系的基石。</p>
+<p>基于openJDK Hotspot VM发布的国内第一个优化、深度定制且开源的高性能服务器版Java虚拟机。</p>
+<ul>
+<li>创新的GCIH（GCinvisible heap）技术实现了off-heap，即将生命周期较长的Java对象从heap中移到heap之外，并且Gc不能管理GCIH内部的Java对象，以此达到降低GC的回收频率和提升Gc的回收效率的目的。</li>
+<li>GCIH中的对象还能够在多个Java虚拟机进程中实现共享</li>
+<li>使用crc32指令实现JvM intrinsic降低JNI的调用开销</li>
+<li>PMU hardware的Java profiling tool和诊断协助功能</li>
+<li>针对大数据场景的ZenGc</li>
+</ul>
+<p>taobao vm应用在阿里产品上性能高，硬件严重依赖inte1的cpu，损失了兼容性，但提高了性能</p>
+<p>目前已经在淘宝、天猫上线，把oracle官方JvM版本全部替换了。</p>
+<h3 id="Dalvik-VM"><a href="#Dalvik-VM" class="headerlink" title="Dalvik VM"></a>Dalvik VM</h3><p>谷歌开发的，应用于Android系统，并在Android2.2中提供了JIT，发展迅猛。</p>
+<p>Dalvik y只能称作虚拟机，而不能称作“Java虚拟机”，它没有遵循 Java虚拟机规范</p>
+<p>不能直接执行Java的Class文件</p>
+<p>基于寄存器架构，不是jvm的栈架构。</p>
+<p>执行的是编译以后的dex（Dalvik Executable）文件。执行效率比较高。</p>
+<p>它执行的dex（Dalvik Executable）文件可以通过class文件转化而来，使用Java语法编写应用程序，可以直接使用大部分的Java API等。<br>Android 5.0使用支持提前编译（Ahead of Time Compilation，AoT）的ART VM替换Dalvik VM。</p>
+<h3 id="Graal-VM"><a href="#Graal-VM" class="headerlink" title="Graal VM"></a>Graal VM</h3><p>2018年4月，oracle Labs公开了GraalvM，号称 “Run Programs Faster Anywhere”，勃勃野心。与1995年java的”write once，run anywhere”遥相呼应。</p>
+<p>GraalVM在HotSpot VM基础上增强而成的跨语言全栈虚拟机，可以作为“任何语言”<br>的运行平台使用。语言包括：Java、Scala、Groovy、Kotlin；C、C++、Javascript、Ruby、Python、R等</p>
+<p>支持不同语言中混用对方的接口和对象，支持这些语言使用已经编写好的本地库文件</p>
+<p>工作原理是将这些语言的源代码或源代码编译后的中间格式，通过解释器转换为能被Graal VM接受的中间表示。Graal VM提供Truffle工具集快速构建面向一种新语言的解释器。在运行时还能进行即时编译优化，获得比原生编译器更优秀的执行效率。</p>
+<p>如果说HotSpot有一天真的被取代，Graalvm希望最大。但是Java的软件生态没有丝毫变化。</p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>具体JVM的内存结构，其实取决于其实现，不同厂商的JVM，或者同一厂商发布的不同版本，都有可能存在一定差异。主要以oracle HotSpot VM为默认虚拟机。</p>
 
-<p>得到的文件为:</p> 
-
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public static void <span class="selector-tag">main</span>(java<span class="selector-class">.lang</span><span class="selector-class">.String</span><span class="selector-attr">[]</span>);</span><br><span class="line">   descriptor: ([Ljava/lang/String;)V</span><br><span class="line">   flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">   Code:</span><br><span class="line">     stack=<span class="number">2</span>, locals=<span class="number">4</span>, args_size=<span class="number">1</span></span><br><span class="line">        <span class="number">0</span>: iconst_2</span><br><span class="line">        <span class="number">1</span>: istore_1</span><br><span class="line">        <span class="number">2</span>: iconst_3</span><br><span class="line">        <span class="number">3</span>: istore_2</span><br><span class="line">        <span class="number">4</span>: iload_1</span><br><span class="line">        <span class="number">5</span>: iload_2</span><br><span class="line">        <span class="number">6</span>: iadd</span><br><span class="line">        <span class="number">7</span>: istore_3</span><br><span class="line">        <span class="number">8</span>: return</span><br><span class="line">     LineNumberTable:</span><br><span class="line">       line <span class="number">9</span>: <span class="number">0</span></span><br><span class="line">       line <span class="number">10</span>: <span class="number">2</span></span><br><span class="line">       line <span class="number">11</span>: <span class="number">4</span></span><br><span class="line">       line <span class="number">12</span>: <span class="number">8</span></span><br><span class="line">     LocalVariableTable:</span><br><span class="line">       Start  Length  Slot  Name   Signature</span><br><span class="line">           <span class="number">0</span>       <span class="number">9</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">           <span class="number">2</span>       <span class="number">7</span>     <span class="number">1</span>     <span class="selector-tag">i</span>   <span class="selector-tag">I</span></span><br><span class="line">           <span class="number">4</span>       <span class="number">5</span>     <span class="number">2</span>     j   <span class="selector-tag">I</span></span><br><span class="line">           <span class="number">8</span>       <span class="number">1</span>     <span class="number">3</span>     k   <span class="selector-tag">I</span></span><br></pre></td></tr></table></figure>
-
-
-<h2><a name="t19"></a><a id="_270"></a>总结</h2> 
-<p>由于跨平台性的设计，Java的指令都是根据栈来设计的。不同平台CPU架构不同，所以不能设计为基于寄存器的。优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。</p> 
-<p>时至今日，尽管嵌入式平台已经不是Java程序的主流运行平台了（准确来说应该是HotSpotVM的宿主环境已经不局限于嵌入式平台了），那么为什么不将架构更换为基于寄存器的架构呢？</p> 
-<h3><a name="t20"></a><a id="_276"></a>栈</h3> 
-<ul><li>跨平台性</li><li>指令集小</li><li>指令多</li><li>执行性能比寄存器差</li></ul> 
-<h2><a name="t21"></a><a id="JVM_283"></a>JVM生命周期</h2> 
-<h3><a name="t22"></a><a id="_285"></a>虚拟机的启动</h3> 
-<p>Java虚拟机的启动是通过引导类加载器（bootstrap class loader）创建一个初始类（initial class）来完成的，这个类是由虚拟机的具体实现指定的。</p> 
-<h3><a name="t23"></a><a id="_289"></a>虚拟机的执行</h3> 
-<ul><li>一个运行中的Java虚拟机有着一个清晰的任务：执行Java程序。</li><li>程序开始执行时他才运行，程序结束时他就停止。</li><li>执行一个所谓的Java程序的时候，真真正正在执行的是一个叫做Java虚拟机的进程。</li></ul> 
-<h3><a name="t24"></a><a id="_295"></a>虚拟机的退出</h3> 
-<p>有如下的几种情况：</p> 
-<ul><li> <p>程序正常执行结束</p> </li><li> <p>程序在执行过程中遇到了异常或错误而异常终止</p> </li><li> <p>由于操作系统用现错误而导致Java虚拟机进程终止</p> </li><li> <p>某线程调用Runtime类或system类的exit方法，或Runtime类的halt方法，并且Java安全管理器也允许这次exit或halt操作。</p> </li><li> <p>除此之外，JNI（Java Native Interface）规范描述了用JNI Invocation API来加载或卸载 Java虚拟机时，Java虚拟机的退出情况。</p> </li></ul> 
-<h2><a name="t25"></a><a id="JVM_306"></a>JVM发展历程</h2> 
-<h3><a name="t26"></a><a id="Sun_Classic_VM_308"></a>Sun Classic VM</h3> 
-<ul><li>早在1996年Java1.0版本的时候，Sun公司发布了一款名为sun classic VM的Java虚拟机，它同时也是世界上第一款商用Java虚拟机，JDK1.4时完全被淘汰。</li><li>这款虚拟机内部只提供解释器。现在还有及时编译器，因此效率比较低，而及时编译器会把热点代码缓存起来，那么以后使用热点代码的时候，效率就比较高。</li><li>如果使用JIT编译器，就需要进行外挂。但是一旦使用了JIT编译器，JIT就会接管虚拟机的执行系统。解释器就不再工作。解释器和编译器不能配合工作。</li><li>现在hotspot内置了此虚拟机。</li></ul> 
-<h3><a name="t27"></a><a id="Exact_VM_315"></a>Exact VM</h3> 
-<p>为了解决上一个虚拟机问题，jdk1.2时，sun提供了此虚拟机。<br> Exact Memory Management：准确式内存管理</p> 
-<ul><li>也可以叫Non-Conservative/Accurate Memory Management</li><li>虚拟机可以知道内存中某个位置的数据具体是什么类型。|</li></ul> 
-<p>具备现代高性能虚拟机的维形</p> 
-<ul><li>热点探测（寻找出热点代码进行缓存）</li><li>编译器与解释器混合工作模式</li></ul> 
-<p>只在solaris平台短暂使用，其他平台上还是classic vm，英雄气短，终被Hotspot虚拟机替换</p> 
-<h3><a name="t28"></a><a id="HotSpot_VM_330"></a>HotSpot VM</h3> 
-<p>HotSpot历史</p> 
-<ul><li>最初由一家名为“Longview Technologies”的小公司设计</li><li>1997年，此公司被sun收购；2009年，Sun公司被甲骨文收购。</li><li>JDK1.3时，HotSpot VM成为默认虚拟机</li></ul> 
-<p>目前Hotspot占有绝对的市场地位，称霸武林。</p> 
-<ul><li>不管是现在仍在广泛使用的JDK6，还是使用比例较多的JDK8中，默认的虚拟机都是HotSpot</li><li>Sun/oracle JDK和openJDK的默认虚拟机</li><li>因此本课程中默认介绍的虚拟机都是HotSpot，相关机制也主要是指HotSpot的Gc机制。（比如其他两个商用虚机都没有方法区的概念）</li></ul> 
-<p>从服务器、桌面到移动端、嵌入式都有应用。</p> 
-<p>名称中的HotSpot指的就是它的热点代码探测技术。</p> 
-<ul><li>通过计数器找到最具编译价值代码，触发即时编译或栈上替换</li><li>通过编译器与解释器协同工作，在最优化的程序响应时间与最佳执行性能中取得平衡</li></ul> 
-<h3><a name="t29"></a><a id="JRockit_350"></a>JRockit</h3> 
-<p>专注于服务器端应用</p> 
-<ul><li>它可以不太关注程序启动速度，因此JRockit内部不包含解析器实现，全部代码都靠即时编译器编译后执行。</li></ul> 
-<p>大量的行业基准测试显示，JRockit JVM是世界上最快的JVM。</p> 
-<ul><li>使用JRockit产品，客户已经体验到了显著的性能提高（一些超过了70%）和硬件成本的减少（达50%）。</li></ul> 
-<p>优势：全面的Java运行时解决方案组合</p> 
-<ul><li>JRockit面向延迟敏感型应用的解决方案JRockit Real Time提供以毫秒或微秒级的JVM响应时间，适合财务、军事指挥、电信网络的需要</li><li>MissionControl服务套件，它是一组以极低的开销来监控、管理和分析生产环境中的应用程序的工具。</li></ul> 
-<p>2008年，JRockit被oracle收购。</p> 
-<p>oracle表达了整合两大优秀虚拟机的工作，大致在JDK8中完成。整合的方式是在HotSpot的基础上，移植JRockit的优秀特性。</p> 
-<p>高斯林：目前就职于谷歌，研究人工智能和水下机器人</p> 
-<h3><a name="t30"></a><a id="IBMJ9_371"></a>IBM的J9</h3> 
-<p>全称：IBM Technology for Java Virtual Machine，简称IT4J，内部代号：J9</p> 
-<p>市场定位与HotSpot接近，服务器端、桌面应用、嵌入式等多用途VM广泛用于IBM的各种Java产品。</p> 
-<p>目前，有影响力的三大商用虚拟机之一，也号称是世界上最快的Java虚拟机。</p> 
-<p>2017年左右，IBM发布了开源J9VM，命名为openJ9，交给EClipse基金会管理，也称为Eclipse OpenJ9</p> 
-<p>OpenJDK -&gt; 是JDK开源了，包括了虚拟机</p> 
-<h3><a name="t31"></a><a id="KVMCDC__CLDC__Hotspot_383"></a>KVM和CDC / CLDC Hotspot</h3> 
-<p>oracle在Java ME产品线上的两款虚拟机为：CDC/CLDC HotSpot Implementation VM KVM（Kilobyte）是CLDC-HI早期产品目前移动领域地位尴尬，智能机被Angroid和ioS二分天下。</p> 
-<p>KVM简单、轻量、高度可移植，面向更低端的设备上还维持自己的一片市场</p> 
-<ul><li>智能控制器、传感器</li><li>老人手机、经济欠发达地区的功能手机</li></ul> 
-<p>所有的虚拟机的原则：一次编译，到处运行。</p> 
-<h3><a name="t32"></a><a id="Azul_VM_394"></a>Azul VM</h3> 
-<p>前面三大“高性能Java虚拟机”使用在通用硬件平台上这里Azu1VW和BEALiquid VM是与特定硬件平台绑定、软硬件配合的专有虚拟机I</p> 
-<ul><li>高性能Java虚拟机中的战斗机。</li></ul> 
-<p>Azul VM是Azu1Systems公司在HotSpot基础上进行大量改进，运行于Azul Systems公司的专有硬件Vega系统上的ava虚拟机。</p> 
-<p>每个Azu1VM实例都可以管理至少数十个CPU和数百GB内存的硬件资源，并提供在巨大内存范围内实现可控的GC时间的垃圾收集器、专有硬件优化的线程调度等优秀特性。</p> 
-<p>2010年，AzulSystems公司开始从硬件转向软件，发布了自己的zing JVM，可以在通用x86平台上提供接近于Vega系统的特性。</p> 
-<h3><a name="t33"></a><a id="Liquid_VM_405"></a>Liquid VM</h3> 
-<p>高性能Java虚拟机中的战斗机。</p> 
-<p>BEA公司开发的，直接运行在自家Hypervisor系统上Liquid VM即是现在的JRockit VE（Virtual Edition），</p> 
-<p>Liquid VM不需要操作系统的支持，或者说它自己本身实现了一个专用操作系统的必要功能，如线程调度、文件系统、网络支持等。</p> 
-<p>随着JRockit虚拟机终止开发，Liquid vM项目也停止了。</p> 
-<h3><a name="t34"></a><a id="Apache_Marmony_415"></a>Apache Marmony</h3> 
-<p>Apache也曾经推出过与JDK1.5和JDK1.6兼容的Java运行平台Apache Harmony。</p> 
-<p>它是IElf和Inte1联合开发的开源JVM，受到同样开源的openJDK的压制，Sun坚决不让Harmony获得JCP认证，最终于2011年退役，IBM转而参与OpenJDK</p> 
-<p>虽然目前并没有Apache Harmony被大规模商用的案例，但是它的Java类库代码吸纳进了Android SDK。</p> 
-<h3><a name="t35"></a><a id="Micorsoft_JVM_423"></a>Micorsoft JVM</h3> 
-<p>微软为了在IE3浏览器中支持Java Applets，开发了Microsoft JVM。</p> 
-<p>只能在window平台下运行。但确是当时Windows下性能最好的Java VM。</p> 
-<p>1997年，sun以侵犯商标、不正当竞争罪名指控微软成功，赔了sun很多钱。微软windowsXPSP3中抹掉了其VM。现在windows上安装的jdk都是HotSpot。</p> 
-<h3><a name="t36"></a><a id="Taobao_JVM_431"></a>Taobao JVM</h3> 
-<p>由AliJVM团队发布。阿里，国内使用Java最强大的公司，覆盖云计算、金融、物流、电商等众多领域，需要解决高并发、高可用、分布式的复合问题。有大量的开源产品。</p> 
-<p>基于openJDK开发了自己的定制版本AlibabaJDK，简称AJDK。是整个阿里Java体系的基石。</p> 
-<p>基于openJDK Hotspot VM发布的国内第一个优化、深度定制且开源的高性能服务器版Java虚拟机。</p> 
-<ul><li>创新的GCIH（GCinvisible heap）技术实现了off-heap，即将生命周期较长的Java对象从heap中移到heap之外，并且Gc不能管理GCIH内部的Java对象，以此达到降低GC的回收频率和提升Gc的回收效率的目的。</li><li>GCIH中的对象还能够在多个Java虚拟机进程中实现共享</li><li>使用crc32指令实现JvM intrinsic降低JNI的调用开销</li><li>PMU hardware的Java profiling tool和诊断协助功能</li><li>针对大数据场景的ZenGc</li></ul> 
-<p>taobao vm应用在阿里产品上性能高，硬件严重依赖inte1的cpu，损失了兼容性，但提高了性能</p> 
-<p>目前已经在淘宝、天猫上线，把oracle官方JvM版本全部替换了。</p> 
-<h3><a name="t37"></a><a id="Dalvik_VM_449"></a>Dalvik VM</h3> 
-<p>谷歌开发的，应用于Android系统，并在Android2.2中提供了JIT，发展迅猛。</p> 
-<p>Dalvik y只能称作虚拟机，而不能称作“Java虚拟机”，它没有遵循 Java虚拟机规范</p> 
-<p>不能直接执行Java的Class文件</p> 
-<p>基于寄存器架构，不是jvm的栈架构。</p> 
-<p>执行的是编译以后的dex（Dalvik Executable）文件。执行效率比较高。</p> 
-<ul><li>它执行的dex（Dalvik Executable）文件可以通过class文件转化而来，使用Java语法编写应用程序，可以直接使用大部分的Java API等。</li></ul> 
-<p>Android 5.0使用支持提前编译（Ahead of Time Compilation，AoT）的ART VM替换Dalvik VM。</p> 
-<h3><a name="t38"></a><a id="Graal_VM_465"></a>Graal VM</h3> 
-<p>2018年4月，oracle Labs公开了GraalvM，号称 “Run Programs Faster Anywhere”，勃勃野心。与1995年java的”write once，run anywhere"遥相呼应。</p> 
-<p>GraalVM在HotSpot VM基础上增强而成的跨语言全栈虚拟机，可以作为“任何语言”<br> 的运行平台使用。语言包括：Java、Scala、Groovy、Kotlin；C、C++、Javascript、Ruby、Python、R等</p> 
-<p>支持不同语言中混用对方的接口和对象，支持这些语言使用已经编写好的本地库文件</p> 
-<p>工作原理是将这些语言的源代码或源代码编译后的中间格式，通过解释器转换为能被Graal VM接受的中间表示。Graal VM提供Truffle工具集快速构建面向一种新语言的解释器。在运行时还能进行即时编译优化，获得比原生编译器更优秀的执行效率。</p> 
-<p>如果说HotSpot有一天真的被取代，Graalvm希望最大。但是Java的软件生态没有丝毫变化。</p> 
-<h3><a name="t39"></a><a id="_478"></a>总结</h3> 
-<p>具体JVM的内存结构，其实取决于其实现，不同厂商的JVM，或者同一厂商发布的不同版本，都有可能存在一定差异。主要以oracle HotSpot VM为默认虚拟机。</p>
       
 
       
@@ -647,7 +643,7 @@ add eax,3 //使eax寄存器的值加3
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#content_views"><span class="toc-number">1.</span> <span class="toc-text">JVM与Java体系结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.2.</span> <span class="toc-text">架构师每天都在思考什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.3.</span> <span class="toc-text">为什么要学习JVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.4.</span> <span class="toc-text">Java vs C++</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.5.</span> <span class="toc-text">推荐书籍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.6.</span> <span class="toc-text">Java生态圈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.7.</span> <span class="toc-text">字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.8.</span> <span class="toc-text">多语言混合编程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.9.</span> <span class="toc-text">Java发展的重大事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.10.</span> <span class="toc-text">虚拟机与Java虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.10.1.</span> <span class="toc-text">虚拟机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.10.2.</span> <span class="toc-text">Java虚拟机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.11.</span> <span class="toc-text">JVM的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.12.</span> <span class="toc-text">JVM整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.13.</span> <span class="toc-text">Java代码执行流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.14.</span> <span class="toc-text">JVM的架构模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.14.1.</span> <span class="toc-text">举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.14.2.</span> <span class="toc-text">字节码反编译</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.15.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.15.1.</span> <span class="toc-text">栈</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.16.</span> <span class="toc-text">JVM生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.16.1.</span> <span class="toc-text">虚拟机的启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.16.2.</span> <span class="toc-text">虚拟机的执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.16.3.</span> <span class="toc-text">虚拟机的退出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.</span> <span class="toc-text">JVM发展历程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.1.</span> <span class="toc-text">Sun Classic VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.2.</span> <span class="toc-text">Exact VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.3.</span> <span class="toc-text">HotSpot VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.4.</span> <span class="toc-text">JRockit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.5.</span> <span class="toc-text">IBM的J9</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.6.</span> <span class="toc-text">KVM和CDC &#x2F; CLDC Hotspot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.7.</span> <span class="toc-text">Azul VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.8.</span> <span class="toc-text">Liquid VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.9.</span> <span class="toc-text">Apache Marmony</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.10.</span> <span class="toc-text">Micorsoft JVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.11.</span> <span class="toc-text">Taobao JVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.12.</span> <span class="toc-text">Dalvik VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.13.</span> <span class="toc-text">Graal VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.17.14.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#content_views"><span class="toc-number">1.</span> <span class="toc-text">JVM与Java体系结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.2.</span> <span class="toc-text">架构师每天都在思考什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.3.</span> <span class="toc-text">为什么要学习JVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.4.</span> <span class="toc-text">Java vs C++</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.5.</span> <span class="toc-text">推荐书籍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.6.</span> <span class="toc-text">Java生态圈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.7.</span> <span class="toc-text">字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.8.</span> <span class="toc-text">多语言混合编程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.9.</span> <span class="toc-text">Java发展的重大事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.10.</span> <span class="toc-text">虚拟机与Java虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.10.1.</span> <span class="toc-text">虚拟机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.10.2.</span> <span class="toc-text">Java虚拟机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.11.</span> <span class="toc-text">JVM的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.12.</span> <span class="toc-text">JVM整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.13.</span> <span class="toc-text">Java代码执行流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#content_views"><span class="toc-number">1.14.</span> <span class="toc-text">JVM的架构模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#content_views"><span class="toc-number">1.14.1.</span> <span class="toc-text">举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">1.14.2.</span> <span class="toc-text">字节码反编译</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.15.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%88"><span class="toc-number">1.15.1.</span> <span class="toc-text">栈</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.16.</span> <span class="toc-text">JVM生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%90%AF%E5%8A%A8"><span class="toc-number">1.16.1.</span> <span class="toc-text">虚拟机的启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E6%89%A7%E8%A1%8C"><span class="toc-number">1.16.2.</span> <span class="toc-text">虚拟机的执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E9%80%80%E5%87%BA"><span class="toc-number">1.16.3.</span> <span class="toc-text">虚拟机的退出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="toc-number">1.17.</span> <span class="toc-text">JVM发展历程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Sun-Classic-VM"><span class="toc-number">1.17.1.</span> <span class="toc-text">Sun Classic VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Exact-VM"><span class="toc-number">1.17.2.</span> <span class="toc-text">Exact VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HotSpot-VM"><span class="toc-number">1.17.3.</span> <span class="toc-text">HotSpot VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JRockit"><span class="toc-number">1.17.4.</span> <span class="toc-text">JRockit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IBM%E7%9A%84J9"><span class="toc-number">1.17.5.</span> <span class="toc-text">IBM的J9</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KVM%E5%92%8CCDC-CLDC-Hotspot"><span class="toc-number">1.17.6.</span> <span class="toc-text">KVM和CDC &#x2F; CLDC Hotspot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Azul-VM"><span class="toc-number">1.17.7.</span> <span class="toc-text">Azul VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Liquid-VM"><span class="toc-number">1.17.8.</span> <span class="toc-text">Liquid VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Apache-Marmony"><span class="toc-number">1.17.9.</span> <span class="toc-text">Apache Marmony</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Micorsoft-JVM"><span class="toc-number">1.17.10.</span> <span class="toc-text">Micorsoft JVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Taobao-JVM"><span class="toc-number">1.17.11.</span> <span class="toc-text">Taobao JVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dalvik-VM"><span class="toc-number">1.17.12.</span> <span class="toc-text">Dalvik VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Graal-VM"><span class="toc-number">1.17.13.</span> <span class="toc-text">Graal VM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">1.17.14.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -825,15 +821,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
