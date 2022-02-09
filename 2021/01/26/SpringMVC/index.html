@@ -157,6 +157,28 @@
     			
             
 		</nav>
+		
+		<!-- 具体修改的内容在下面 -->
+		<script type="text/javascript" src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+		<form id="search-form"> <!-- 搜索框相关 -->
+			<input type="text" id="local-search-input" name="q" results="0" style="text-align:center" placeholder="站内搜索..." class="search form-control" autocomplete="off" autocorrect="off"/>
+			<i class="fa fa-times" onclick="resetSearch()"></i> <!-- 清空/重置搜索框 -->
+		</form>
+		<div id="local-search-result"></div> <!-- 搜索结果区 -->
+		<p class='no-result'>没找到。。。</p> <!-- 无匹配时显示，注意请在 CSS 中设置默认隐藏 -->
+		<script type="text/javascript" src="/search.js"></script>
+		<script>
+		var inputArea = document.querySelector("#local-search-input");
+		var getSearchFile = function(){
+			var path = "/search.xml";
+			searchFunc(path, 'local-search-input', 'local-search-result');
+		}
+		inputArea.onfocus = function(){ getSearchFile() }
+
+		</script>
+
+				
+		
 		<nav class="header-nav">
 			<div class="social">
 				
@@ -1185,11 +1207,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1221,11 +1243,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">双指针</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1233,11 +1251,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
