@@ -213,19 +213,19 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-剑指-Offer-22.-链表中倒数第k个节点--双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-shiro简述" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-22.-%E9%93%BE%E8%A1%A8%E4%B8%AD%E5%80%92%E6%95%B0%E7%AC%ACk%E4%B8%AA%E8%8A%82%E7%82%B9--%E5%8F%8C%E6%8C%87%E9%92%88/">剑指 Offer 22. 链表中倒数第k个节点--双指针</a>
+      <a class="article-title" href="/2022/01/01/shiro%E7%AE%80%E8%BF%B0/">shiro简述</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-22.-%E9%93%BE%E8%A1%A8%E4%B8%AD%E5%80%92%E6%95%B0%E7%AC%ACk%E4%B8%AA%E8%8A%82%E7%82%B9--%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
+        <a href="/2022/01/01/shiro%E7%AE%80%E8%BF%B0/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -242,8 +242,72 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/">剑指 Offer 22. 链表中倒数第k个节点–双指针</a></p>
-        
+        <h4 id="什么是shiro？"><a href="#什么是shiro？" class="headerlink" title="什么是shiro？"></a>什么是shiro？</h4><p>shiro是一个基于java的开源的安全管理框架，开源完成<strong>认证，授权，会话管理，加密，缓存</strong>等功能，说到授权，认证，就会想到rbac，实际上shiro可以看作是rbac的框架</p>
+<h4 id="为什么学习shiro"><a href="#为什么学习shiro" class="headerlink" title="为什么学习shiro"></a>为什么学习shiro</h4><p>在java的世界中，安全管理框架有spring security和shiro。spring security 要依赖于spring，并且比较复杂，学习曲线比较高。shiro比较简单，而且shiro比较独立，既可以在javase中使用，也可以在javaee中使用，并且在分布式集群环境下也可以使用。</p>
+<h4 id="shiro的结构体系"><a href="#shiro的结构体系" class="headerlink" title="shiro的结构体系"></a>shiro的结构体系</h4><p><img src="https://img-blog.csdnimg.cn/20210508162749112.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>四大部分：</strong></p>
+<ul>
+<li><strong>Authentication</strong>：认证 ，用户身份验证 （<strong>其实就是登录</strong>）</li>
+<li><strong>Authorization</strong>：授权，授予用户访问某些资源</li>
+<li><strong>Session Management</strong>：</li>
+</ul>
+<p><strong>会话管理，用户登录后就是一次会话</strong>，在没有退出之前，它的所有信息都在会话中，会话可以是普通JavaSE环境的，也可以是web环境的</p>
+<ul>
+<li> <strong>Cryptography</strong>：加密，提供了常见的一些加密算法，使得在应用中可以很方便的实现数据安全</li>
+</ul>
+<p><strong>支持的特性</strong></p>
+<ul>
+<li>webSupport：web应用程序支持，shiro可以很方便的集成到web应用程序中</li>
+<li>caching：缓存，shiro提供了对缓存的支持，比如Redis缓存</li>
+<li>concurrency：并发支持，支持多线程并发访问</li>
+<li>Testing：测试</li>
+<li>Run As：支持一个用户在允许的前提下，使用另外一个身份登录</li>
+<li>Remember me：记住我</li>
+</ul>
+<h4 id="shiro架构"><a href="#shiro架构" class="headerlink" title="shiro架构"></a>shiro架构</h4><p><img src="https://img-blog.csdnimg.cn/20210508170517345.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong>subject</strong></p>
+<ul>
+<li>subject即主体，外部应用与subject进行交互，可能是一个通过浏览器进行请求的<strong>用户</strong>，也可能是一个运行的程序</li>
+<li>subject在shiro中是一个接口，外部程序通过subject进行认证授权，而subject是通过SecurityManager安全管理器进行认证授权</li>
+</ul>
+<p><strong>SecurityManager</strong></p>
+<ul>
+<li>安全管理器 ，对全部的subject进行安全管理，它是shiro的核心，负责对所有的subject进行安全管理，协调管理shiro各个组件之间的工作。通过SecurityManager可以完成subject的认证、授权等，实际上Securitymanager是通过Authenticator进行认证、通过Authorizer进行授权（这两个会调用下面的realm和外界数据源进行交互），通过SessionManager进行会话管理</li>
+<li>Security是一个接口，继承了Authenticator、Authorzier、SessionManager这三个接口</li>
+</ul>
+<p><strong>Authenticator</strong></p>
+<ul>
+<li>认证器，对用户身份进行认证，是一个接口，shiro提供ModularRealmAuthenticator实现类，通过它基本上可以满足大多数需求，也可以自定义认证器，类似于rbac中查询数据库并返回用户对象的部分</li>
+</ul>
+<p><strong>Authorizer</strong></p>
+<ul>
+<li>授权器，用户通过认证器后，在访问功能时需要通过授权器判断用户是否有此功能的操权限，类似于rbac中返回用户对象，对用户的各个功能对象进行赋值的过程</li>
+</ul>
+<p><strong>Realms</strong></p>
+<ul>
+<li><p>领域，相当于dataSource数据源。SecurityManager进行安全认证需要通过Realm获取数据，比如从数据库获取用户身份信息</p>
+</li>
+<li><p>realm不仅仅是从数据源获取数据，在realm中还有认证授权校验的相关代码</p>
+</li>
+</ul>
+<p><strong>sessionManager</strong></p>
+<ul>
+<li>SessionManager即会话管理，shiro定义了一套会话管理，它不依赖web容器的session，所以shiro可以使用在非web应用上，也可以将分布式应用的会话集中在一点管理，此特性可使它实现单点登录。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20210508170517345.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>springboot中整合shiro之后，项目中的session使用的就不再是tomcat提供的session，而是由shiro来提供session（包括request，ServletContext、session作用域都是重新由shiro提供的），并且是由SecurityManager中的SessionManager进行管理的，使用起来和tomcat原来提供的session完全没区别</p>
+<p><strong>SessionDao</strong></p>
+<ul>
+<li>会话dao，是对session会话操作的一套接口，比如要讲session存储到数据库，可以通过jdbc将会话存储到数据库</li>
+</ul>
+<p><strong>CacheManager</strong></p>
+<ul>
+<li>缓存管理，将用户权限数据存储在缓存，提高性能</li>
+</ul>
+<p><strong>Crytography</strong></p>
+<ul>
+<li>密码管理，shiro提供了一套加密/解密的组件</li>
+</ul>
+
       
 
       
@@ -256,7 +320,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">双指针</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
         		</li>
       		
 		</ul>
@@ -266,7 +330,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-22.-%E9%93%BE%E8%A1%A8%E4%B8%AD%E5%80%92%E6%95%B0%E7%AC%ACk%E4%B8%AA%E8%8A%82%E7%82%B9--%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/shiro%E7%AE%80%E8%BF%B0/">展开全文 >></a>
         </p>
       
 
@@ -298,19 +362,19 @@
 
 
   
-    <article id="post-剑指-Offer-24.-反转链表--双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-剑指-Offer-04.-二维数组中的查找--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-24.-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8--%E5%8F%8C%E6%8C%87%E9%92%88/">剑指 Offer 24. 反转链表--双指针</a>
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-04.-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE--%E6%9F%A5%E6%89%BE/">剑指 Offer 04. 二维数组中的查找--查找</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-24.-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8--%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-04.-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -327,7 +391,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/">剑指 Offer 24. 反转链表–双指针</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/submissions/">剑指 Offer 04. 二维数组中的查找–查找</a></p>
         
       
 
@@ -341,7 +405,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">双指针</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
         		</li>
       		
 		</ul>
@@ -351,7 +415,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-24.-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8--%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-04.-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
         </p>
       
 
@@ -383,19 +447,19 @@
 
 
   
-    <article id="post-剑指-Offer-25.-合并两个排序的链表--双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-剑指-Offer-05.-替换空格--字符串" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-25.-%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%8E%92%E5%BA%8F%E7%9A%84%E9%93%BE%E8%A1%A8--%E5%8F%8C%E6%8C%87%E9%92%88/">剑指 Offer 25. 合并两个排序的链表--双指针</a>
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-05.-%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC--%E5%AD%97%E7%AC%A6%E4%B8%B2/">剑指 Offer 05. 替换空格--字符串</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-25.-%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%8E%92%E5%BA%8F%E7%9A%84%E9%93%BE%E8%A1%A8--%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-05.-%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC--%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -412,7 +476,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof/">剑指 Offer 25. 合并两个排序的链表–双指针</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/">剑指 Offer 05. 替换空格–字符串</a></p>
         
       
 
@@ -426,7 +490,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">双指针</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">字符串</a>
         		</li>
       		
 		</ul>
@@ -436,7 +500,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-25.-%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%8E%92%E5%BA%8F%E7%9A%84%E9%93%BE%E8%A1%A8--%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-05.-%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC--%E5%AD%97%E7%AC%A6%E4%B8%B2/">展开全文 >></a>
         </p>
       
 
@@ -468,19 +532,19 @@
 
 
   
-    <article id="post-剑指-Offer-42. 连续子数组的最大和--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-剑指-Offer-10--II.-青蛙跳台阶问题--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-42.%20%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%A4%A7%E5%92%8C--%E8%B4%AA%E5%BF%83/">剑指 Offer 42. 连续子数组的最大和--贪心</a>
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-10--II.-%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6%E9%97%AE%E9%A2%98--DP/">剑指 Offer 10- II. 青蛙跳台阶问题--DP</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-42.%20%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%A4%A7%E5%92%8C--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-10--II.-%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6%E9%97%AE%E9%A2%98--DP/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -497,7 +561,444 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/submissions/">剑指 Offer 42. 连续子数组的最大和–贪心</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/qing-wa-tiao-tai-jie-wen-ti-lcof/submissions/">剑指 Offer 10- II. 青蛙跳台阶问题–DP</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-10--II.-%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6%E9%97%AE%E9%A2%98--DP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-剑指-Offer-11.-旋转数组的最小数字--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-11.-%E6%97%8B%E8%BD%AC%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%B0%8F%E6%95%B0%E5%AD%97--%E6%9F%A5%E6%89%BE/">剑指 Offer 11. 旋转数组的最小数字--查找</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-11.-%E6%97%8B%E8%BD%AC%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%B0%8F%E6%95%B0%E5%AD%97--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/">剑指 Offer 11. 旋转数组的最小数字–查找</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-11.-%E6%97%8B%E8%BD%AC%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%B0%8F%E6%95%B0%E5%AD%97--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-剑指-Offer-14--I.-剪绳子--DP贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-14--I.-%E5%89%AA%E7%BB%B3%E5%AD%90--DP%E8%B4%AA%E5%BF%83/">剑指 Offer 14- I. 剪绳子--DP/贪心</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-14--I.-%E5%89%AA%E7%BB%B3%E5%AD%90--DP%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://img-blog.csdnimg.cn/99bb8c93c69245f585dee587e1ff6bd1.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_19,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/104e82783a834466afe8a4449cf009c0.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">cuttingRope</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[n + <span class="number">1</span>];</span><br><span class="line">        dp[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">3</span>; i &lt; n + <span class="number">1</span>; i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">2</span>; j &lt; i; j++)&#123;</span><br><span class="line">                dp[i] = Math.max(dp[i], Math.max(j * (i - j), j * dp[i - j]));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>时间复杂度O(n平方) 空间复杂度O(n)</strong></p>
+<p>贪心、需要数学证明，当n &gt; 4时绳子尽可能剪成长度为3的段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">cuttingRope</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">         <span class="comment">//处理特殊情况</span></span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">2</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">3</span>) <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">4</span>) <span class="keyword">return</span> <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">long</span> ans = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//当大于4的时候，先分出一段长度为3的，直到长度小于等于4，则不再分</span></span><br><span class="line">        <span class="keyword">while</span>(n&gt;<span class="number">4</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ans=ans * <span class="number">3</span>;</span><br><span class="line">            n-=<span class="number">3</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">int</span>)(ans * n);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>时间复杂度O(logn) 空间复杂度O(1)</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">DP</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-14--I.-%E5%89%AA%E7%BB%B3%E5%AD%90--DP%E8%B4%AA%E5%BF%83/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-剑指-Offer-10--I.-斐波那契数列--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-10--I.-%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97--DP/">剑指 Offer 10- I. 斐波那契数列--DP</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-10--I.-%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97--DP/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/fei-bo-na-qi-shu-lie-lcof/submissions/">剑指 Offer 10- I. 斐波那契数列–DP</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-10--I.-%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97--DP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-剑指-Offer-18.-删除链表的节点--双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-18.-%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E8%8A%82%E7%82%B9--%E5%8F%8C%E6%8C%87%E9%92%88/">剑指 Offer 18. 删除链表的节点--双指针</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-18.-%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E8%8A%82%E7%82%B9--%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/">剑指 Offer 18. 删除链表的节点–双指针</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">双指针</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-18.-%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E8%8A%82%E7%82%B9--%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-剑指-Offer-14--II.-剪绳子-II--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-14--II.-%E5%89%AA%E7%BB%B3%E5%AD%90-II--%E8%B4%AA%E5%BF%83/">剑指 Offer 14- II. 剪绳子 II--贪心</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-14--II.-%E5%89%AA%E7%BB%B3%E5%AD%90-II--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/jian-sheng-zi-ii-lcof/submissions/">剑指 Offer 14- II. 剪绳子 II–贪心</a></p>
         
       
 
@@ -521,7 +1022,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-42.%20%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%A4%A7%E5%92%8C--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-14--II.-%E5%89%AA%E7%BB%B3%E5%AD%90-II--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
         </p>
       
 
@@ -553,19 +1054,19 @@
 
 
   
-    <article id="post-剑指-Offer-40.-最小的k个数--排序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-剑指-Offer-21.-调整数组顺序使奇数位于偶数前面---双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-40.-%E6%9C%80%E5%B0%8F%E7%9A%84k%E4%B8%AA%E6%95%B0--%E6%8E%92%E5%BA%8F/">剑指 Offer 40. 最小的k个数--排序</a>
+      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-21.-%E8%B0%83%E6%95%B4%E6%95%B0%E7%BB%84%E9%A1%BA%E5%BA%8F%E4%BD%BF%E5%A5%87%E6%95%B0%E4%BD%8D%E4%BA%8E%E5%81%B6%E6%95%B0%E5%89%8D%E9%9D%A2---%E5%8F%8C%E6%8C%87%E9%92%88/">剑指 Offer 21. 调整数组顺序使奇数位于偶数前面-- 双指针</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-40.-%E6%9C%80%E5%B0%8F%E7%9A%84k%E4%B8%AA%E6%95%B0--%E6%8E%92%E5%BA%8F/" class="archive-article-date">
+        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-21.-%E8%B0%83%E6%95%B4%E6%95%B0%E7%BB%84%E9%A1%BA%E5%BA%8F%E4%BD%BF%E5%A5%87%E6%95%B0%E4%BD%8D%E4%BA%8E%E5%81%B6%E6%95%B0%E5%89%8D%E9%9D%A2---%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -582,262 +1083,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/">剑指 Offer 40. 最小的k个数–排序</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">排序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-40.-%E6%9C%80%E5%B0%8F%E7%9A%84k%E4%B8%AA%E6%95%B0--%E6%8E%92%E5%BA%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-剑指-Offer-45.-把数组排成最小的数--排序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-45.-%E6%8A%8A%E6%95%B0%E7%BB%84%E6%8E%92%E6%88%90%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0--%E6%8E%92%E5%BA%8F/">剑指 Offer 45. 把数组排成最小的数--排序</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-45.-%E6%8A%8A%E6%95%B0%E7%BB%84%E6%8E%92%E6%88%90%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0--%E6%8E%92%E5%BA%8F/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/submissions/">剑指 Offer 45. 把数组排成最小的数–排序</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">排序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-45.-%E6%8A%8A%E6%95%B0%E7%BB%84%E6%8E%92%E6%88%90%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0--%E6%8E%92%E5%BA%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-剑指-Offer-50.-第一个只出现一次的字符--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-50.-%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">剑指 Offer 50. 第一个只出现一次的字符--查找</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-50.-%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/submissions/">剑指 Offer 50. 第一个只出现一次的字符–查找</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-50.-%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-剑指-Offer-48.-最长不含重复字符的子字符串-双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-48.-%E6%9C%80%E9%95%BF%E4%B8%8D%E5%90%AB%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%8F%8C%E6%8C%87%E9%92%88/">剑指 Offer 48. 最长不含重复字符的子字符串-双指针</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-48.-%E6%9C%80%E9%95%BF%E4%B8%8D%E5%90%AB%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/">剑指 Offer 48. 最长不含重复字符的子字符串-双指针</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/">剑指 Offer 21. 调整数组顺序使奇数位于偶数前面– 双指针</a></p>
         
       
 
@@ -861,177 +1107,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-48.-%E6%9C%80%E9%95%BF%E4%B8%8D%E5%90%AB%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-剑指-Offer-53---I.-在排序数组中查找数字-I--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-53---I.-%E5%9C%A8%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E6%9F%A5%E6%89%BE%E6%95%B0%E5%AD%97-I--%E6%9F%A5%E6%89%BE/">剑指 Offer 53 - I. 在排序数组中查找数字 I--查找</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-53---I.-%E5%9C%A8%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E6%9F%A5%E6%89%BE%E6%95%B0%E5%AD%97-I--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/submissions/">剑指 Offer 53 - I. 在排序数组中查找数字 I–查找</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-53---I.-%E5%9C%A8%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E6%9F%A5%E6%89%BE%E6%95%B0%E5%AD%97-I--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-剑指-Offer-53---II.-0～n-1中缺失的数字--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-53---II.-0%EF%BD%9En-1%E4%B8%AD%E7%BC%BA%E5%A4%B1%E7%9A%84%E6%95%B0%E5%AD%97--%E6%9F%A5%E6%89%BE/">剑指 Offer 53 - II. 0～n-1中缺失的数字--查找</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-53---II.-0%EF%BD%9En-1%E4%B8%AD%E7%BC%BA%E5%A4%B1%E7%9A%84%E6%95%B0%E5%AD%97--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/que-shi-de-shu-zi-lcof/submissions/">剑指 Offer 53 - II. 0～n-1中缺失的数字–查找</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-53---II.-0%EF%BD%9En-1%E4%B8%AD%E7%BC%BA%E5%A4%B1%E7%9A%84%E6%95%B0%E5%AD%97--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/%E5%89%91%E6%8C%87-Offer-21.-%E8%B0%83%E6%95%B4%E6%95%B0%E7%BB%84%E9%A1%BA%E5%BA%8F%E4%BD%BF%E5%A5%87%E6%95%B0%E4%BD%8D%E4%BA%8E%E5%81%B6%E6%95%B0%E5%89%8D%E9%9D%A2---%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
         </p>
       
 
@@ -1065,7 +1141,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
     </nav>
   
 
@@ -1169,11 +1245,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1189,6 +1265,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
@@ -1197,7 +1277,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">排序</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">链表</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1217,11 +1305,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1229,11 +1321,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1242,10 +1338,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
