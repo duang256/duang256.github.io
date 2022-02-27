@@ -213,20 +213,20 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-LeetCode-139-单词拆分--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-shiro-ehcache缓存" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/">LeetCode-139 单词拆分--DP</a>
+      <a class="article-title" href="/2022/01/07/shiro-ehcache%E7%BC%93%E5%AD%98/">shiro-ehcache缓存</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+        <a href="/2022/01/07/shiro-ehcache%E7%BC%93%E5%AD%98/" class="archive-article-date">
+  	<time datetime="2022-01-07T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-07</time>
 </a>
 		
 		
@@ -242,8 +242,70 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/word-break/">LeetCode-139 单词拆分–DP</a></p>
-        
+        <h1 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h1><p><font color=red>什么是缓存？</font></p>
+<blockquote>
+<p>缓存是计算机上的原始数据的复制集</p>
+</blockquote>
+<p><font color=red>缓存的作用？</font></p>
+<p>使用缓存使得服务器能够进行高效率的响应（减少响应时间、延迟时间、增大吞吐量和并发用户数量等）</p>
+<p><font color=red>缓存分类？</font></p>
+<p><strong>客户端缓存</strong><br>对于BS架构，客户端缓存指的是缓存到浏览器（cookie），图片等静态资源浏览器默认缓存<br><strong>网络缓存</strong><br>主要指代理服务器对客户端请求数据的缓存（比如支付宝支付时就请求代理服务器（支付宝的服务器）<br><strong>服务端缓存</strong></p>
+<p><em><strong>服务器本地缓存</strong></em></p>
+<p>项目所有的部分都在一台电脑里边，只需要从该电脑里边拿到缓存即可</p>
+<p><em><strong>分布式缓存</strong></em></p>
+<p>分布式缓存是项目的不同部分在不同电脑里边，但是想要拿到相同的缓存，于是使用分布式缓存（Redis、Memcache等）<br>当本地缓存被<strong>穿透</strong>的时候就会去查询分布式缓存，当在分布式缓存中查询到数据的时候，直接将查询结果放到本地缓存中。</p>
+<p><em><strong>数据库缓存</strong></em><br>数据库在设计的时候也有缓存操作，更改相关参数开启查询缓存</p>
+<p><font color=red>缓存中的术语？</font></p>
+<ul>
+<li>缓存命中：在缓存中查询到数据</li>
+<li>没有命中：缓存中没有查询到，但数据库中查询到，并将数据放到缓存中</li>
+<li>缓存穿透：在缓存和数据库中都没有查询到数据</li>
+<li>存储成本：缓存没有命中的时候，从其他数据源取出数据并放到缓存中的时间成本和空间成本就是存储成本</li>
+<li>缓存失效：数据库已经更改，缓存中该数据失效</li>
+<li>替代策略：当缓存没有命中时，并且缓存容量已经满了，就需要去除一条数据，然后将查询到的数据加进缓存。（有多种替代策略，通常要考虑数据的使用频率、获取成本、缓存容量和时间等因素）</li>
+<li>缓存雪崩：宕机了</li>
+</ul>
+<p>阿里云 Redis云服务器<br>    动态扩容：通过后台配置升级Redis存储空间（不用宕掉）<br>    数据多备：一主一备（一个备份）<br>    自动容灾：当主机宕机系统自动检测到，切换备份顶上，实现服务高可用</p>
+<h1 id="ehcache"><a href="#ehcache" class="headerlink" title="ehcache"></a>ehcache</h1><p>EHCache是sourceforge的开源缓存项目（<strong>是一种本地缓存</strong>），本身的纯Java实现的，所以可以和绝大多数Java项目无缝整合。<br>EHCache支持内存和磁盘缓存，默认存储在内存中，内存不够时可以把缓存数据同步到磁盘中（是否开启缓存到磁盘是可以设置的）。</p>
+<p>EHCache支持基于Filter的Cache实现（拦截查询数据库操作，先让它去缓存中查询），同时支持Gzip压缩算法提高响应速度。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--配置Ehcache的依赖--&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>net.sf.ehcache<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ehcache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">name:缓存名称。</span><br><span class="line">maxElementsInMemory：缓存最大个数。</span><br><span class="line">eternal:对象是否永久有效，一但设置了，timeout将不起作用。</span><br><span class="line">timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=<span class="literal">false</span>对象不是永久有效时使用，可选属性，默认值是<span class="number">0</span>，也就是可闲置时间无穷大。</span><br><span class="line">timeToLiveSeconds：设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=<span class="literal">false</span>对象不是永久有效时使用，默认是<span class="number">0.</span>，也就是对象存活时间无穷大。</span><br><span class="line">overflowToDisk：当内存中对象数量达到maxElementsInMemory时，Ehcache将会对象写到磁盘中。</span><br><span class="line">diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是<span class="number">30</span>MB。每个Cache都应该有自己的一个缓冲区。</span><br><span class="line">maxElementsOnDisk：硬盘最大缓存个数。</span><br><span class="line">diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store persists between restarts of the Virtual Machine. The <span class="keyword">default</span> value is <span class="literal">false</span>.</span><br><span class="line">diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是<span class="number">120</span>秒。</span><br><span class="line">memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。</span><br><span class="line">clearOnFlush：内存数量最大时是否清除。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ehcache</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">updateCheck</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!----&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">&quot;java.io.tmpdir/ehcache&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">defaultCache</span> <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span> <span class="attr">maxEntriesLocalHeap</span>=<span class="string">&quot;10000&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">maxEntriesLocalDisk</span>=<span class="string">&quot;10000000&quot;</span>  <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;120&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">diskExpiryThreadIntervalSeconds</span>=<span class="string">&quot;120&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;120&quot;</span> <span class="attr">memoryStoreEvictionPolicy</span>=<span class="string">&quot;LRU&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;HelloWorldCache&quot;</span> <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">overflowToDisk</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;5&quot;</span> <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;5&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">memoryStoreEvictionPolicy</span>=<span class="string">&quot;LRU&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>SecurityManager用来管理多个cache，每个cache可以自定义缓存参数（生存时间，钝化时间等）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyEhcache</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//配置文件</span></span><br><span class="line">        URL resource =MyEhcache.class.getClassLoader().getResource(<span class="string">&quot;cache.xml&quot;</span>);</span><br><span class="line">        <span class="comment">//创建缓存管理对象CacheManager</span></span><br><span class="line">        CacheManager cacheManager=<span class="keyword">new</span> CacheManager(resource);</span><br><span class="line"></span><br><span class="line">        Cache  cache=cacheManager.getCache(<span class="string">&quot;HelloWorldCache&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建对象存储缓存数据</span></span><br><span class="line">        Element element=<span class="keyword">new</span> Element(<span class="string">&quot;str&quot;</span>,<span class="string">&quot;wit&quot;</span>);</span><br><span class="line"></span><br><span class="line">        cache.put(element);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取缓存数据</span></span><br><span class="line">        Cache cache1=cacheManager.getCache(<span class="string">&quot;HelloWorldCache&quot;</span>);</span><br><span class="line">        Element element1 = cache1.get(<span class="string">&quot;str&quot;</span>);</span><br><span class="line">        String str= (String) element1.getObjectValue();</span><br><span class="line">        System.out.println(str);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20210519230821518.png" alt="在这里插入图片描述"></p>
+<h2 id="整合shiro"><a href="#整合shiro" class="headerlink" title="整合shiro"></a>整合shiro</h2><p>shiro整合ehcache需要做的工作是提供一个CacheManager就行了</p>
+<p>依赖（与shiro整合过的依赖）</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--shiro整合ehcache,需要和磁盘交互所以需要commons-io--&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.shiro<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>shiro-ehcache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-io<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-io<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">       </span><br></pre></td></tr></table></figure>
+
+<p>ehcache-shiro放在resources下</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ehcache</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">updateCheck</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--磁盘缓存位置--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">&quot;java.io.tmpdir/ehcache&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--默认缓存--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">defaultCache</span> <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span> <span class="attr">maxEntriesLocalHeap</span>=<span class="string">&quot;1000&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;3600&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;120&quot;</span> <span class="attr">overflowToDisk</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--登录记录缓存 锁定10分钟--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;loginRecordCache&quot;</span> <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;2000&quot;</span> <span class="attr">overflowToDisk</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;600&quot;</span> <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">statistics</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Config中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 配置Security Cache</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//创建shiro的cacheManager对象</span></span><br><span class="line">       EhCacheManager ehCacheManager = <span class="keyword">new</span> EhCacheManager();</span><br><span class="line">       <span class="comment">//创建官方的cachemanager对象</span></span><br><span class="line">       <span class="comment">//获取EhCache的配置文件流对象</span></span><br><span class="line">       InputStream is=<span class="keyword">null</span>;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           is=ResourceUtils.getInputStreamForPath(<span class="string">&quot;classpath:ehcache-shiro.xml&quot;</span>);</span><br><span class="line">       &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;</span><br><span class="line">       net.sf.ehcache.CacheManager cm=<span class="keyword">new</span> CacheManager(is);</span><br><span class="line">       ehCacheManager.setCacheManager(cm);</span><br><span class="line">       <span class="keyword">return</span> ehCacheManager;</span><br></pre></td></tr></table></figure>
+<p>securityManager中配置CacheManager，回顾以下这个图（CacheManager也再SecurityManager的管理范围之内）<br><img src="https://img-blog.csdnimg.cn/20210508170517345.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置ehcache缓存</span></span><br><span class="line">        defaultWebSecurityManager.setCacheManager(getEhCacheManager());</span><br></pre></td></tr></table></figure>
+
+
+<p>在设置缓存之前，在解析thymeleaf中的shiro标签（解析一个调用一次授权方法去判断是否拥有权限）和点击标签（对应controller方法判断是否有权限，也去调用授权方法），使用缓存之后，第二次需要授权时，<strong>通过缓存就能知道权限是否存在，不再重复调用授权方法</strong></p>
+<p>（没有看过底层，估计是shiro支持将permission和role都放进缓存了~）<br><img src="https://img-blog.csdnimg.cn/20210519231310149.png" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiresPermissions(&quot;user:del&quot;)</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;delUser&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">delUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;删除成功&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiresPermissions(&quot;user:upd&quot;)</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;updUser&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">updUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;修改成功&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiresPermissions(&quot;user:add&quot;)</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;addUser&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">addUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;新增成功&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiresPermissions(&quot;user:sel&quot;)</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;selUser&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">selUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;查询成功&quot;</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="登录锁定案例-在shiro整合springboot源码基础上添加"><a href="#登录锁定案例-在shiro整合springboot源码基础上添加" class="headerlink" title="登录锁定案例(在shiro整合springboot源码基础上添加)"></a>登录锁定案例(在<a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/116838232">shiro整合springboot源码基础上添加</a>)</h1><p>需求：连续登录四次不成功后锁定十分钟（不允许再登录，即使第五次登录的是正确的账号密码），四次之内登录成功，记录的不成功次数清零。锁定时间内再次尝试登录重新计时（不管是不是正确密码，钝化时间：查询一次重新计时）</p>
+<p>解决方案逻辑：<br>未整合shiro的做法：<br>ehcache为缓存，使用ehcache存储连续失败的次数（每次登录都直接+1，第一次置为0，成功就删除计数缓存），如果ehcache中次数已经为4时，就锁定10分钟（钝化时间为10分钟，钝化时间内不访问缓存），锁定时间内，再次访问，钝化时间重新计时</p>
+<p><img src="https://img-blog.csdnimg.cn/20210520192402610.png" alt="在这里插入图片描述"></p>
+<p><strong>Component将自定义的MyMatcher 弄成Bean   ，使用构造方法自动注入EhCacheManager ，所以EhCacheManager 也封装成Bean</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> EhCacheManager <span class="title">getEhCacheManager</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//创建shiro的cacheManager对象</span></span><br><span class="line">    EhCacheManager ehCacheManager = <span class="keyword">new</span> EhCacheManager();</span><br><span class="line">    <span class="comment">//创建官方的cachemanager对象</span></span><br><span class="line">    <span class="comment">//获取EhCache的配置文件流对象</span></span><br><span class="line">    InputStream is=<span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        is=ResourceUtils.getInputStreamForPath(<span class="string">&quot;classpath:ehcache-shiro.xml&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    net.sf.ehcache.CacheManager cm=<span class="keyword">new</span> CacheManager(is);</span><br><span class="line">    ehCacheManager.setCacheManager(cm);</span><br><span class="line">    <span class="keyword">return</span> ehCacheManager;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMatcher</span> <span class="keyword">extends</span> <span class="title">HashedCredentialsMatcher</span> </span>&#123;</span><br><span class="line">    <span class="comment">//记录错误次数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//声明缓存对象</span></span><br><span class="line">    <span class="keyword">private</span> Ehcache passwordRetryEhcache;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取EhCacheManager来获得缓存次数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyMatcher</span><span class="params">(EhCacheManager ehCacheManager)</span></span>&#123;</span><br><span class="line">        passwordRetryEhcache=ehCacheManager.getCacheManager().getCache(<span class="string">&quot;loginRecordCache&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//复写父类的匹配方法(该方法在登录时会由shiro在底层调用，比对登录信息和数据库信息，我们自定义，在原基础上添加一些代码)</span></span><br><span class="line">    <span class="comment">//对于比对的功能我们仍然在里边调用父类的比对方法</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">doCredentialsMatch</span><span class="params">(AuthenticationToken token, AuthenticationInfo info)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取用户登录次数的缓存信息(缓存键名为username)</span></span><br><span class="line">            <span class="comment">//获取用户身份信息</span></span><br><span class="line">        String username=token.getPrincipal().toString();</span><br><span class="line">        <span class="comment">//获取缓存对象</span></span><br><span class="line">        Element element =passwordRetryEhcache.get(username);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2.判断是否已经有缓存数据</span></span><br><span class="line">        <span class="keyword">if</span>(element==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="comment">//还没有登录成功过,创建新的缓存初值为0,并且自增</span></span><br><span class="line">            i=<span class="number">0</span>;<span class="comment">//锁定之后，缓存消失，i值需要重新赋值，不然抛出锁定异常了</span></span><br><span class="line">            Element ele=<span class="keyword">new</span> Element(username,<span class="keyword">new</span> AtomicInteger(<span class="number">0</span>));<span class="comment">//AtomicInteger可以进行自增</span></span><br><span class="line">            passwordRetryEhcache.put(ele);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">//如果有，直接自增（先不管对不对直接自增）</span></span><br><span class="line">            AtomicInteger atomicInteger= (AtomicInteger) element.getObjectValue();</span><br><span class="line">            <span class="comment">//让里面的数字自增一下,返回自增之后的值，如果i为4说明已经登录错误4次了，0,1,2,3</span></span><br><span class="line">            i=atomicInteger.incrementAndGet();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//判断i的值是否是4次</span></span><br><span class="line">        <span class="keyword">if</span>(i&gt;=<span class="number">4</span>)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ExcessiveAttemptsException();<span class="comment">//抛出异常以供捕获</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//进行本次登录</span></span><br><span class="line">        <span class="keyword">boolean</span> match = <span class="keyword">super</span>.doCredentialsMatch(token, info);</span><br><span class="line">        <span class="comment">//如果登陆成功，清楚错误次数缓存</span></span><br><span class="line">        <span class="keyword">if</span>(match)&#123;</span><br><span class="line">            passwordRetryEhcache.remove(username);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> match;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>缓存策略</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ehcache</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">updateCheck</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--磁盘缓存位置--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">&quot;java.io.tmpdir/ehcache&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--默认缓存--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">defaultCache</span> <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span> <span class="attr">maxEntriesLocalHeap</span>=<span class="string">&quot;1000&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;3600&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;120&quot;</span> <span class="attr">overflowToDisk</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--登录记录缓存 锁定10分钟--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;loginRecordCache&quot;</span> <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;2000&quot;</span> <span class="attr">overflowToDisk</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;600&quot;</span> <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">statistics</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Config中注入myMatcher</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line">   <span class="keyword">private</span> MyMatcher myMatcher;</span><br></pre></td></tr></table></figure>
+<p>matcher改成自定义的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> DefaultWebSecurityManager <span class="title">defaultWebSecurityManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        DefaultWebSecurityManager defaultWebSecurityManager = <span class="keyword">new</span> DefaultWebSecurityManager();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//设置登录认证开启加密</span></span><br><span class="line">       <span class="comment">// HashedCredentialsMatcher matcher=new HashedCredentialsMatcher();</span></span><br><span class="line">        <span class="comment">//设置加密方式</span></span><br><span class="line">        myMatcher.setHashAlgorithmName(<span class="string">&quot;md5&quot;</span>);</span><br><span class="line">        <span class="comment">//加密次数</span></span><br><span class="line">        myMatcher.setHashIterations(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">//放进realm</span></span><br><span class="line">        myrealm.setCredentialsMatcher(myMatcher);</span><br><span class="line">        <span class="comment">//将自定义的realm集成到defaultWebSecurityManager</span></span><br><span class="line">        defaultWebSecurityManager.setRealm(myrealm);</span><br><span class="line">        <span class="comment">//开启rememberMe功能  remember功能是shiro基于cookie的处理</span></span><br><span class="line">        defaultWebSecurityManager.setRememberMeManager(getRememberMeManager());</span><br><span class="line">        <span class="comment">//设置ehcache缓存</span></span><br><span class="line">        defaultWebSecurityManager.setCacheManager(getEhCacheManager());</span><br><span class="line">        <span class="keyword">return</span> defaultWebSecurityManager;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>登录方法（仅用ResponseBody进行测试）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明单元方法，用户登录</span></span><br><span class="line">   <span class="meta">@RequestMapping(&quot;/userLogin&quot;)</span></span><br><span class="line">   <span class="meta">@ResponseBody</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">userLogin</span><span class="params">(String username,String password,<span class="meta">@RequestParam(defaultValue = &quot;false&quot;)</span>Boolean remember)</span></span>&#123;</span><br><span class="line">       <span class="comment">//获取subject对象</span></span><br><span class="line">       <span class="comment">//当springboot启动，自定义的securityManager自动被放入到SecurityUtils中</span></span><br><span class="line">       <span class="comment">//SecurityUtils中的SecurityManager是静态的（多线程）</span></span><br><span class="line">       <span class="comment">//所以直接用SecurityUtils拿到就行了</span></span><br><span class="line">      Subject subject= SecurityUtils.getSubject();</span><br><span class="line"></span><br><span class="line">      <span class="comment">//创建对象存储认证信息</span></span><br><span class="line">       AuthenticationToken token=<span class="keyword">new</span> UsernamePasswordToken(username,password,remember);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">try</span>&#123;</span><br><span class="line">           <span class="comment">//调用shiro的login方法完成登录认证</span></span><br><span class="line">           subject.login(token);</span><br><span class="line">           <span class="keyword">return</span> <span class="string">&quot;登录成功&quot;</span>;</span><br><span class="line">       &#125;<span class="keyword">catch</span> (UnknownAccountException e)&#123;</span><br><span class="line">           System.out.println(<span class="string">&quot;账号不存在&quot;</span>);</span><br><span class="line">           <span class="keyword">return</span> <span class="string">&quot;账号不存在&quot;</span>;</span><br><span class="line">       &#125;<span class="keyword">catch</span> (IncorrectCredentialsException e)&#123;</span><br><span class="line">           System.out.println(<span class="string">&quot;密码错误&quot;</span>);</span><br><span class="line">           <span class="keyword">return</span> <span class="string">&quot;密码错误&quot;</span>;</span><br><span class="line">       &#125;<span class="keyword">catch</span> (ExcessiveAttemptsException e)&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="string">&quot;登录超过四次，账户锁定10分钟&quot;</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -256,7 +318,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
         		</li>
       		
 		</ul>
@@ -266,7 +328,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/07/shiro-ehcache%E7%BC%93%E5%AD%98/">展开全文 >></a>
         </p>
       
 
@@ -298,19 +360,584 @@
 
 
   
-    <article id="post-LeetCode-135分发糖果-贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-shiro-授权" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">LeetCode-135分发糖果-贪心</a>
+      <a class="article-title" href="/2022/01/06/shiro-%E6%8E%88%E6%9D%83/">shiro-授权</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+        <a href="/2022/01/06/shiro-%E6%8E%88%E6%9D%83/" class="archive-article-date">
+  	<time datetime="2022-01-06T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-06</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://img-blog.csdnimg.cn/20210510102409630.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="测试有关方法"><a href="#测试有关方法" class="headerlink" title="测试有关方法"></a>测试有关方法</h2><p>ini配置文件使用默认的realm，使用IOC的方式对subject进行注入角色和权限，如果使用自定义的realm，就需要从数据库中提取该用户的角色和权限进行set到shiro中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[users]</span><br><span class="line">zhangsan=<span class="number">123</span>,role1,role2</span><br><span class="line">lisi=<span class="number">456</span>,role2</span><br><span class="line">[roles]</span><br><span class="line">role1:users:add,users:delete,users:update,users:select</span><br><span class="line">role2:users:add</span><br></pre></td></tr></table></figure>
+<p>hasRole检查是否有该角色返回Boolean，checkRole如果没有权限就报错，ispermitted检查是否有该权限返回Boolean，check同理（下边代码测试授权，<strong>授权必须在认证通过之后才能进行</strong>，所以写的时候还是要前边先写认证，并且认证成功才执行下面代码）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">//仅测试部分基础方法</span></span><br><span class="line">		<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authenticator</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//相当于配置realm</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		<span class="comment">//模拟拿到用户登录信息</span></span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;lisi&quot;</span>,<span class="string">&quot;456&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:select&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:add&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:update&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:delete&quot;</span>));</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="授权常用的三种方式"><a href="#授权常用的三种方式" class="headerlink" title="授权常用的三种方式"></a>授权常用的三种方式</h2><p>一般web用的都是第二种和第三种，这里不是很清晰，后边整合web再详解，<strong>授权分为基于角色的授权和基于资源（表的crud）的授权</strong></p>
+<p>条件判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(subject.hasRole(“admin”)) &#123;</span><br><span class="line"> <span class="comment">//有权限 </span></span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="comment">//无权限 </span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>注解式：通过在执行的 Java 方法上放置相应的注解完成：（具体用法后边web整合中详细介绍）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiresRoles(&quot;admin&quot;)</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span> </span>&#123; </span><br><span class="line"><span class="comment">//有权限 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>没有权限将抛出相应的异常； JSP/GSP 标签：在 JSP/GSP 页面通过相应的标签完成：（需要导入taglib ）（具体用法后边web整合中详细介绍）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">    &lt;!-- 依赖 --&gt;</span><br><span class="line">    &lt;%<span class="meta">@taglib</span> prefix=<span class="string">&quot;shiro&quot;</span> uri=<span class="string">&quot;http://shiro.apache.org/tags&quot;</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html PUBLIC <span class="string">&quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;</span> <span class="string">&quot;http://www.w3.org/TR/html4/loose.dtd&quot;</span>&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;shiro:hasPermission name=<span class="string">&quot;users:update&quot;</span>&gt;</span><br><span class="line">&lt;a href=<span class="string">&quot;#&quot;</span>&gt;&lt;/a&gt;</span><br><span class="line">&lt;/shiro:hasPermission&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="自定义realm授权（一个用户一个角色）（参考rbac）"><a href="#自定义realm授权（一个用户一个角色）（参考rbac）" class="headerlink" title="自定义realm授权（一个用户一个角色）（参考rbac）"></a>自定义realm授权（一个用户一个角色）（参考rbac）</h2><h3 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h3><p>用户表<br><img src="https://img-blog.csdnimg.cn/20210204222027960.png" alt="在这里插入图片描述"><br>角色表<br><img src="https://img-blog.csdnimg.cn/20210204222203272.png" alt="在这里插入图片描述"><br>权限表<br><img src="https://img-blog.csdnimg.cn/20210204222236116.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210204223823221.png" alt="在这里插入图片描述"></p>
+<h2 id="ini文件"><a href="#ini文件" class="headerlink" title="ini文件"></a>ini文件</h2><p>只需要配置自定义的realm，因为数据源在自定义的realm中取得用户，角色等信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">realm=cn.wit.realm.UsersRealm</span><br><span class="line">securityManager.realm=$realm</span><br></pre></td></tr></table></figure>
+<h2 id="授权方法"><a href="#授权方法" class="headerlink" title="授权方法"></a>授权方法</h2><p>关于授权，只要把用户所拥有的权限返回给shiro，从数据库中利用rbac思想取得用户的所有权限，然后传给<font color=blue>SimpleAuthorizationInfo</font>对象的<font color=blue>addStringPermission</font>方法，最后认证的信息（认证是否成功），授权的信息（所拥有的权限），都会封装到subject里边</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthorizationInfo <span class="title">doGetAuthorizationInfo</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">			PrincipalCollection principals)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//授权主要的工作是将用户拥有的权限返回给shiro</span></span><br><span class="line">		</span><br><span class="line">		String username=principals.getPrimaryPrincipal().toString();</span><br><span class="line"></span><br><span class="line">		Connection conn=<span class="keyword">null</span>;</span><br><span class="line">        PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">        ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">        ComboPooledDataSource cpds=<span class="keyword">null</span>;</span><br><span class="line">        Users users=<span class="keyword">new</span> Users();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="comment">//c3p0获取数据库连接conn</span></span><br><span class="line">    		cpds= <span class="keyword">new</span> ComboPooledDataSource();</span><br><span class="line">    		cpds.setDriverClass(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">    		cpds.setJdbcUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>);</span><br><span class="line">    		cpds.setUser(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">    		cpds.setPassword(<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">    		conn = cpds.getConnection();</span><br><span class="line">            </span><br><span class="line">            String sql=<span class="string">&quot;select e.*,re.rid from element e join role_element re on e.id=re.eid  where rid =(select u.rid from users u where username=?)&quot;</span>;</span><br><span class="line">            ps= conn.prepareStatement(sql);</span><br><span class="line">            ps.setObject(<span class="number">1</span>,username);</span><br><span class="line">            rs=ps.executeQuery();</span><br><span class="line">            List&lt;String&gt;elements=<span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">            	elements.add(rs.getString(<span class="string">&quot;eleno&quot;</span>));</span><br><span class="line">            &#125;</span><br><span class="line">            users.setElement(elements);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (PropertyVetoException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            	<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            		rs.close();</span><br><span class="line">            	&#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            	<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            		ps.close();</span><br><span class="line">            	&#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            	<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            		conn.close();</span><br><span class="line">            	&#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">	</span><br><span class="line">		</span><br><span class="line">		SimpleAuthorizationInfo info=<span class="keyword">new</span> SimpleAuthorizationInfo();</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">			</span><br><span class="line">		<span class="keyword">for</span> (String element : users.getElement()) &#123;</span><br><span class="line">			System.out.println(element);</span><br><span class="line">			info.addStringPermission(element);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="main"><a href="#main" class="headerlink" title="main"></a>main</h2><p>当用户的权限都封装在subject之后，就可以根据上面讲的三种授权的方法，判断是否有权限之后编写业务逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//相当于配置realm</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		<span class="comment">//模拟拿到用户登录信息</span></span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:select&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:add&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:update&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:delete&quot;</span>));</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="源码跟踪"><a href="#源码跟踪" class="headerlink" title="源码跟踪"></a>源码跟踪</h2><p>subject进入</p>
+<p>subject的实现类<strong>DelegatingSubject</strong>的isPermitted（F4查看类结构）<br><img src="https://img-blog.csdnimg.cn/20210510185516816.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>和认证一样，同样是将授权交给securityManager处理，securityManager实现类是<strong>DefaultSecurityManager</strong>，授权部分是它的父类<strong>AuthorizingManager</strong>完成的<br><img src="https://img-blog.csdnimg.cn/20210510194822467.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2021051019491068.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>调用的是authorizer的isPermitted方法，进入Authorizer<br><img src="https://img-blog.csdnimg.cn/20210510194927641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>授权器的实现类是<strong>ModularRealmAuthorizer</strong><br><img src="https://img-blog.csdnimg.cn/20210510195032202.png" alt="在这里插入图片描述"><br>它的isPermitted方法中有对realm强转，这里就会调用realm的isPermitted</p>
+<blockquote>
+<p>ModularRealmAuthorizer循环检查每一个Realm是否实现了Authorizer，检查通过则调用该Realm的权限验证方法。</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20210510210136580.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>realm授权部分实际上是AuthorizingRealm实现的，当中也有isPermitted方法   ,此时如果传的权限是字符串，PermissionResolver的功能是将字符串转化为Permission（默认使用的PermissionResolver实例为WildcardPermissionResolver）</p>
+<p><img src="https://img-blog.csdnimg.cn/2021051021165289.png" alt="在这里插入图片描述"><br>进入PermissionResolver<br><img src="https://img-blog.csdnimg.cn/20210510211910450.png" alt="在这里插入图片描述"><br>之前被AuthorizingRealm调用的resolverpermission方法<br><img src="https://img-blog.csdnimg.cn/20210510212058140.png" alt="在这里插入图片描述"></p>
+<p>进入WildcardPermission （按照它的规则去进行转换，转换成功失败会返回Boolean）</p>
+<blockquote>
+<p>Shiro提供直观有力的表述语法——WildcardPermission。</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20210510212215959.png" alt="在这里插入图片描述"><br>转换之后字符串变成Permission，调用参数为Permission类型放isPermitted，<br><img src="https://img-blog.csdnimg.cn/20210510212757850.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>进入第二个isPermitted的getAuthorizationInfo，获取权限信息<br><img src="https://img-blog.csdnimg.cn/20210510215637793.png" alt="在这里插入图片描述"><br>该方法返回值为AuthorizationInfo，如果有缓存则从缓存中提取数据<br><img src="https://img-blog.csdnimg.cn/20210510215812151.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如果没有缓存，就只能根据Principals从realm中重新拿数据（比如第一次登录），这里调用了doGetAuthorizationInfo<br><img src="https://img-blog.csdnimg.cn/20210510215910693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>进去有一个抽象方法，<br><img src="https://img-blog.csdnimg.cn/20210510220013235.png" alt="在这里插入图片描述"><br>realm都实现了这个方法<br><img src="https://img-blog.csdnimg.cn/20210510220135576.png" alt="在这里插入图片描述"><br>比如JdbcRealm实现<br><img src="https://img-blog.csdnimg.cn/20210510220518657.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这里边红框是最重要的代码，当自定义realm同样是实现的这个（<font color=red>自定义realm同样是实现doGetAuthorizationInfo这个方法</font>）<br><img src="https://img-blog.csdnimg.cn/20210510220528626.png" alt="在这里插入图片描述"><br>拿到权限信息后就可以和Permission对比，循环判断多个权限是否被该用户拥有<br><img src="https://img-blog.csdnimg.cn/20210510220828568.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong>END</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/06/shiro-%E6%8E%88%E6%9D%83/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-shiro-散列算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/05/shiro-%E6%95%A3%E5%88%97%E7%AE%97%E6%B3%95/">shiro-散列算法</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/05/shiro-%E6%95%A3%E5%88%97%E7%AE%97%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2022-01-05T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-05</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="认识md5"><a href="#认识md5" class="headerlink" title="认识md5"></a>认识md5</h2><p>md5是一种加密算法，保护数据安全(现被证实并不怎么安全)，shiro中提供了md5加密算法<br>salt表示加盐，通过加盐的方式能够进一步提高数据的安全性，所以在数据库users表设计的时候，除了<font color=blue>id、username、password</font>之外，还有一列<font color=blue>password_salt</font></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//md5加密</span></span><br><span class="line">		Md5Hash hash=<span class="keyword">new</span> Md5Hash(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		System.out.println(hash.toString());</span><br><span class="line">		<span class="comment">//md5加盐</span></span><br><span class="line">		hash=<span class="keyword">new</span> Md5Hash(<span class="string">&quot;123&quot;</span>,<span class="string">&quot;wit&quot;</span>);</span><br><span class="line">		System.out.println(hash.toString());</span><br><span class="line">		<span class="comment">//md5加盐 散列两次，散列次数越多，密码越安全</span></span><br><span class="line">		hash=<span class="keyword">new</span> Md5Hash(<span class="string">&quot;123&quot;</span>,<span class="string">&quot;wit&quot;</span>,<span class="number">2</span>);</span><br><span class="line">		System.out.println(hash.toString());</span><br><span class="line">		hash=<span class="keyword">new</span> Md5Hash(<span class="string">&quot;456&quot;</span>,<span class="string">&quot;wit&quot;</span>,<span class="number">2</span>);</span><br><span class="line">		System.out.println(hash.toString());</span><br><span class="line">		</span><br></pre></td></tr></table></figure>
+<p>使用md5呢，首先要保证数据库中的密码是（已经用工具）加密过的<br><img src="https://img-blog.csdnimg.cn/20210202171520616.png" alt="在这里插入图片描述"></p>
+<h2 id="自定义的realm"><a href="#自定义的realm" class="headerlink" title="自定义的realm"></a>自定义的realm</h2><p>从数据库拿到数据user（<font color=#FF0066>id、username、password、password_salt</font>）对象后，下边这行代码传给shiro，shiro就知道需要数据是加密过的，<font color=#6699FF>还有一些参数，比如散列次数，加密方式，就需要对realm进行配置</font></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SimpleAuthenticationInfo(username,password,ByteSource.Util.bytes(salt),getName());</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.realm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.beans.PropertyVetoException;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.SimpleAuthenticationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authz.AuthorizationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.realm.AuthorizingRealm;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.PrincipalCollection;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.ByteSource;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.wit.users.Users;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.mchange.v2.c3p0.ComboPooledDataSource;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserRealm</span> <span class="keyword">extends</span> <span class="title">AuthorizingRealm</span></span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;uesrRealm&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthorizationInfo <span class="title">doGetAuthorizationInfo</span><span class="params">(PrincipalCollection arg0)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthenticationInfo <span class="title">doGetAuthenticationInfo</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">			AuthenticationToken taken)</span> <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">			String username=(String) taken.getPrincipal();</span><br><span class="line">			Users users=<span class="keyword">null</span>;</span><br><span class="line">			Connection conn=<span class="keyword">null</span>;</span><br><span class="line">	        PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">	        ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">	        ComboPooledDataSource cpds=<span class="keyword">null</span>;</span><br><span class="line">	        <span class="keyword">try</span> &#123;</span><br><span class="line">	          <span class="comment">//c3p0获取数据库连接conn</span></span><br><span class="line">	    		cpds= <span class="keyword">new</span> ComboPooledDataSource();</span><br><span class="line">	    		cpds.setDriverClass(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">	    		cpds.setJdbcUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>);</span><br><span class="line">	    		cpds.setUser(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">	    		cpds.setPassword(<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">	    		conn = cpds.getConnection();</span><br><span class="line">	            </span><br><span class="line">	            String sql=<span class="string">&quot;select *from users where username=?&quot;</span>;</span><br><span class="line">	            ps= conn.prepareStatement(sql);</span><br><span class="line">	            ps.setObject(<span class="number">1</span>,username);</span><br><span class="line">	            rs=ps.executeQuery();</span><br><span class="line">	            <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">	            	users=<span class="keyword">new</span> Users();</span><br><span class="line">	            	users.setId(rs.getInt(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">	            	users.setUsername(rs.getString(<span class="string">&quot;username&quot;</span>));</span><br><span class="line">	            	users.setPassword(rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">	            	users.setPassword_salt(rs.getString(<span class="string">&quot;password_salt&quot;</span>));</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	            e.printStackTrace();</span><br><span class="line">	        &#125; <span class="keyword">catch</span> (PropertyVetoException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		rs.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		ps.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		conn.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">		</span><br><span class="line">	      username=users.getUsername();</span><br><span class="line">	      String password=users.getPassword();</span><br><span class="line">	      String salt=users.getPassword_salt();</span><br><span class="line">	      System.out.println(username);</span><br><span class="line">	      System.out.println(password);</span><br><span class="line">	      System.out.println(salt);</span><br><span class="line">	      <span class="comment">//从数据库中拿到的密码是经过加密的（并且加了盐），所以数据库中才设计盐这个属性，想要解密不仅要拿到密码，还要从数据库拿到盐</span></span><br><span class="line">	      <span class="comment">//除此之外，需要设置realm 告知shiro需要用md5的方式进行解密</span></span><br><span class="line">	      SimpleAuthenticationInfo info=<span class="keyword">new</span> </span><br><span class="line">	    		  SimpleAuthenticationInfo(username,password,ByteSource.Util.bytes(salt),getName());</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="ini"><a href="#ini" class="headerlink" title="ini"></a>ini</h2><p>hashAlgorithmName表示加密方式，hashIterations表示散列次数，credentialsMatcher是关于设置加密的类，将其赋值给realm。<font color=blue>对于加密的源码跟踪文章尾部有介绍</font></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">credentialsMatcher=org.apache.shiro.authc.credential.HashedCredentialsMatcher</span><br><span class="line">credentialsMatcher.hashAlgorithmName=md5</span><br><span class="line">credentialsMatcher.hashIterations=<span class="number">2</span></span><br><span class="line"></span><br><span class="line">userRealm=cn.wit.realm.UserRealm</span><br><span class="line">userRealm.credentialsMatcher=$credentialsMatcher</span><br><span class="line">securityManager.realm=$userRealm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//拿到SecurityManager并将它放到环境当中</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="md5源码跟踪"><a href="#md5源码跟踪" class="headerlink" title="md5源码跟踪"></a>md5源码跟踪</h2><p>从login进入源码，subject实现类DelegatingSubject，将自己和taken都给了SecurityManager，实现类为DefaultSecurityManager，该类login方法调用Authenticator的Authenticate方法，进入Authenticator，实现类为ModularRealmAuthenticator，里边有setRealms、setAuthenticationStrategy，可以进行 认证策略和realms的设置，进入Realm接口，在它的实现类AuthenticatingRealm里面有credentialsMatcher属性，表示加密<br><img src="https://img-blog.csdnimg.cn/20210202173425798.png" alt="在这里插入图片描述"><br>查看类层次，下边有不同的解密方式的实现类,</p>
+<p><img src="https://img-blog.csdnimg.cn/20210202173509824.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这些加密的方式都是继承的HashedCredentialsMatcher，下边的这个类的set方法，<font color=red>我们在ini中设置的正是这些属性，出于对salt信息的保护，所以设置ini只设置了加密方式和散列次数，将salt在自定义的realm中跟账号密码一起传递给shiro</font><br><img src="https://img-blog.csdnimg.cn/2021020217374792.png" alt="在这里插入图片描述"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/05/shiro-%E6%95%A3%E5%88%97%E7%AE%97%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-shiro-自定义realm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/04/shiro-%E8%87%AA%E5%AE%9A%E4%B9%89realm/">shiro-自定义realm</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/04/shiro-%E8%87%AA%E5%AE%9A%E4%B9%89realm/" class="archive-article-date">
+  	<time datetime="2022-01-04T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-04</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="ini"><a href="#ini" class="headerlink" title="ini"></a>ini</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">userRealm=cn.wit.realm.UserRealm</span><br><span class="line">securityManager.realm=$userRealm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>根据taken拿到username，然后用username查询数据库，返回User<br>对象信息，赋值username和password，<font color=blue>SimpleAuthenticationInfo对象</font> 传入username、password、realm名称（父类提供了getName方法，重写这个方法），然后返回这个info对象。表示将数据库的用户信息给shiro，shiro会去比较登录的信息（taken里边的），如果一致就登录成功</p>
+<p>注意这里是根据用户名去查询密码，然后查询到的用户名密码和输入的用户名密码进行比对（比<strong>对由shiro做的</strong>）</p>
+<h2 id="UserRealm-extends-AuthorizingRealm"><a href="#UserRealm-extends-AuthorizingRealm" class="headerlink" title="UserRealm  extends AuthorizingRealm"></a>UserRealm  extends AuthorizingRealm</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.realm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.beans.PropertyVetoException;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.SimpleAuthenticationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authz.AuthorizationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.realm.AuthorizingRealm;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.PrincipalCollection;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.wit.users.Users;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.mchange.v2.c3p0.ComboPooledDataSource;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserRealm</span> <span class="keyword">extends</span> <span class="title">AuthorizingRealm</span></span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;uesrRealm&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthorizationInfo <span class="title">doGetAuthorizationInfo</span><span class="params">(PrincipalCollection arg0)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthenticationInfo <span class="title">doGetAuthenticationInfo</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">			AuthenticationToken taken)</span> <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">			String username=(String) taken.getPrincipal();</span><br><span class="line">			String pwd=<span class="string">&quot;&quot;</span>;</span><br><span class="line">		</span><br><span class="line">			Connection conn=<span class="keyword">null</span>;</span><br><span class="line">	        PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">	        ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">	        ComboPooledDataSource cpds=<span class="keyword">null</span>;</span><br><span class="line">	        <span class="keyword">try</span> &#123;</span><br><span class="line">	          <span class="comment">//c3p0获取数据库连接conn</span></span><br><span class="line">	    		cpds= <span class="keyword">new</span> ComboPooledDataSource();</span><br><span class="line">	    		cpds.setDriverClass(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">	    		cpds.setJdbcUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>);</span><br><span class="line">	    		cpds.setUser(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">	    		cpds.setPassword(<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">	    		conn = cpds.getConnection();</span><br><span class="line">	            </span><br><span class="line">	            String sql=<span class="string">&quot;select *from users where username=?&quot;</span>;</span><br><span class="line">	            ps= conn.prepareStatement(sql);</span><br><span class="line">	            ps.setObject(<span class="number">1</span>,username);</span><br><span class="line">	            rs=ps.executeQuery();</span><br><span class="line">	            <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">	            	Users users=<span class="keyword">new</span> Users();</span><br><span class="line">	            	users.setId(rs.getInt(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">	            	users.setUsername(rs.getString(<span class="string">&quot;username&quot;</span>));</span><br><span class="line">	            	users.setPassword(rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">	            	pwd=users.getPassword();</span><br><span class="line">	            	username=users.getUsername();</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	            e.printStackTrace();</span><br><span class="line">	        &#125; <span class="keyword">catch</span> (PropertyVetoException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		rs.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		ps.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		conn.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">		</span><br><span class="line">		SimpleAuthenticationInfo info=<span class="keyword">new</span> SimpleAuthenticationInfo(username,pwd,getName());</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="main"><a href="#main" class="headerlink" title="main"></a>main</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.shiro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.SecurityUtils;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.IncorrectCredentialsException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UnknownAccountException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UsernamePasswordToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.config.IniSecurityManagerFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.Subject;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.Factory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.mgt.SecurityManager;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 完成用户认证功能</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//拿到SecurityManager并将它放到环境当中</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="跟踪源码"><a href="#跟踪源码" class="headerlink" title="跟踪源码"></a>跟踪源码</h2><p>从login进入跟到SecurityManager，到它的实现类defaultSecurityManager，调用authenticator的authenticate方法，进入authenticator，它的实现类ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/20210202144439771.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/b05dd9e84bc349eebf4e404226413f5e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>setRealms方法是在RealmSecurityManager中实现的</p>
+<p><img src="https://img-blog.csdnimg.cn/ee707f237aff43168dbc17bbdcef406b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>DefaultWebSecurityManager里边设置Realm或realms<br><img src="https://img-blog.csdnimg.cn/1502ba27f6084e5388c437126ed75816.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/e4f8abd14b37474c89da74a3a4f95ac2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_19,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>然后放到AuthenticatingSecurityManager创建的ModularRealmAuthenticator中<br><img src="https://img-blog.csdnimg.cn/aae8682d4e674b6aab8dc7b8af25f67a.png" alt="在这里插入图片描述"></p>
+<p>Realm类层次如下，里面已经实现了多种realm了，比如之前的jdbcRealm就是这里边已经定义好的，如果要自定义realm，需要继承AuthorizingRealm，并且自定义授权同样是继承的这个类<br><img src="https://img-blog.csdnimg.cn/20210202144850335.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>AuthorizingRealm（abstract）是AuthenticatingRealm的子类<br>AuthenticatingRealm（abstract）中有doGetAuthenticationInfo方法，可以自定义认证<br>AuthorizingRealm中有doGetAuthorizationInfo方法，可以自定义授权</p>
+<p>自定义类继承AuthenticatingRealm，所以继承类就必须重写这两个方法<br><img src="https://img-blog.csdnimg.cn/20210202145504147.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2021020214561895.png" alt="在这里插入图片描述"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/04/shiro-%E8%87%AA%E5%AE%9A%E4%B9%89realm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-shiro-JdbcRealm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/03/shiro-JdbcRealm/">shiro-JdbcRealm</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/03/shiro-JdbcRealm/" class="archive-article-date">
+  	<time datetime="2022-01-03T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-03</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>shiro默认使用自带的IniRealm，IniRealm从ini配置文件中读取用户的信息。大部分情况下我们是需要从数据库中读取用户信 息，所以要自定义realm</p>
+<p><strong>[main]</strong><br>myRealm=xxxx<br>#依赖注入<br>SecurityManager.realm=$myRealm<br>配置应用程序的SecurityManager实例及任何它的依赖组件（比如Realms）<br><strong>[users]</strong><br>可以像认证demo中配置静态用户（张三=123）。还可以定义角色（lisi=456,role1,role2）</p>
+<p>将用户和用户和角色联系起来(<strong>这里就很rbac了！</strong>)<br>[users]<br>zhangsan=1111,role1<br>[roles]<br>role=user:add,user:delete</p>
+<p>使用JdbcRealm进行认证</p>
+<ul>
+<li><font color=blue>在指定的dataSource锁对应的数据库中应该有用户表users，该表中有username，password，password_salt等字段，</font>这些名称都是jdbcRealm源码中SQL语句中的，所以，如果创建数据库时不按照源码的字段名来建表，就没法使用JdbcRealm</li>
+</ul>
+<h2 id="JdbcRealm-demo"><a href="#JdbcRealm-demo" class="headerlink" title="JdbcRealm demo"></a>JdbcRealm demo</h2><h2 id="jar包"><a href="#jar包" class="headerlink" title="jar包"></a>jar包</h2><p><img src="https://img-blog.csdnimg.cn/20210201172252454.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p>这里password设计成32位，md5加密是32位<br><img src="https://img-blog.csdnimg.cn/20210509142135721.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2021020119270516.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log4j.rootLogger=Info, stdout </span><br><span class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender </span><br><span class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout </span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n</span><br></pre></td></tr></table></figure>
+<h3 id="shiro-ini"><a href="#shiro-ini" class="headerlink" title="shiro.ini"></a>shiro.ini</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">dataSource=com.mchange.v2.c3p0.ComboPooledDataSource</span><br><span class="line">dataSource.driverClass=com.mysql.jdbc.Driver</span><br><span class="line">dataSource.jdbcUrl=jdbc:mysql:<span class="comment">//localhost:3306/login</span></span><br><span class="line">dataSource.user=root</span><br><span class="line">dataSource.password=wityy</span><br><span class="line">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm</span><br><span class="line">jdbcRealm.dataSource=$dataSource</span><br><span class="line">securityManager.realm=$jdbcRealm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>main中dataSource用c3p0数据库连接池 连接数据库，<font color=red>mysql专栏中有关于数据库连接池的内容。</font> ，配置完dataSource后，配置jdbcRealm，将dataSource给jdbcRealm，将jdbcRealm赋值给SecurityManager，赋值前加$</p>
+<h3 id="main"><a href="#main" class="headerlink" title="main"></a>main</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.shiro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.SecurityUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.IncorrectCredentialsException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UnknownAccountException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UsernamePasswordToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.config.IniSecurityManagerFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.realm.Realm;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.Subject;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.Factory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.mgt.SecurityManager;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 完成用户认证功能</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//拿到SecurityManager并将它放到环境当中</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			subject.login(taken);</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="验证策略"><a href="#验证策略" class="headerlink" title="验证策略"></a>验证策略</h2><p>在说具体内容之前先了解一下认证过程的源码<br><font color=blue> 从login进入源码的过程参见该篇文章：</font><a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/113470133">认证过程</a></p>
+<p>从进入认证器部分的源码开始</p>
+<p>查看Authenticator认证器 接口的类层次，具体的实现类是ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/2021020120290946.png" alt="在这里插入图片描述"></p>
+<p>l里边有个authenticationStratery类属性，继续跳转<img src="https://img-blog.csdnimg.cn/20210201203002851.png" alt="在这里插入图片描述"><br>该接口的类层次，<font color=red>三个类分别代表三种不同的认证策略</font><br>AtLeastOneSuccessfulStrategy  验证一个成功后<strong>继续验证后边的</strong>，最终由一个及以上就成功，否则失败（<strong>默认</strong>）<br>AllSuccessfulStrategy  只有所有realm验证成功才算总体验证成功<br>FirstSuccessfulStrategy  （验证成功一个后<strong>停止验证后边的</strong>，一个都没有就失败）<br><img src="https://img-blog.csdnimg.cn/20210201203055207.png" alt="在这里插入图片描述"><br>加入AllSuccessfulStrategy后的ini文件（可以用多realm进行验证，再新建一个数据库进行realm配置然后securityManager.realm后边跟多个就行了，下边代码仅仅展示authenticationStrategy用法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">dataSource=com.mchange.v2.c3p0.DriverManagerDataSource</span><br><span class="line">dataSource.driverClass=com.mysql.jdbc.Driver</span><br><span class="line">dataSource.jdbcUrl=jdbc:mysql:<span class="comment">//localhost:3306/login</span></span><br><span class="line">dataSource.user=root</span><br><span class="line">dataSource.password=wityy</span><br><span class="line">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm</span><br><span class="line">jdbcRealm.dataSource=$dataSource</span><br><span class="line"></span><br><span class="line">authenticationStrategy=org.apache.shiro.authc.pam.AllSuccessfulStrategy</span><br><span class="line">securityManager.realm=$jdbcRealm</span><br><span class="line">securityManager.authenticator.authenticationStrategy=$authenticationStrategy</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/03/shiro-JdbcRealm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-shiro认证" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/02/shiro%E8%AE%A4%E8%AF%81/">shiro认证</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/02/shiro%E8%AE%A4%E8%AF%81/" class="archive-article-date">
+  	<time datetime="2022-01-02T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-02</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在应用中通过某些标识信息来证明用户的身份，用户需要将身份和凭证给shiro<br><strong>Principals</strong></p>
+<ul>
+<li>用户 的身份信息，是subject的标识属性，至少在数据库中应该具有唯一性。如：电话号码，邮箱，账号等</li>
+</ul>
+<p><strong>Credentials</strong> </p>
+<ul>
+<li>凭证：是只被subject知道的秘密值，可以是密码，也可以是数字证书等。Principals/Credentials最常见的形式就是用户名和密码。通常使用<strong>usernamePasswordToken</strong>来指定身份和凭证信息</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/2021013113493729.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>下边写一个测试Demo</p>
+<h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><h2 id="jar包"><a href="#jar包" class="headerlink" title="jar包"></a>jar包</h2><p>这里边只有shiro-all是核心包，其他都是日志包<br><img src="https://img-blog.csdnimg.cn/20210131163114843.png" alt="在这里插入图片描述"></p>
+<h2 id="log4j-properties"><a href="#log4j-properties" class="headerlink" title="log4j.properties"></a>log4j.properties</h2><p>因为建的是普通java项目，所以日志的写法是这样事儿的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log4j.rootLogger=debug, stdout </span><br><span class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender </span><br><span class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout </span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n</span><br></pre></td></tr></table></figure>
+<h2 id="shiro-ini"><a href="#shiro-ini" class="headerlink" title="shiro.ini"></a>shiro.ini</h2><p>eclipse中没有ini后缀<br><img src="https://img-blog.csdnimg.cn/20210508194404875.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508194551434.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508194638772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508195015110.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>这个文件是暂时用来存放数据，相当于数据库的角色，在这个demo里边放用户账号密码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[users]</span><br><span class="line">zhangsan=<span class="number">1111</span></span><br></pre></td></tr></table></figure>
+<h2 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h2><p>SecurityManager需要导一下包org.apache.shiro.mgt.SecurityManager(java.lang中有一个同名的，后边的包也都是导入org.apache.shiro前缀的)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//创建SecurityManager工厂 读取配置文件</span></span><br><span class="line">		Factory&lt;SecurityManager&gt; factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		<span class="comment">//通过SecurityManager工厂获取SecurityManager的实例</span></span><br><span class="line">		SecurityManager securityManager=factory.getInstance();</span><br><span class="line">		<span class="comment">//将SecurityManager对象设置到运行环境中</span></span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		<span class="comment">//通过SecurityUtils获取主体subject</span></span><br><span class="line">		Subject subject=SecurityUtils.getSubject();</span><br><span class="line">		<span class="comment">//假如用户名 zhangsan和1111,这里测试的数据是模拟登录时用户输入的数据</span></span><br><span class="line">		<span class="comment">//而ini文件中的数据相当于数据库中的数据</span></span><br><span class="line">		UsernamePasswordToken token=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;1111&quot;</span>);</span><br><span class="line">		<span class="comment">//用户身份验证</span></span><br><span class="line">		subject.login(token);</span><br><span class="line">		<span class="comment">//通过subject判断用户是否通过验证,isAuthenticated表示用户是否被验证过</span></span><br><span class="line">		<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;用户名或密码不正确&quot;</span>); <span class="comment">//这里如果密码错误实际上会爆出异常（见下边异常处理），需要用异常处理的方法，这里只是写出一个逻辑</span></span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>我们使用Shiro的IniSecurityManager实现来提取我们的shir.ini文件，它位于classpath的根目录。该实现反应了shiro对工厂设计模式的支持。classpath:前缀是一个资源定位符，用来告诉shiro去哪加载ini文件（其他前缀，如url：file:也同样被支持）</li>
+<li>factory.getInstance()方法被调用，它来解析INI文件并返回该配置的SecurityManager实例</li>
+<li>在这个简单的例子中，我们把SecurityManager设置为一个静态的单例，能够跨JVM访问。但实际上这是不可取的，如果在单个JVM中会有不止一个启用shiro的应用程序，对于这个简单的程序而言，这并没有问题，但更复杂的应用程序环境通常将SecurityManager置于应用程序特定的存储中，在web应用中的ServletContext或Spring</li>
+</ul>
+<h1 id="常见的异常信息及处理"><a href="#常见的异常信息及处理" class="headerlink" title="常见的异常信息及处理"></a>常见的异常信息及处理</h1><p>在认证过程中有AuthenticationException，该异常有几个子类，分别对应不同的异常情况</p>
+<p><img src="https://img-blog.csdnimg.cn/20210131164620578.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>DisabledAccountException账户失效异常</li>
+<li>ExcessiveAttemptsException尝试次数过多</li>
+<li>UnknownAccountException用户名不正确</li>
+<li>ExpiredCredentialException 凭证过期</li>
+<li>IncorrectCredentialException 凭证不正确<br>虽然shiro为每一种异常都提供了准确的异常信息，但是在编写代码过程中应提示给用户的异常信息为模糊的，这样有助于安全，常见的处理方式为</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//用户身份验证</span></span><br><span class="line">			subject.login(token);</span><br><span class="line">			<span class="comment">//通过subject判断用户是否通过验证,isAuthenticated表示用户是否被验证过</span></span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			System.out.println(<span class="string">&quot;用户名或密码不正确&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;用户名或密码不正确&quot;</span>);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="login认证源码过程"><a href="#login认证源码过程" class="headerlink" title="login认证源码过程"></a>login认证源码过程</h2><p>通过shiro相关api，创建securityManager以及获取subject（这个过程不研究）<br>封装token信息<br><img src="https://img-blog.csdnimg.cn/2021050822165478.png" alt="在这里插入图片描述"><br>UsernamePasswordToken中rememberMe默认false<br><img src="https://img-blog.csdnimg.cn/dff9cb3679aa42dba5f43ffaa245f235.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/1c179008a410416c8132b7a46af06992.png" alt="在这里插入图片描述"><br>跳转this</p>
+<p><img src="https://img-blog.csdnimg.cn/2021050822195086.png" alt="在这里插入图片描述"></p>
+<p>通过subject.login（token）进行用户认证</p>
+<p>从login进去源码<br><img src="https://img-blog.csdnimg.cn/20210201203923642.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/94a495e29ad043bbaa7dc515b45f035e.png" alt="在这里插入图片描述"></p>
+<p>subject类层次,实现类为DelegatingSubject<br><img src="https://img-blog.csdnimg.cn/20210201204009939.png" alt="在这里插入图片描述"><br>subject将token给了securityManager来完成认证，而且里边调用的方法名也叫login，（当成功之后，subject.isAuthenticated返回true）,所以<strong>真正的认证的核心部分是在这个securityManager.login方法里边(不是subject在做，是securityManager在做)</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/a9018d5cb7304c3c949f272d169e38d4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/d03c84f3f19a4531afc63d383ca2ce4d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>SecurityManager本身是一个接口，SecurityManager继承了三个接口，分别是Authenticator ，Authorizer ，SessionManager（三个主体功能）<br><img src="https://img-blog.csdnimg.cn/20210508230109240.png" alt="在这里插入图片描述"><br>SecurityManager的类层次，下边有很多个抽象实现类，而且他们的嵌套的，每往下一个就多一个功能（比如Caching是实现缓存的，Realm是实现域的，Authenticating是实现认证的，Authorizing是实现授权的，Sessions实现Session管理，Default实现web），最终的实现类是DefaultSecurityManager（<strong>这个里边就有login方法</strong>）<br><img src="https://img-blog.csdnimg.cn/20210201204145237.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>调用了authenticate方法（该方法是由AuthenticatingSecurityManager完成的）给info赋值（这个AuthenticationInfo里边其实就是获取身份和凭证），至此就是认证调用认证器的过程<br><img src="https://img-blog.csdnimg.cn/20210201204238325.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>下图是AuthenticationInfo中<br><img src="https://img-blog.csdnimg.cn/20210508232448327.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="AuthenticationInfo中"></p>
+<p>调用authenticate方法回到了AuthenticatingSecurityManager中（是它实现的认证功能），它调用了authenticator（验证器）的authenticate，所以真正的认证工作还是由认证器来完成的</p>
+<p><img src="https://img-blog.csdnimg.cn/20210201205146814.png" alt="在这里插入图片描述"></p>
+<p>AuthenticatingSecurityManager里边有Authenticator,使用的是ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/609eded9ed6642a69ab281867a3ed336.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>认证器设置Realm是由DefaultWebSecurityManager调用<br><img src="https://img-blog.csdnimg.cn/1ec9878cf7f547649b72eac0a2c3949f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>上面调用的setRealms在RealmSecurityManager中实现<br><img src="https://img-blog.csdnimg.cn/72a47badab104129806821540a33365b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>在AuthenticatingSecurityManager中将realm传递给ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/2e8299c613f542e2b9d873a656119fc1.png" alt="在这里插入图片描述"></p>
+<p>Authenticator接口<br><img src="https://img-blog.csdnimg.cn/20210508233314454.png" alt="在这里插入图片描述"><br>Authenticator接口有一个默认的实现类ModularRealmAuthenticator 来完成认证（里面的realm是在AuthenticatingSecurityManager中传过来的）</p>
+<p><img src="https://img-blog.csdnimg.cn/20210508233502573.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508233729919.png" alt="在这里插入图片描述"><br>当调用authenticate方法时，实际上调用的是AbstractAuthenticator（ModularRealmAuthenticator的父类）的方法，这个方法里边又调用了<strong>doAuthenticator</strong>（这个是ModularRealmAuthenticator的方法）<br><img src="https://img-blog.csdnimg.cn/20210508233911945.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>最终由ModularRealmAuthenticator的doAuthenticator进行认证，获取域，如果一个realm只需要token符合这个域就算认证成功，如果有多个realm就需要Authentication strategy（认证策略，上边第一个图里边有）来完成对应的认证工作（认证策略有多种，后边会单独写文章）</p>
+<p>doSingleRealmAuthentication  realm只一个<br>doMultiRealmAuthentication    realm多个<br><img src="https://img-blog.csdnimg.cn/2021050823414944.png" alt="在这里插入图片描述"></p>
+<p>进入doSingleRealmAuthentication<br><img src="https://img-blog.csdnimg.cn/20210510224918596.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>进入realm，首先是获取缓存，如果没有缓存就进入doGetAuthenticationInfo<br><img src="https://img-blog.csdnimg.cn/20210510225418888.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>doGetAuthenticationInfo是一个抽象方法，下边的realm都有实现这个方法（<font color=red>自定义的也会实现这个方法，都会返回AuthenticationInfo</font>）<br><img src="https://img-blog.csdnimg.cn/20210510225804278.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210510225742317.png" alt="在这里插入图片描述"></p>
+<p>JdbcRealm<br><img src="https://img-blog.csdnimg.cn/4c215eb506d34086bd700d3ddad1707c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><strong>到此认证完成，回到subject（isAuthenticated）判断是否认证成功，如果认证失败会抛出指定的异常 信息</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/02/shiro%E8%AE%A4%E8%AF%81/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-1002-查找共用字符--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">LeetCode-1002 查找共用字符--查找</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -327,7 +954,262 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/candy/submissions/">LeetCode-135分发糖果-贪心</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-common-characters/submissions/">LeetCode-1002 查找共用字符</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-1137-第-N-个泰波那契数--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/">LeetCode-1137 第 N 个泰波那契数--DP</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/n-th-tribonacci-number/submissions/">LeetCode-1137 第 N 个泰波那契数–DP</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-1143-最长公共子序列--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/">LeetCode-1143 最长公共子序列--DP</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-common-subsequence/">LeetCode-1143 最长公共子序列–DP</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-12-整数转罗马数字--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">LeetCode-12 整数转罗马数字--贪心</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-to-roman/">LeetCode-12 整数转罗马数字–贪心</a></p>
         
       
 
@@ -351,687 +1233,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-142环形链表II--链表-双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-142%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II--%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88/">LeetCode-142环形链表II--链表 双指针</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-142%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II--%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/linked-list-cycle-ii/">LeetCode-142环形链表II–链表 双指针</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">双指针</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-142%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II--%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-167两数之和 II - 输入有序数组-数组 双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/">LeetCode-167两数之和 II - 输入有序数组-数组 双指针</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/">LeetCode-167两数之和 II - 输入有序数组-数组 双指针</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">双指针</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-198-打家劫舍--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">LeetCode-198 打家劫舍--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/house-robber/">LeetCode-198 打家劫舍–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-215-数组中的第K个最大元素--排序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-215-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACK%E4%B8%AA%E6%9C%80%E5%A4%A7%E5%85%83%E7%B4%A0--%E6%8E%92%E5%BA%8F/">LeetCode-215 数组中的第K个最大元素--排序</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-215-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACK%E4%B8%AA%E6%9C%80%E5%A4%A7%E5%85%83%E7%B4%A0--%E6%8E%92%E5%BA%8F/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/kth-largest-element-in-an-array/submissions/">LeetCode-215 数组中的第K个最大元素–排序</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">排序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-215-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACK%E4%B8%AA%E6%9C%80%E5%A4%A7%E5%85%83%E7%B4%A0--%E6%8E%92%E5%BA%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-1两数之和--hash" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-1%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C--hash/">LeetCode-1两数之和--hash</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-1%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C--hash/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-by-leetcode-solution/">LeetCode-1两数之和–hash</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hash</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-1%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C--hash/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-221 最大正方形--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-221%20%E6%9C%80%E5%A4%A7%E6%AD%A3%E6%96%B9%E5%BD%A2--DP/">LeetCode-221 最大正方形--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-221%20%E6%9C%80%E5%A4%A7%E6%AD%A3%E6%96%B9%E5%BD%A2--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximal-square/">LeetCode-221 最大正方形–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-221%20%E6%9C%80%E5%A4%A7%E6%AD%A3%E6%96%B9%E5%BD%A2--DP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-268丢失的数字--位运算" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-268%E4%B8%A2%E5%A4%B1%E7%9A%84%E6%95%B0%E5%AD%97--%E4%BD%8D%E8%BF%90%E7%AE%97/">LeetCode-268丢失的数字--位运算</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-268%E4%B8%A2%E5%A4%B1%E7%9A%84%E6%95%B0%E5%AD%97--%E4%BD%8D%E8%BF%90%E7%AE%97/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/missing-number/submissions/">LeetCode-268丢失的数字–位运算</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">位运算</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-268%E4%B8%A2%E5%A4%B1%E7%9A%84%E6%95%B0%E5%AD%97--%E4%BD%8D%E8%BF%90%E7%AE%97/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-300-最长递增子序列--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-300-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97--DP/">LeetCode-300 最长递增子序列--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-300-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-subsequence/">LeetCode-300. 最长递增子序列–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-300-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97--DP/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
         </p>
       
 
@@ -1065,7 +1267,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
     </nav>
   
 
@@ -1177,6 +1379,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
@@ -1201,11 +1407,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1237,6 +1443,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Math</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">字符串</a>
               </li>
              
@@ -1245,7 +1455,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Math</a>
+                <a href="javascript:void(0)" class="js-tag color3">搜索</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">数组</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1273,11 +1495,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
             
             <div class="clearfix"></div>
