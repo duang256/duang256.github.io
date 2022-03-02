@@ -207,6 +207,109 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-shiro-JdbcRealm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/03/shiro-JdbcRealm/">shiro-JdbcRealm</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/03/shiro-JdbcRealm/" class="archive-article-date">
+  	<time datetime="2022-01-03T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-03</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>shiro默认使用自带的IniRealm，IniRealm从ini配置文件中读取用户的信息。大部分情况下我们是需要从数据库中读取用户信 息，所以要自定义realm</p>
+<p><strong>[main]</strong><br>myRealm=xxxx<br>#依赖注入<br>SecurityManager.realm=$myRealm<br>配置应用程序的SecurityManager实例及任何它的依赖组件（比如Realms）<br><strong>[users]</strong><br>可以像认证demo中配置静态用户（张三=123）。还可以定义角色（lisi=456,role1,role2）</p>
+<p>将用户和用户和角色联系起来(<strong>这里就很rbac了！</strong>)<br>[users]<br>zhangsan=1111,role1<br>[roles]<br>role=user:add,user:delete</p>
+<p>使用JdbcRealm进行认证</p>
+<ul>
+<li><font color=blue>在指定的dataSource锁对应的数据库中应该有用户表users，该表中有username，password，password_salt等字段，</font>这些名称都是jdbcRealm源码中SQL语句中的，所以，如果创建数据库时不按照源码的字段名来建表，就没法使用JdbcRealm</li>
+</ul>
+<h2 id="JdbcRealm-demo"><a href="#JdbcRealm-demo" class="headerlink" title="JdbcRealm demo"></a>JdbcRealm demo</h2><h2 id="jar包"><a href="#jar包" class="headerlink" title="jar包"></a>jar包</h2><p><img src="https://img-blog.csdnimg.cn/20210201172252454.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p>这里password设计成32位，md5加密是32位<br><img src="https://img-blog.csdnimg.cn/20210509142135721.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2021020119270516.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log4j.rootLogger=Info, stdout </span><br><span class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender </span><br><span class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout </span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n</span><br></pre></td></tr></table></figure>
+<h3 id="shiro-ini"><a href="#shiro-ini" class="headerlink" title="shiro.ini"></a>shiro.ini</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">dataSource=com.mchange.v2.c3p0.ComboPooledDataSource</span><br><span class="line">dataSource.driverClass=com.mysql.jdbc.Driver</span><br><span class="line">dataSource.jdbcUrl=jdbc:mysql:<span class="comment">//localhost:3306/login</span></span><br><span class="line">dataSource.user=root</span><br><span class="line">dataSource.password=wityy</span><br><span class="line">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm</span><br><span class="line">jdbcRealm.dataSource=$dataSource</span><br><span class="line">securityManager.realm=$jdbcRealm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>main中dataSource用c3p0数据库连接池 连接数据库，<font color=red>mysql专栏中有关于数据库连接池的内容。</font> ，配置完dataSource后，配置jdbcRealm，将dataSource给jdbcRealm，将jdbcRealm赋值给SecurityManager，赋值前加$</p>
+<h3 id="main"><a href="#main" class="headerlink" title="main"></a>main</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.shiro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.SecurityUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.IncorrectCredentialsException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UnknownAccountException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UsernamePasswordToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.config.IniSecurityManagerFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.realm.Realm;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.Subject;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.Factory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.mgt.SecurityManager;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 完成用户认证功能</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//拿到SecurityManager并将它放到环境当中</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			subject.login(taken);</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="验证策略"><a href="#验证策略" class="headerlink" title="验证策略"></a>验证策略</h2><p>在说具体内容之前先了解一下认证过程的源码<br><font color=blue> 从login进入源码的过程参见该篇文章：</font><a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/113470133">认证过程</a></p>
+<p>从进入认证器部分的源码开始</p>
+<p>查看Authenticator认证器 接口的类层次，具体的实现类是ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/2021020120290946.png" alt="在这里插入图片描述"></p>
+<p>l里边有个authenticationStratery类属性，继续跳转<img src="https://img-blog.csdnimg.cn/20210201203002851.png" alt="在这里插入图片描述"><br>该接口的类层次，<font color=red>三个类分别代表三种不同的认证策略</font><br>AtLeastOneSuccessfulStrategy  验证一个成功后<strong>继续验证后边的</strong>，最终由一个及以上就成功，否则失败（<strong>默认</strong>）<br>AllSuccessfulStrategy  只有所有realm验证成功才算总体验证成功<br>FirstSuccessfulStrategy  （验证成功一个后<strong>停止验证后边的</strong>，一个都没有就失败）<br><img src="https://img-blog.csdnimg.cn/20210201203055207.png" alt="在这里插入图片描述"><br>加入AllSuccessfulStrategy后的ini文件（可以用多realm进行验证，再新建一个数据库进行realm配置然后securityManager.realm后边跟多个就行了，下边代码仅仅展示authenticationStrategy用法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">dataSource=com.mchange.v2.c3p0.DriverManagerDataSource</span><br><span class="line">dataSource.driverClass=com.mysql.jdbc.Driver</span><br><span class="line">dataSource.jdbcUrl=jdbc:mysql:<span class="comment">//localhost:3306/login</span></span><br><span class="line">dataSource.user=root</span><br><span class="line">dataSource.password=wityy</span><br><span class="line">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm</span><br><span class="line">jdbcRealm.dataSource=$dataSource</span><br><span class="line"></span><br><span class="line">authenticationStrategy=org.apache.shiro.authc.pam.AllSuccessfulStrategy</span><br><span class="line">securityManager.realm=$jdbcRealm</span><br><span class="line">securityManager.authenticator.authenticationStrategy=$authenticationStrategy</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/03/shiro-JdbcRealm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-《Java-并发编程实战》阅读笔记-Java-线程：原理篇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -518,6 +621,222 @@
 
 
   
+    <article id="post-Role-Based-Access-Control" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/02/Role-Based-Access-Control/">Role Based Access Control</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/02/Role-Based-Access-Control/" class="archive-article-date">
+  	<time datetime="2022-01-02T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-02</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p> 权限一句话来理解就是对资源的控制，对web应用来说就是对url的控制，关于权限可以毫不客气的说几乎每个系统都会包含，只不过不同系统关于权限的应用复杂程序不一样而已，现在我们在用的权限模型基本上都是以RBAC为基础进行扩展的，我们今天就将RBAC权限模型进行下介绍。 </p>
+<h2 id="二、RBAC模型"><a href="#二、RBAC模型" class="headerlink" title="二、RBAC模型"></a>二、RBAC模型</h2><p>  RBAC是Role-BasedAccess Control的英文缩写，意思是基于角色的访问控制。RBAC认为权限授权实际上是Who、What、How的问题。在RBAC模型中，who、what、how构成了访问权限三元组，也就是“Who对What(Which)进行How的操作，也就是“主体”对“客体”的操作，其中who——是权限的拥有者或主体（如：User、Role），what——是资源或对象（Resource、Class)</p>
+<p>   RBAC其实是一种分析模型，主要分为：基本模型RBAC0（Core RBAC）、角色分层模型RBAC1（Hierarchal RBAC）、角色限制模型RBAC2（Constraint RBAC）和统一模型RBAC3（Combines RBAC）。</p>
+<p>1）RBAC0</p>
+<p>   RBAC0，它是RBAC0的核心，RBAC1、RBAC2、RBAC3都是先后在RBAC0上的扩展。RBAC0定义了能构成RBAC控制系统的最小的元素集合，RBAC0由四部分构成：</p>
+<p>   a、用户（User）</p>
+<p>   b、角色（Role）</p>
+<p>   c、会话（Session）</p>
+<p>   d、许可（Pemission）,其中许可又包括“操作”和“控制对象”其中许可被赋予角色，而不是用户，当一个角色被指定给一个用户时，此用户就拥有了该角色所包含的许可。会话是动态的概念，用户必须通过会话才可以设置角色，是用户与激活的角色之间的映射关系。</p>
+<p><img src="https://img-blog.csdnimg.cn/ec577e1b419a422e85811524bb55f839.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_17,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>  图中，用户与角色是多对多的关系；角色和许可也是多对多的关系；用户与会话是一对一关系；会话与角色是一对多关系；</p>
+<p>2）RBAC1</p>
+<p>   RBAC1，它是RBAC角色的分层模型，RBAC1建立在RBAC0基础之上，在角色中引入了继承的概念，有了继承那么角色就有了上下级或者等级关系<br><img src="https://img-blog.csdnimg.cn/33b6e5f89e6d48fdba64360e3cb44de0.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_15,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>3）RBAC2</p>
+<p>   RBAC2，它是RBAC的约束模型，RBAC2也是建立的RBAC0的基础之上的，在RBAC0基础上假如了约束的概念，主要引入了静态职责分离SSD(Static Separation of Duty)和动态职责分离DSD(Dynamic Separation of Duty)。</p>
+<p>SSD是用户和角色的指派阶段加入的，主要是对用户和角色有如下约束:</p>
+<p>a、互斥角色：同一个用户在两个互斥角色中只能选择一个</p>
+<p>b、基数约束：一个用户拥有的角色是有限的，一个角色拥有的许可也是有限的</p>
+<p>c、先决条件约束：用户想要获得高级角色，首先必须拥有低级角色</p>
+<p>   DSD是会话和角色之间的约束，可以动态的约束用户拥有的角色，如一个用户可以拥有两个角色，但是运行时只能激活一个角色。<img src="https://img-blog.csdnimg.cn/249de963cf614991aeb543208e8b1519.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_16,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>4）RBAC3</p>
+<p>   RBAC3，它是RBAC1与RBAC2合集，所以RBAC3是既有角色分层又有约束的一种模型</p>
+<p><img src="https://img-blog.csdnimg.cn/26c53e4a05664eaaab0657a9f3e7eb2f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_16,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>以上就是RBAC模型的四种设计思想，现在我们用的权限模型都是在RBAC模型的基础上根据自己的业务进行组合和改进。</p>
+<h2 id="三、我们的权限模型"><a href="#三、我们的权限模型" class="headerlink" title="三、我们的权限模型"></a>三、我们的权限模型</h2><p>   先大概解释下我们的业务，我们做的是教育行业高校云平台，每个学校都可以在我们平台进行注册，注册完成后可以享受一些基础的服务，当然了不同级别的用户享受的基础服务是不同的，这些基础的服务包括新生注册管理、基础系统管理、考试系统管理、评教系统管理等模块，每个模块都相当于一个子系统，每个子系统都有各自的功能，每个功能也都有各自的相关的页面，而所有的子系统、页面以及页面上的功能按钮都是需要我们权限进行管理，所以我们的权限管理相对来说任务也是比较繁重的。</p>
+<p>   我们先来看下我们权限管理模块的类图：</p>
+<p><img src="https://img-blog.csdnimg.cn/649fd95bc8fa4f49964a92693352cffe.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p> 核心还是基于用户、角色和许可的RBAC模型，只不过我们将这三者分别进行了相应的扩展：</p>
+<p>用户</p>
+<p>   无论哪个用户首先它必须是属于某个部门的，部门是行政单位，而某个部门也可以包含多个用户，所以部门和用户的关系为1对多的关系；</p>
+<p>   先说一下为什么要有用户组的概念，如果有一类的用户都要属于某个角色，我们一个个给用户授予角色，重复工作特别多，所以我们把这么一些用户进行分类，也就是用户组，这样的话，我们直接对用户组赋予角色，减少重复的工作量，这样达到的目的是这，用户拥有的所有许可，就是用户个人所属角色拥有的许可与该用户所在用户组所属角色拥有的许可之和。一个用户可以属于多个用户组，一个用户组也可以包括多个用户，所以用户与用户组是多对多的关系；</p>
+<p>角色</p>
+<p>   角色是一定数量的许可的集合，许可的载体，一个角色可以包含多个用户，一个用户同样的也可以属于多个角色，所以角色与用户的关系为多对多的关系。同样的一个角色可以包含多个用户组，一个用户组也可以属于多个角色，所以角色和用户组也是多对多的关系；</p>
+<p>许可</p>
+<p>   许可我一般称它为权限，它包括控制对象和操作，控制对象一般为资源，包括菜单、页面、文件等资源，而操作一般包括增删改查等，图中“系统操作”就是操作，“菜单信息”就是控制对象；</p>
+<p>   菜单信息中的每个菜单都会有增删改查等操作，所以菜单信息与系统操作是一对多的关系；</p>
+<p>   我们给角色授予权限时，授予就是颗粒最小的权限，所以我们将系统操作权限授予某些角色。一个角色可以拥有多个系统操作，一个系统操作同样也可以属于多个角色，所以系统操作和角色为多对多的关系。</p>
+<p>   到这里我们就将我们的权限模型之间的关系基本上介绍完毕了，在类图中的两个类之间的多对多的关系在数据库中会出现第三张表，所以下面我们来看下我们的数据库中表的关系图：<br><img src="https://img-blog.csdnimg.cn/905cc3d323ba4f3394b9c27504fd4e7f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_16,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<h2 id="四、改进"><a href="#四、改进" class="headerlink" title="四、改进"></a>四、改进</h2><p>   现在这个权限模型已经开发出来投入使用了，当然了现在的模型也不一定是最好的，只能说针对于现在的系统的规模是比较合适的，对于现在的权限模型还是有可以扩展的地方，其实就是类图中的菜单信息，在系统中我们只是粗犷的将子系统名称、子系统菜单、子系统菜单页面元素、文件等这些资源全部放到了一个表中即菜单信息表，在表中我们利用类型进行具体区分，同时利用上下级关系来管理他们之间的层次关系，但是在这个表中冗余的数据会特别多，我觉得如果可以更进一步改善的话，可以考虑将菜单表按照菜单类型进行拆分，然后再来一张表资源关系表来管理这些类型资源之间的关系。</p>
+<p><img src="https://img-blog.csdnimg.cn/652b97dcef6e4efab614696348a10b96.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_13,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<h1 id="学习笔记"><a href="#学习笔记" class="headerlink" title="学习笔记"></a>学习笔记</h1><h2 id="RBAC优势体现在哪？"><a href="#RBAC优势体现在哪？" class="headerlink" title="RBAC优势体现在哪？"></a>RBAC优势体现在哪？</h2><p>在学习rbac之前我们如果想做菜单权限，我们建表应该是<strong>下图</strong>这样的，这样建表的问题是：所有用户里面实际上只有几种不同的菜单（RBAC只要针对角色进行关联就只需要几组关联信息），但是这样的建表方式，只要添加一个用户就需要更新关联表，这样很麻烦</p>
+<p>从数据库操作角度讲，当注册一个用户时</p>
+<ul>
+<li><p>使用原来的建表方式，你需要更新用户表和关联表</p>
+</li>
+<li><p>使用RBAC思想建表，只需要指定用户的角色即可</p>
+</li>
+</ul>
+<p>—–<strong>当一个用户只有一个角色时，只需要给用户表添加一个角色外键，角色表与菜单表进行关联</strong><br>—–<strong>当用户有多个角色时，需要在用户和角色之间建立一个关联表，角色表与菜单表进行关联</strong><br><img src="https://img-blog.csdnimg.cn/20210508102306114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p><strong>RBAC思想是一种用于数据库设计的思想，使用RBAC思想能够更好的完成权限控制</strong>，常用三种场景：</p>
+<ul>
+<li>菜单（不同用户显示不同菜单）</li>
+<li>资源可见（某些功能对该用户不可见）</li>
+<li>url权限（该用户不能访问某个控制器，比如某些vip功能）<br><img src="https://img-blog.csdnimg.cn/20210127231123214.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+</ul>
+<p>一个网站可以有多个用户，而用户会有不同的角色，最常见的就是管理员和普通用户，有的情境下用户只有一种角色（有的情境下用户会有不同的角色，这里以只一种角色来进行分析），一种角色一般是对应多种功能，对于角色和功能的关系，就必须要用角色-功能中间表，在整个过程中，角色始终是数据库设计的核心，其他的表都是围绕着角色转的</p>
+<h2 id="菜单Demo"><a href="#菜单Demo" class="headerlink" title="菜单Demo"></a>菜单Demo</h2><ul>
+<li>ssm环境下</li>
+<li>一个用户对应一个角色</li>
+<li>不同角色不同菜单</li>
+<li>用户登录后根据用户角色显示菜单<br><img src="https://img-blog.csdnimg.cn/20210128110352739.png" alt="在这里插入图片描述"></li>
+</ul>
+<p>数据库首先创建角色，角色表不需要外键，都是别的表依赖角色表</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">create table <span class="title">role</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">	id <span class="keyword">int</span>(<span class="number">10</span>)</span> primary key auto_increment,</span></span><br><span class="line"><span class="function">	name <span class="title">varchar</span><span class="params">(<span class="number">20</span>)</span></span></span><br><span class="line"><span class="function">)</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后创建用户表，案例设定一个用户一个角色，所以角色id对应用户的外键rid</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">create table <span class="title">users</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">	id <span class="keyword">int</span>(<span class="number">10</span>)</span> primary key auto_increment,</span></span><br><span class="line"><span class="function">	username <span class="title">varchar</span><span class="params">(<span class="number">20</span>)</span>,</span></span><br><span class="line"><span class="function">	password <span class="title">varchar</span><span class="params">(<span class="number">20</span>)</span>,</span></span><br><span class="line"><span class="function">	rid <span class="title">int</span><span class="params">(<span class="number">10</span>)</span></span></span><br><span class="line"><span class="function">)</span></span><br><span class="line"><span class="function"></span></span><br></pre></td></tr></table></figure>
+<p><em><strong>上边用户和角色的管理完毕，下边是角色和菜单的关联，一对多的关联，就不必也不能使用外键</strong></em></p>
+<p>创建菜单表，其中pid是显示出菜单的层次而设计</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">create table <span class="title">menu</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">id <span class="keyword">int</span>(<span class="number">10</span>)</span> primary key auto_increment,</span></span><br><span class="line"><span class="function">name <span class="title">varchar</span><span class="params">(<span class="number">20</span>)</span>,</span></span><br><span class="line"><span class="function">pid <span class="title">int</span><span class="params">(<span class="number">10</span>)</span></span></span><br><span class="line"><span class="function">)</span></span><br></pre></td></tr></table></figure>
+<p>创建role_menu，将role和menu联系起来，当业务需要查询某个角色的菜单，应将role_menu和menu两个表联合（rm.mid=m.id &amp;where rm.id=?），这样就能查询出某个role的所有menu</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">create table <span class="title">role_menu</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">id <span class="keyword">int</span>(<span class="number">10</span>)</span> primary key auto_increment,</span></span><br><span class="line"><span class="function">rid <span class="title">int</span><span class="params">(<span class="number">10</span>)</span>,</span></span><br><span class="line"><span class="function">mid <span class="title">int</span><span class="params">(<span class="number">10</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">)</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="mapper"><a href="#mapper" class="headerlink" title="mapper"></a>mapper</h3><h4 id="Login"><a href="#Login" class="headerlink" title="Login"></a>Login</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UsersMapper</span> </span>&#123;</span><br><span class="line">	<span class="function">Users <span class="title">selByUser</span><span class="params">(Users users)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span></span></span><br><span class="line"><span class="meta">  <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">  <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namesapce:理解成实现类的全路径(包名+类名) --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;cn.wit.mapper.UsersMapper&quot;</span> &gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selByUser&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;users&quot;</span>&gt;</span></span><br><span class="line">		select * from users where username = #&#123;username&#125; and password = #&#123;password&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">	</span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="查询菜单"><a href="#查询菜单" class="headerlink" title="查询菜单"></a>查询菜单</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MenuMapper</span> </span>&#123;</span><br><span class="line">	<span class="function">List&lt;Menu&gt; <span class="title">selByRid</span><span class="params">(<span class="meta">@Param(&quot;rid&quot;)</span> <span class="keyword">int</span> rid ,<span class="meta">@Param(&quot;pid&quot;)</span><span class="keyword">int</span> pid)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>菜单联合后，主要是联合了每个menu的role信息，where筛选role，就可以得到想要的某个role的全部menu，菜单需要有层次，进行递归调用（<a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/113096718?ops_request_misc=%25257B%252522request%25255Fid%252522%25253A%252522161176184116780266241771%252522%25252C%252522scm%252522%25253A%25252220140713.130102334.pc%25255Fblog.%252522%25257D&request_id=161176184116780266241771&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_v1~rank_blog_v1-1-113096718.pc_v1_rank_blog_v1&utm_term=%25E8%258F%259C%25E5%258D%2595">分级菜单案例</a>），</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE mapper</span><br><span class="line">  PUBLIC <span class="string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span><br><span class="line">  <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span><br><span class="line">&lt;!-- namesapce:理解成实现类的全路径(包名+类名) --&gt;</span><br><span class="line">&lt;mapper namespace=<span class="string">&quot;cn.wit.mapper.MenuMapper&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	&lt;resultMap type=<span class="string">&quot;menu&quot;</span> id=<span class="string">&quot;mmap&quot;</span>&gt;</span><br><span class="line">		&lt;id column=<span class="string">&quot;id&quot;</span> property=<span class="string">&quot;id&quot;</span> /&gt;</span><br><span class="line">		&lt;result column=<span class="string">&quot;name&quot;</span> property=<span class="string">&quot;name&quot;</span> /&gt;</span><br><span class="line">		&lt;result column=<span class="string">&quot;pid&quot;</span> property=<span class="string">&quot;pid&quot;</span> /&gt;</span><br><span class="line">		&lt;collection property=<span class="string">&quot;children&quot;</span> select=<span class="string">&quot;selByRid&quot;</span> column=<span class="string">&quot;&#123;rid=rid,pid=id&#125;&quot;</span>&gt;</span><br><span class="line">		&lt;/collection&gt;</span><br><span class="line">	&lt;/resultMap&gt;</span><br><span class="line">	&lt;select id=<span class="string">&quot;selByRid&quot;</span> resultMap=<span class="string">&quot;mmap&quot;</span>&gt;</span><br><span class="line">		select m.* ,#&#123;rid&#125; rid</span><br><span class="line">		from Menu m join</span><br><span class="line">		role_menu r on r.mid = m.id</span><br><span class="line">		where r.rid = #&#123;rid&#125; and m.pid=#&#123;pid&#125;</span><br><span class="line">	&lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="pojo"><a href="#pojo" class="headerlink" title="pojo"></a>pojo</h3><h4 id="Menu"><a href="#Menu" class="headerlink" title="Menu"></a>Menu</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line"><span class="keyword">private</span> String name;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> pid;</span><br><span class="line"><span class="keyword">private</span> List&lt;Menu&gt; children;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Users"><a href="#Users" class="headerlink" title="Users"></a>Users</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">	<span class="keyword">private</span> String username;</span><br><span class="line">	<span class="keyword">private</span> String password;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> rid;</span><br><span class="line">	<span class="keyword">private</span> List&lt;Menu&gt; menus;</span><br></pre></td></tr></table></figure>
+
+<h3 id="service"><a href="#service" class="headerlink" title="service"></a>service</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MenuServiceImpl</span> <span class="keyword">implements</span> <span class="title">MenuService</span></span>&#123;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> MenuMapper menuMapper;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Menu&gt; <span class="title">showMenu</span><span class="params">(<span class="keyword">int</span> rid)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> menuMapper.selByRid(rid, <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>注入登录的Mapper和需要设置菜单的Impl，传入rid设置菜单List，另外user空指针</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersServiceImpl</span> <span class="keyword">implements</span> <span class="title">UsersService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UsersMapper usersMapper;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> MenuService menuServiceImpl;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Users <span class="title">login</span><span class="params">(Users users)</span> </span>&#123;</span><br><span class="line">		Users user = usersMapper.selByUser(users);</span><br><span class="line">		<span class="keyword">if</span>(user!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			user.setMenus(menuServiceImpl.showMenu(user.getRid()));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> user;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="controller"><a href="#controller" class="headerlink" title="controller"></a>controller</h3><p>基 本 操 作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersController</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UsersService usersServiceImpl;</span><br><span class="line">	<span class="meta">@RequestMapping(&quot;login&quot;)</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">login</span><span class="params">(Users users,HttpSession session)</span></span>&#123;</span><br><span class="line">		</span><br><span class="line">		Users user = usersServiceImpl.login(users);</span><br><span class="line">		<span class="keyword">if</span>(user!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			session.setAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">			<span class="keyword">return</span> <span class="string">&quot;redirect:/main.jsp&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;redirect:/login.jsp&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="jsp"><a href="#jsp" class="headerlink" title="jsp"></a>jsp</h3><h4 id="login-jsp"><a href="#login-jsp" class="headerlink" title="login.jsp"></a>login.jsp</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=<span class="string">&quot;login&quot;</span> method=<span class="string">&quot;post&quot;</span>&gt;</span><br><span class="line">	用户名:&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;username&quot;</span>/&gt;&lt;br/&gt;</span><br><span class="line">	密码:&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;password&quot;</span>/&gt;&lt;br/&gt;</span><br><span class="line">	&lt;input type=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;登录&quot;</span>/&gt;&lt;br/&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="main-jsp"><a href="#main-jsp" class="headerlink" title="main.jsp"></a>main.jsp</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;%@ taglib prefix=<span class="string">&quot;c&quot;</span> uri=<span class="string">&quot;http://java.sun.com/jsp/jstl/core&quot;</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html PUBLIC <span class="string">&quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;</span> <span class="string">&quot;http://www.w3.org/TR/html4/loose.dtd&quot;</span>&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;dl&gt;</span><br><span class="line">&lt;c:forEach items=<span class="string">&quot;$&#123;user.menus &#125;&quot;</span> <span class="keyword">var</span>=<span class="string">&quot;menu&quot;</span>&gt;</span><br><span class="line">	&lt;dt&gt;$&#123;menu.name &#125;&lt;/dt&gt;</span><br><span class="line">	&lt;c:forEach items=<span class="string">&quot;$&#123;menu.children &#125;&quot;</span> <span class="keyword">var</span>=<span class="string">&quot;child&quot;</span>&gt;</span><br><span class="line">		&lt;dd&gt;$&#123;child.name &#125;&lt;/dd&gt;</span><br><span class="line">	&lt;/c:forEach&gt;</span><br><span class="line">&lt;/c:forEach&gt;</span><br><span class="line">&lt;/dl&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="资源可见"><a href="#资源可见" class="headerlink" title="资源可见"></a>资源可见</h2><p>在菜单的例子上进行添加，由于rbac良好的扩展性，不管是菜单还是资源可见还是url权限，都是属于<strong>功能</strong>的部分，都是功能呢围绕角色进行数据库设计的，在具体操作时，只需要添加一个功能表，一个角色_功能表，因为添加了新功能，相当于角色也多了一个新属性，对应的用户自然也要同步这个属性，在业务需要查询角色对应的功能时，SQL语句联合操作即可拿到数据</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><ul>
+<li>建立一个资源表element</li>
+<li>建立一个角色_资源表role_element</li>
+</ul>
+<p><strong>DDL</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `element` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">10</span>) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `eleno` varchar(<span class="number">20</span>) DEFAULT NULL,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span> <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB AUTO_INCREMENT=<span class="number">2</span> DEFAULT CHARSET=utf8;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `role_element` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">10</span>) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `rid` <span class="keyword">int</span>(<span class="number">10</span>) DEFAULT NULL,</span><br><span class="line">  `eid` <span class="keyword">int</span>(<span class="number">10</span>) DEFAULT NULL,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span> <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB AUTO_INCREMENT=<span class="number">2</span> DEFAULT CHARSET=utf8;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="mapper-1"><a href="#mapper-1" class="headerlink" title="mapper"></a>mapper</h3><p>资源可见指的是资源对特定的角色可见，对其他角色隐藏，当用户登录时，通过用户的角色（rid）判断是否要显示这一资源，所以，落实到具体的操作上，就应该是selByRid，联合element和role_element来结合rid和具体的资源，筛选rid可以得到某个rid的资源（返回element对象）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE mapper</span><br><span class="line">  PUBLIC <span class="string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span><br><span class="line">  <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">  &lt;mapper namespace=<span class="string">&quot;cn.wit.mapper.ElementMapper&quot;</span>&gt;</span><br><span class="line">  	&lt;resultMap type=<span class="string">&quot;Element&quot;</span> id=<span class="string">&quot;mymap&quot;</span>&gt;</span><br><span class="line">  		&lt;id column=<span class="string">&quot;id&quot;</span> property=<span class="string">&quot;id&quot;</span>/&gt;</span><br><span class="line">  		&lt;result column=<span class="string">&quot;eleno&quot;</span> property=<span class="string">&quot;eleno&quot;</span>/&gt;</span><br><span class="line">  	&lt;/resultMap&gt;</span><br><span class="line">  	&lt;select id=<span class="string">&quot;selByRid&quot;</span> parameterType=<span class="string">&quot;int&quot;</span> resultMap=<span class="string">&quot;mymap&quot;</span>&gt;</span><br><span class="line">  		select e.*,re.rid from element e</span><br><span class="line">  		join role_element re on e.id=re.eid </span><br><span class="line">  		where rid=#&#123;id&#125;</span><br><span class="line">  	&lt;/select&gt;</span><br><span class="line">  &lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="Impl"><a href="#Impl" class="headerlink" title="Impl"></a>Impl</h3><p>Impl基本操作调用方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ElementServiceImpl</span> <span class="keyword">implements</span> <span class="title">ElementService</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> ElementMapper elementMapper;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Element&gt; <span class="title">selByRid</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> elementMapper.selByRid(id);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>将新功能添加到用户中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersServiceImpl</span> <span class="keyword">implements</span> <span class="title">UsersService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UsersMapper usersMapper;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> MenuService menuServiceImpl;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> ElementService elementServiceImpl;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Users <span class="title">login</span><span class="params">(Users users)</span> </span>&#123;</span><br><span class="line">		Users user = usersMapper.selByUser(users);</span><br><span class="line">		<span class="keyword">if</span>(user!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			user.setMenus(menuServiceImpl.showMenu(user.getRid()));</span><br><span class="line">			user.setElements(elementServiceImpl.selByRid(user.getRid()));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> user;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="jsp-1"><a href="#jsp-1" class="headerlink" title="jsp"></a>jsp</h3><p>通过验证用户的elements资源属性中的eleno来匹配显示资源，某个资源的eleno字符串匹配，则进行显示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;c:forEach items=<span class="string">&quot;$&#123;user.elements &#125;&quot;</span> <span class="keyword">var</span>=<span class="string">&quot;ele&quot;</span>&gt;</span><br><span class="line">	&lt;c:<span class="keyword">if</span> test=<span class="string">&quot;$&#123;ele.eleno  eq &#x27;grant&#x27; &#125;&quot;</span>&gt;</span><br><span class="line">		&lt;button&gt;授权&lt;/button&gt;</span><br><span class="line">	&lt;/c:<span class="keyword">if</span>&gt;</span><br><span class="line">&lt;/c:forEach&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="URL权限验证"><a href="#URL权限验证" class="headerlink" title="URL权限验证"></a>URL权限验证</h2><p>权限验证相比前面两个不好理解一点，简单来说就是用户A用户B都能进行登录操作（重定向rbac/main.jsp这个uri）,但是用户A能访问demo控制器（经过controller然后跳转到demo.jsp），用户B没有访问demo的权限，访问demo就重定向到登录页面</p>
+<ul>
+<li>同样的，跟上面两个功能相比，url同样是一种功能，同样是建立两个表，并且用户添加功能属性</li>
+<li>不一样的是，只能将用户的url添加到Users中，返回值为User，这样查询全部权限的数据无法传到controller中，解决办法可以改返回值，也可以将查询全部权限的操作直接放在controller中，下边的例子就是后者<h2 id="数据库-1"><a href="#数据库-1" class="headerlink" title="数据库"></a>数据库</h2></li>
+<li>建立url表</li>
+<li>建立role_url表</li>
+</ul>
+<p><strong>DDL</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `url` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">10</span>) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `name` varchar(<span class="number">100</span>) DEFAULT NULL,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span> <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB AUTO_INCREMENT=<span class="number">4</span> DEFAULT CHARSET=utf8;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `role_url` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">10</span>) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `rid` <span class="keyword">int</span>(<span class="number">10</span>) DEFAULT NULL,</span><br><span class="line">  `uid` <span class="keyword">int</span>(<span class="number">10</span>) DEFAULT NULL,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span> <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB AUTO_INCREMENT=<span class="number">5</span> DEFAULT CHARSET=utf8;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="mapper-2"><a href="#mapper-2" class="headerlink" title="mapper"></a>mapper</h3><p>url权限控制需要查询某个角色的权限之外，还需要查询全部权限（当用户访问无权限内容时，应该做出某些动作，比如跳转会登陆界面，或者提醒你充VIP）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UrlMapper</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Select(&quot;select *from url where id in(select uid from role_url where rid=#&#123;rid&#125;)&quot;)</span></span><br><span class="line">	<span class="function">List&lt;Url&gt; <span class="title">selByRid</span><span class="params">(<span class="keyword">int</span> rid)</span></span>;</span><br><span class="line">	<span class="meta">@Select(&quot;select *from url&quot;)</span></span><br><span class="line">	List&lt;Url&gt;selAll();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="Impl-1"><a href="#Impl-1" class="headerlink" title="Impl"></a>Impl</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UrlServiceImpl</span> <span class="keyword">implements</span> <span class="title">UrlService</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UrlMapper urlMapper;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Url&gt; <span class="title">selByRid</span><span class="params">(<span class="keyword">int</span> rid)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> urlMapper.selByRid(rid);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Url&gt; <span class="title">showAll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> urlMapper.selAll();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersServiceImpl</span> <span class="keyword">implements</span> <span class="title">UsersService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UsersMapper usersMapper;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> MenuService menuServiceImpl;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> ElementService elementServiceImpl;</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UrlService urlServiceImpl;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Users <span class="title">login</span><span class="params">(Users users)</span> </span>&#123;</span><br><span class="line">		Users user = usersMapper.selByUser(users);</span><br><span class="line">		<span class="keyword">if</span>(user!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			user.setMenus(menuServiceImpl.showMenu(user.getRid()));</span><br><span class="line">			user.setElements(elementServiceImpl.selByRid(user.getRid()));</span><br><span class="line">			user.setUrl(urlServiceImpl.selByRid(user.getRid()));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> user;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="controller-1"><a href="#controller-1" class="headerlink" title="controller"></a>controller</h3><ul>
+<li>需要注入用户的所有信息，包括usersServiceImpl和url权限的查询全部需要的urlServiceImpl</li>
+<li>将users和全部url权限数据通过session流转给jsp<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UsersController</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UrlService urlServiceImpl;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Resource</span></span><br><span class="line">	<span class="keyword">private</span> UsersService usersServiceImpl;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@RequestMapping(&quot;login&quot;)</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">login</span><span class="params">(Users users,HttpSession session)</span></span>&#123;</span><br><span class="line">		</span><br><span class="line">		Users user = usersServiceImpl.login(users);</span><br><span class="line">		<span class="keyword">if</span>(user!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			System.out.println(user);</span><br><span class="line">			List&lt;Url&gt; urlist=urlServiceImpl.showAll();</span><br><span class="line">			session.setAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">			session.setAttribute(<span class="string">&quot;urlist&quot;</span>, urlist);</span><br><span class="line">			<span class="keyword">return</span> <span class="string">&quot;redirect:/main.jsp&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;redirect:/login.jsp&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@RequestMapping(&quot;demo&quot;)</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">demo</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;/a.jsp&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h3>通过filter或者拦截器来筛选请求</li>
+</ul>
+<p>逻辑思路：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">uri=session.getURI()<span class="comment">//请求uri</span></span><br><span class="line"><span class="keyword">if</span>(静态资源)&#123;</span><br><span class="line">	放行</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	所有权限<span class="function">url  urlist</span></span><br><span class="line"><span class="function">	<span class="title">if</span><span class="params">(urlist！=<span class="keyword">null</span>)</span></span>&#123;</span><br><span class="line">		isExist=<span class="keyword">false</span><span class="comment">//请求uri是否在权限里边</span></span><br><span class="line">		foreach(items=urlist <span class="keyword">var</span>=url)&#123;</span><br><span class="line">			<span class="keyword">if</span>(url.getName==uri)&#123;</span><br><span class="line">				isExist=<span class="keyword">true</span><span class="comment">//全部权限中有与uri一致的，需要权限验证</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(isExist)&#123;</span><br><span class="line">			<span class="comment">//uri在权限里边</span></span><br><span class="line">			</span><br><span class="line">			isRight<span class="comment">//是否属于本用户权限</span></span><br><span class="line">			urls=session.getAttribute()<span class="comment">//本用户权限</span></span><br><span class="line">			foreach(items=urls <span class="keyword">var</span>=url)&#123;</span><br><span class="line">				<span class="keyword">if</span>(url.getName()==uri)&#123;</span><br><span class="line">					isRight=<span class="keyword">true</span><span class="comment">//用户权限中有与uri一致的</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(isRight)&#123;</span><br><span class="line">				<span class="comment">//属于本用户权限</span></span><br><span class="line">				放行</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="comment">//本用户无该权限</span></span><br><span class="line">				重定向登录页面</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="comment">//不在权限里边</span></span><br><span class="line">			</span><br><span class="line">			放行</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		没有权限url，放行</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebFilter(&quot;/*&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UrlFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(FilterConfig filterConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span></span></span><br><span class="line"><span class="function">			<span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">		HttpServletRequest req=(HttpServletRequest)request;</span><br><span class="line">		HttpServletResponse res=(HttpServletResponse)response;</span><br><span class="line">		String uri=req.getRequestURI();</span><br><span class="line">		<span class="keyword">if</span>(uri.endsWith(<span class="string">&quot;.js&quot;</span>)||uri.endsWith(<span class="string">&quot;.css&quot;</span>)||uri.endsWith(<span class="string">&quot;.jpg&quot;</span>)||uri.endsWith(<span class="string">&quot;.png&quot;</span>))&#123;</span><br><span class="line">			<span class="comment">//放行</span></span><br><span class="line">			chain.doFilter(request, response);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(uri.equals(<span class="string">&quot;/rbac/login&quot;</span>)||uri.equals(<span class="string">&quot;/rbac/login.jsp&quot;</span>))&#123;</span><br><span class="line">				<span class="comment">//不拦截的uri</span></span><br><span class="line">				chain.doFilter(request, response);</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="keyword">boolean</span> isExist=<span class="keyword">false</span>;</span><br><span class="line">				HttpSession session = req.getSession();</span><br><span class="line">				<span class="comment">//先判断属不属于有权限的uri</span></span><br><span class="line">				List&lt;Url&gt; urlist = (List&lt;Url&gt;) session.getAttribute(<span class="string">&quot;urlist&quot;</span>);</span><br><span class="line">				<span class="keyword">if</span>(urlist!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					System.out.println(<span class="string">&quot;urlist不为空&quot;</span>);</span><br><span class="line">					<span class="keyword">for</span> (Url url : urlist) &#123;</span><br><span class="line">						System.out.println(url+<span class="string">&quot;:&quot;</span>+uri);</span><br><span class="line">						<span class="keyword">if</span>(uri.equals(url.getName()))&#123;</span><br><span class="line">							isExist=<span class="keyword">true</span>;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">if</span>(isExist)&#123;</span><br><span class="line">						System.out.println(<span class="string">&quot;存在有权限的uri&quot;</span>);</span><br><span class="line">						<span class="comment">//如果属于有权限的uri，判断是否是当前用户是否有访问该uri的权限</span></span><br><span class="line">						Users user = (Users) session.getAttribute(<span class="string">&quot;user&quot;</span>);</span><br><span class="line">						List&lt;Url&gt; urls = user.getUrl();</span><br><span class="line">						<span class="keyword">boolean</span> isRight=<span class="keyword">false</span>;</span><br><span class="line">						<span class="keyword">for</span> (Url url : urls) &#123;</span><br><span class="line">							System.out.println(uri+<span class="string">&quot;:&quot;</span>+url.getName());</span><br><span class="line">							<span class="keyword">if</span>(uri.equals(url.getName()))&#123;</span><br><span class="line">								isRight=<span class="keyword">true</span>;</span><br><span class="line">							&#125;</span><br><span class="line">						&#125;</span><br><span class="line">						<span class="keyword">if</span>(isRight)&#123;</span><br><span class="line">							<span class="comment">//此时是uri属于权限，而且用户拥有该权限，放行</span></span><br><span class="line">							System.out.println(<span class="string">&quot;有uri权限&quot;</span>);</span><br><span class="line">							chain.doFilter(request, response);</span><br><span class="line">						&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">							<span class="comment">//此时uri属于权限，用户没该权限，无权限访问跳回登陆页面</span></span><br><span class="line">							System.out.println(<span class="string">&quot;无uri权限&quot;</span>);</span><br><span class="line">							res.sendRedirect(<span class="string">&quot;/rbac/login.jsp&quot;</span>);</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">						<span class="comment">//此时是uri不属于权限，放行</span></span><br><span class="line">						chain.doFilter(request, response);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">					<span class="comment">//此时该权限表里边没有数据，所有都放行</span></span><br><span class="line">					chain.doFilter(request, response);</span><br><span class="line">				&#125;</span><br><span class="line">				</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zwk626542417/article/details/46726491?ops_request_misc=&request_id=&biz_id=102&utm_term=rbac&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-46726491.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187">参考链接</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/02/Role-Based-Access-Control/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-《Java-并发编程实战》阅读笔记-Java-线程：使用篇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -779,176 +1098,6 @@
 
 
   
-    <article id="post-LeetCode-135分发糖果-贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">LeetCode-135分发糖果-贪心</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/candy/submissions/">LeetCode-135分发糖果-贪心</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-12-整数转罗马数字--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">LeetCode-12 整数转罗马数字--贪心</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-to-roman/">LeetCode-12 整数转罗马数字–贪心</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
     <article id="post-LeetCode-1137-第-N-个泰波那契数--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1003,91 +1152,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-139-单词拆分--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/">LeetCode-139 单词拆分--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/word-break/">LeetCode-139 单词拆分–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/">展开全文 >></a>
         </p>
       
 
@@ -1204,19 +1268,19 @@
 
 
   
-    <article id="post-LeetCode-198-打家劫舍--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LeetCode-12-整数转罗马数字--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">LeetCode-198 打家劫舍--DP</a>
+      <a class="article-title" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">LeetCode-12 整数转罗马数字--贪心</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/" class="archive-article-date">
+        <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -1233,7 +1297,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/house-robber/">LeetCode-198 打家劫舍–DP</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-to-roman/">LeetCode-12 整数转罗马数字–贪心</a></p>
         
       
 
@@ -1247,7 +1311,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
         		</li>
       		
 		</ul>
@@ -1257,7 +1321,92 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-135分发糖果-贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">LeetCode-135分发糖果-贪心</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/candy/submissions/">LeetCode-135分发糖果-贪心</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">展开全文 >></a>
         </p>
       
 
@@ -1423,11 +1572,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1459,11 +1608,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">spring</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1487,15 +1644,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Tree</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1507,15 +1664,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
