@@ -256,7 +256,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">工具使用</a>
         		</li>
       		
 		</ul>
@@ -415,6 +415,116 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/09/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-%E5%B9%B6%E5%8F%91%E7%A8%8B%E5%BA%8F%E6%B5%8B%E8%AF%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-表的分页操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/09/%E8%A1%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%93%8D%E4%BD%9C/">表的分页操作</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/09/%E8%A1%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%93%8D%E4%BD%9C/" class="archive-article-date">
+  	<time datetime="2022-01-09T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-09</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p>create table flower(<br>id int(5) not null AUTO_INCREMENT PRIMARY KEY comment ‘编号’,<br>name varchar(100) not null comment ‘名称’,<br>price double(20,1) not null comment ‘价格’,<br>production varchar(100) not null comment ‘产地’<br>) comment ‘花卉信息表’;</p>
+<p>insert into flower values(default,“牵牛花”,10.0,“中国”);<br>insert into flower values(default,“水仙花”,15.0,“波兰”);<br>insert into flower values(default,“玫瑰花”,20.0,“漂亮国”);</p>
+<h2 id="实体层"><a href="#实体层" class="headerlink" title="实体层"></a>实体层</h2><h3 id="Flower-java"><a href="#Flower-java" class="headerlink" title="Flower.java"></a>Flower.java</h3><h3 id="PageInfo-java"><a href="#PageInfo-java" class="headerlink" title="PageInfo.java"></a>PageInfo.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> pageSize;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> pageNumber;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> total;</span><br><span class="line">	<span class="keyword">private</span> List&lt;Flower&gt; list;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> StartNumber;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>pageSize：每页数据个数，可以给默认值，或者由jsp传入</li>
+<li>total：总共页数，在Impl中进行计算</li>
+<li>pageNumber：现在的页数，初始值设定为1，点击上一页（下一页）变化</li>
+<li>list：当前页数数据集合，去除list进行数据的展示</li>
+<li>startNumber：当前页面从第几条数据之后开始，由pageNumber进行计算得出，和pageSize一起构成limit的两个要素</li>
+<li>dao中selByPage方法传入PageInfo对象，返回List，count方法返回数据总条数</li>
+<li><strong>Impl中默认pageNumber为1,pageSize默认为某值，请求传入这两个参数，可能为null或””，需要进行条件判断，否则就按照默认值设置PageInfo对象的pageNumber、pageSize、pageStart，调用selByPage返回list，并设置list，调用Count并设置total.将PageInfo请求转发给jsp</strong></li>
+<li>jsp中使用jstl技术拿到PageInfo对象<h2 id="数据访问层（dao）"><a href="#数据访问层（dao）" class="headerlink" title="数据访问层（dao）"></a>数据访问层（dao）</h2></li>
+</ul>
+<h3 id="FlowerDao（cn-wit-Dao）"><a href="#FlowerDao（cn-wit-Dao）" class="headerlink" title="FlowerDao（cn.wit.Dao）"></a>FlowerDao（cn.wit.Dao）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FlowerDao</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">count</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function">List&lt;Flower&gt; <span class="title">selByPage</span><span class="params">(PageInfo pi)</span></span>;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="FlowerDaoImpl-cn-wit-DaoImpl"><a href="#FlowerDaoImpl-cn-wit-DaoImpl" class="headerlink" title="FlowerDaoImpl(cn.wit.DaoImpl)"></a>FlowerDaoImpl(cn.wit.DaoImpl)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlowerDaoImpl</span> <span class="keyword">implements</span> <span class="title">FlowerDao</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">count</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Connection conn=<span class="keyword">null</span>;</span><br><span class="line">		PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">		ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//类加载驱动</span></span><br><span class="line">			Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">			<span class="comment">//创建连接对象</span></span><br><span class="line">			conn=DriverManager.getConnection(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">			<span class="comment">//创建sql命名</span></span><br><span class="line">			String sql=<span class="string">&quot;select count(*) from flower&quot;</span>;</span><br><span class="line">			<span class="comment">//创建sql命令对象</span></span><br><span class="line">			ps=conn.prepareStatement(sql);</span><br><span class="line">			<span class="comment">//执行sql命令</span></span><br><span class="line">			rs=ps.executeQuery();</span><br><span class="line">			<span class="keyword">int</span>  i=<span class="number">0</span>;</span><br><span class="line">			<span class="keyword">if</span>(rs.next()) &#123;</span><br><span class="line">			i=rs.getInt(<span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> i;</span><br><span class="line">		&#125;  <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">			</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					rs.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e1) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e1.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					ps.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					conn.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Flower&gt; <span class="title">selByPage</span><span class="params">(PageInfo pi)</span> </span>&#123;</span><br><span class="line">		Connection conn=<span class="keyword">null</span>;</span><br><span class="line">		PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">		ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//类加载驱动</span></span><br><span class="line">			Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">			<span class="comment">//创建连接对象</span></span><br><span class="line">			conn=DriverManager.getConnection(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">			<span class="comment">//创建sql命令</span></span><br><span class="line">			String sql=<span class="string">&quot;select *from flower limit ?,?&quot;</span>;</span><br><span class="line">			ps=conn.prepareStatement(sql);</span><br><span class="line">			ps.setObject(<span class="number">1</span>,pi.getStartNumber());</span><br><span class="line">			ps.setObject(<span class="number">2</span>, pi.getPageSize());</span><br><span class="line">			rs=ps.executeQuery();</span><br><span class="line">			List&lt;Flower&gt;list=<span class="keyword">new</span> ArrayList&lt;Flower&gt;();</span><br><span class="line">			<span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">				Flower flower=<span class="keyword">new</span> Flower();</span><br><span class="line">				flower.setId(rs.getInt(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">				flower.setName(rs.getString(<span class="string">&quot;name&quot;</span>));</span><br><span class="line">				flower.setPrice(rs.getDouble(<span class="string">&quot;price&quot;</span>));</span><br><span class="line">				flower.setProduction(rs.getString(<span class="string">&quot;production&quot;</span>));</span><br><span class="line">				list.add(flower);</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">return</span> list;</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">		&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					rs.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e1) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e1.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					ps.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					conn.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="业务逻辑"><a href="#业务逻辑" class="headerlink" title="业务逻辑"></a>业务逻辑</h2><h3 id="FlowerService-cn-wit-service"><a href="#FlowerService-cn-wit-service" class="headerlink" title="FlowerService(cn.wit.service)"></a>FlowerService(cn.wit.service)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FlowerService</span> </span>&#123;</span><br><span class="line">	<span class="function">PageInfo  <span class="title">selByPage</span><span class="params">(String pageNumber,String pageSizeStr)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="FlowerServiceImpl-cn-wit-serviceImpl"><a href="#FlowerServiceImpl-cn-wit-serviceImpl" class="headerlink" title="FlowerServiceImpl(cn.wit.serviceImpl)"></a>FlowerServiceImpl(cn.wit.serviceImpl)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> PageInfo <span class="title">selByPage</span><span class="params">(String pageNumberStr,String pageSizeStr)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> pageNumber=<span class="number">1</span>;</span><br><span class="line">		<span class="keyword">int</span> pageSize=<span class="number">3</span>;</span><br><span class="line">		<span class="keyword">if</span>(pageNumberStr!=<span class="keyword">null</span>&amp;&amp;!pageNumberStr.equals(<span class="string">&quot;&quot;</span>))&#123;</span><br><span class="line">			pageNumber=Integer.parseInt(pageNumberStr);</span><br><span class="line">		&#125;</span><br><span class="line">		logger.debug(<span class="string">&quot;pageNumber:&quot;</span>+pageNumber);</span><br><span class="line">		<span class="keyword">if</span>(pageSizeStr!=<span class="keyword">null</span>&amp;&amp;!pageSizeStr.equals(<span class="string">&quot;&quot;</span>))&#123;</span><br><span class="line">			pageSize=Integer.parseInt(pageSizeStr);</span><br><span class="line">		&#125;</span><br><span class="line">		logger.debug(<span class="string">&quot;pageSize:&quot;</span>+pageSize);</span><br><span class="line">		</span><br><span class="line">		PageInfo pi=<span class="keyword">new</span> PageInfo();</span><br><span class="line">		FlowerDao fd=<span class="keyword">new</span> FlowerDaoImpl();</span><br><span class="line">		<span class="keyword">int</span> count = fd.count();</span><br><span class="line">		pi.setTotal(count%pageSize==<span class="number">0</span>?count/pageSize:count/pageSize+<span class="number">1</span>);</span><br><span class="line">		pi.setPageSize(pageSize);</span><br><span class="line">		pi.setStartNumber((pageNumber-<span class="number">1</span>)*pageSize);</span><br><span class="line">		pi.setPageNumber(pageNumber);</span><br><span class="line">		logger.debug(pageNumber);</span><br><span class="line">		pi.setList(fd.selByPage(pi));</span><br><span class="line">		 </span><br><span class="line">		<span class="keyword">return</span> pi;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="控制器层"><a href="#控制器层" class="headerlink" title="控制器层"></a>控制器层</h2><h3 id="PageServlet-cn-wit-Servlet"><a href="#PageServlet-cn-wit-Servlet" class="headerlink" title="PageServlet(cn.wit.Servlet)"></a>PageServlet(cn.wit.Servlet)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet(&quot;/page&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageSerlvet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">	FlowerService fs=<span class="keyword">new</span> FlowerServiceImpl();</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		String pageNumber=req.getParameter(<span class="string">&quot;pageNumber&quot;</span>);</span><br><span class="line">		String pageSize=req.getParameter(<span class="string">&quot;pageSize&quot;</span>);</span><br><span class="line">		PageInfo pi = fs.selByPage(pageNumber, pageSize);</span><br><span class="line">		<span class="keyword">if</span>(pi!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			req.setAttribute(<span class="string">&quot;pi&quot;</span>, pi);</span><br><span class="line">			<span class="comment">//路径</span></span><br><span class="line">				<span class="comment">//相对路径 </span></span><br><span class="line">					<span class="comment">//从上一个文件夹中出发</span></span><br><span class="line">				<span class="comment">//绝对路径</span></span><br><span class="line">					<span class="comment">//静态资源，静态资源都在webcontent中，写绝对路径应该是/项目名/webcontent中路径</span></span><br><span class="line">					<span class="comment">//请求转发从项目下出发  /page.jsp  </span></span><br><span class="line">					<span class="comment">//写类的绝对路径时是从src下出发</span></span><br><span class="line">			req.getRequestDispatcher(<span class="string">&quot;/page.jsp&quot;</span>).forward(req, resp);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><h3 id="page-jsp"><a href="#page-jsp" class="headerlink" title="page.jsp"></a>page.jsp</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html PUBLIC <span class="string">&quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;</span> <span class="string">&quot;http://www.w3.org/TR/html4/loose.dtd&quot;</span>&gt;</span><br><span class="line">&lt;%<span class="meta">@taglib</span> prefix=<span class="string">&quot;c&quot;</span> uri=<span class="string">&quot;http://java.sun.com/jsp/jstl/core&quot;</span>%&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;table border=<span class="string">&quot;1px&quot;</span> &gt;</span><br><span class="line">   		&lt;tr&gt;</span><br><span class="line">   			&lt;th&gt;编号&lt;/th&gt;</span><br><span class="line">   			&lt;th&gt;花名&lt;/th&gt;</span><br><span class="line">   			&lt;th&gt;价格&lt;/th&gt;</span><br><span class="line">   			&lt;th&gt;产地&lt;/th&gt;</span><br><span class="line">   		&lt;/tr&gt;</span><br><span class="line">   		</span><br><span class="line">   		&lt;c:forEach items=<span class="string">&quot;$&#123;pi.list&#125;&quot;</span> <span class="keyword">var</span>=<span class="string">&quot;flower&quot;</span>&gt;</span><br><span class="line">   			&lt;tr&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.id&#125;&lt;/td&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.name&#125;&lt;/td&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.price&#125;&lt;/td&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.production&#125;&lt;/td&gt;</span><br><span class="line">   			&lt;/tr&gt;</span><br><span class="line">   		&lt;/c:forEach&gt;</span><br><span class="line">   	</span><br><span class="line">   	&lt;/table&gt;</span><br><span class="line">   	&lt;a href=<span class="string">&quot;page?pageNumber=$&#123;pi.pageNumber-1 &#125;&amp;pageSize=$&#123;pi.pageSize&#125;&quot;</span> &lt;c:<span class="keyword">if</span> test=<span class="string">&quot;$&#123;pi.pageNumber&lt;= 1&#125;&quot;</span>&gt;         onclick=<span class="string">&quot;javascript:return false;&quot;</span>          &lt;/c:<span class="keyword">if</span>&gt;&gt;上一页&lt;/a&gt;</span><br><span class="line">   	&lt;a href=<span class="string">&quot;page?pageNumber=$&#123;pi.pageNumber+1 &#125;&amp;pageSize=$&#123;pi.pageSize&#125;&quot;</span> &lt;c:<span class="keyword">if</span> test=<span class="string">&quot;$&#123;pi.pageNumber&gt;= pi.total&#125;&quot;</span>&gt;  onclick=<span class="string">&quot;javascript:return false;&quot;</span>          &lt;/c:<span class="keyword">if</span>&gt;&gt;下一页&lt;/a&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/09/%E8%A1%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%93%8D%E4%BD%9C/">展开全文 >></a>
         </p>
       
 
@@ -1623,220 +1733,6 @@
 
 
   
-    <article id="post-《Java 并发编程实战》阅读笔记 Java 线程：安全性" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/04/%E3%80%8AJava%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%20Java%20%E7%BA%BF%E7%A8%8B%EF%BC%9A%E5%AE%89%E5%85%A8%E6%80%A7/">《Java 并发编程实战》阅读笔记 Java 线程：安全性</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/04/%E3%80%8AJava%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%20Java%20%E7%BA%BF%E7%A8%8B%EF%BC%9A%E5%AE%89%E5%85%A8%E6%80%A7/" class="archive-article-date">
-  	<time datetime="2022-01-04T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-04</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <span id="more"></span>
-
-<h1 id="线程的安全性"><a href="#线程的安全性" class="headerlink" title="线程的安全性"></a>线程的安全性</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7">线程的安全性</a></p>
-<ul>
-<li>加锁：synchronized<ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#synchronized-%E9%94%81%E6%98%AF%E5%8F%AF%E9%87%8D%E5%85%A5%E7%9A%84">synchronized 锁是可重入的</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#%E5%A6%82%E4%BD%95%E5%87%8F%E5%B0%8F-synchronized-%E5%AF%B9%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D">如何减小 synchronized 对应用性能的影响</a></li>
-<li>synchronized 的原理<ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#%E5%AF%B9%E8%B1%A1%E5%A4%B4">对象头</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#monitor-record">Monitor Record</a></li>
-</ul>
-</li>
-<li>锁优化<ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#%E5%81%8F%E5%90%91%E9%94%81">偏向锁</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113105011#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81">轻量级锁</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>线程安全性主要解决了如何避免多个线程在同一时刻访问同一个数据的问题，它主要通过加锁的方式，使得多个线程排成一队，一个一个的访问数据，也是由于这个原因，通过这种方式保证线程安全会对应用的性能产生影响。</p>
-<h2 id="加锁：synchronized"><a href="#加锁：synchronized" class="headerlink" title="加锁：synchronized"></a>加锁：synchronized</h2><p>synchronized 是互斥锁，也就是说，在同一时刻，它只允许一个线程拿到锁对象，它有如下两种使用方法：</p>
-<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>对于存在线程安全问题的代码，我们可以用 synchronized 修饰它，然后无论有多少个线程同时到达这段代码，线程们都只能排成一列，一个一个的去执行它，就像地道战中的 “关口”，只能容一个人爬过去。</p>
-<p>synchronized 有两种修饰代码块的方式：<strong>修饰代码块</strong>和<strong>修饰方法</strong>。</p>
-<p><strong>修饰代码块：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (lock对象) &#123;</span><br><span class="line">    <span class="comment">// 同步代码块</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>修饰方法：</strong></p>
-<p>采用修饰方法的方式使用 synchronized，不意味着就不需要指定锁对象了，只不过 Java 为我们隐式指定了。</p>
-<p>修饰普通方法：（锁是调用方法的对象）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 相当于:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span>(<span class="keyword">this</span>) <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>修饰静态方法：（锁是该方法所在的 Class 对象）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 相当于:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span>(X.class) <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="synchronized-锁是可重入的"><a href="#synchronized-锁是可重入的" class="headerlink" title="synchronized 锁是可重入的"></a>synchronized 锁是可重入的</h3><p>拿到锁的线程可以再次拿到锁，这意味着获取锁的操作粒度是“线程”。</p>
-<p><strong>可重入锁的一种实现方式：</strong></p>
-<ul>
-<li>为每个锁关联一个获取该锁的次数的计数器 count，和一个所有者线程；</li>
-<li>count = 0 时，说明没有线程持有该锁；</li>
-<li>当一个线程获取一个未被持有的锁时，JVM 记下锁的持有者，并 count = 1；</li>
-<li>当这个线程再次获取锁时，count++；</li>
-<li>当线程退出同步代码块时，count–；</li>
-<li>当 count 再次减为 0 时，锁被释放。</li>
-</ul>
-<h3 id="如何减小-synchronized-对应用性能的影响"><a href="#如何减小-synchronized-对应用性能的影响" class="headerlink" title="如何减小 synchronized 对应用性能的影响"></a>如何减小 synchronized 对应用性能的影响</h3><ul>
-<li>将不影响共享状态且执行时间较长的操作放在同步代码块外面，尽量让同步代码块中放的是一些执行时间比较短的操作，让持有锁的时间尽可能短。</li>
-<li>执行时间较长的计算或者可能无法快速完成的操作时（如：网络I/O或控制台I/O操作），一定不要持有锁！</li>
-</ul>
-<h3 id="synchronized-的原理"><a href="#synchronized-的原理" class="headerlink" title="synchronized 的原理"></a>synchronized 的原理</h3><h4 id="简单解释（通过-Happens-Before）"><a href="#简单解释（通过-Happens-Before）" class="headerlink" title="简单解释（通过 Happens-Before）"></a>简单解释（通过 Happens-Before）</h4><p>Happens-Before 中有一条关于锁的规则：监视器锁的解锁操作必须在同一个监视器锁的加锁操作前执行。我们知道，Java 中的 Happens-Before 规则表达的是：前面一个操作的结果对后续操作是可见的。这条规则说明，前一个线程的解锁操作对后一个线程的加锁操作是可见的，即前一个线程在临界区修改的共享变量，对后续进入临界区的线程是可见的。</p>
-<blockquote>
-<p>这里的 “临界区” 表示被 synchronized 修饰的代码块。</p>
-</blockquote>
-<h4 id="真正的原理"><a href="#真正的原理" class="headerlink" title="真正的原理"></a>真正的原理</h4><p>JVM 是基于进入和退出 Monitor 对象来实现方法同步和代码块同步的。代码块的同步是通过<code>monitorenter</code>和<code>monitorexit</code>实现的，方法同步使用的是另一种方式，细节在JVM规范中并没有详细说明。</p>
-<p><code>monitorenter</code>会被插入到同步代码块开始的位置，而<code>monitorexit</code>会被插入到方法结束的位置或者异常处（并不是同步代码块结束的位置），JVM保证每个<code>monitorenter</code>都会有一个<code>monitorexit</code>与之对应。</p>
-<p>当一个线程执行到<code>monitorenter</code>指令时，会尝试获取对象对应的 monitor 的所有权，任何对象都有一个 monitor 与之关联，当一个 monitor 被持有后，该对象所保护的区域将处于锁定状态，因为其他线程这时不能持有 monitor。</p>
-<p>那么接下来问题来了，锁对象到底被存在哪里呢？synchronized 用的锁是存在 Java 对象的对象头中的，我们先来介绍一下对象头是什么。</p>
-<h5 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h5><p>Java 的对象头主要包含几部分：</p>
-<table>
-<thead>
-<tr>
-<th>长度</th>
-<th>内容</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>32/64 bit</td>
-<td>Mark Word</td>
-<td>存储对象的hashCode和锁信息</td>
-</tr>
-<tr>
-<td>32/64 bit</td>
-<td>Class Metadata Address</td>
-<td>存储对象类型数据的指针</td>
-</tr>
-<tr>
-<td>32 bit</td>
-<td>Array length</td>
-<td>数组的长度（数组对象才有）</td>
-</tr>
-</tbody></table>
-<h5 id="Monitor-Record"><a href="#Monitor-Record" class="headerlink" title="Monitor Record"></a>Monitor Record</h5><p>Monitor Record是线程私有的数据结构，每一个线程都有一个可用monitor record列表，同时还有一个全局的可用列表。每一个被锁住的对象都会和一个monitor record关联（对象头的 MarkWord中的 LockWord 指向 monitor record 的起始地址），同时 monitor record 中有一个 Owner 字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用。</p>
-<p>如下为 Monitor Record 的内部结构：</p>
-<table>
-<thead>
-<tr>
-<th>monitor record 元素</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Owner</strong></td>
-<td>初始时为 null,表示当前没有任何线程拥有该 monitor，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为 null</td>
-</tr>
-<tr>
-<td>EntryQ</td>
-<td>阻塞所有试图锁住 monitor record 失败的线程</td>
-</tr>
-<tr>
-<td>RcThis</td>
-<td>表示 blocked 或 waiting 在该 monitor record 上的所有线程的个数</td>
-</tr>
-<tr>
-<td><strong>Nest</strong></td>
-<td>实现重入锁的计数</td>
-</tr>
-<tr>
-<td>HashCode</td>
-<td>保存从对象头拷贝过来的 HashCode 值</td>
-</tr>
-<tr>
-<td>Candidate</td>
-<td>0 表示没有需要唤醒的线程，1 表示要唤醒一个继任线程来竞争锁</td>
-</tr>
-</tbody></table>
-<h3 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h3><h4 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h4><p><strong>引入背景：</strong><br>大多数情况下，锁不仅不存在竞争，而且总是由同一个线程多次获得，为了让线程获得锁的代价更低而引入了偏向锁。</p>
-<p><strong>加锁过程：</strong></p>
-<ul>
-<li>当一个线程访问同步块并获取锁时，会在对象头和栈帧中的锁记录里存储锁偏向的线程ID，以后该线程在进入和退出同步块时不需要花费CAS操作来加锁和解锁，而只需简单的测试一下对象头的Mark Word里是否存储着指向当前线程的偏向锁</li>
-<li>如果测试成功，表示线程已经获得了锁</li>
-<li>如果测试失败，则需要再测试下Mark Word中偏向锁的标识是否设置成1（表示当前是偏向锁）</li>
-<li>如果没有设置，则使用CAS竞争锁，如果设置了，则尝试使用CAS将对象头的偏向锁指向当前线程</li>
-</ul>
-<h4 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108161631?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164609574916780255271836%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=164609574916780255271836&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-30-108161631.nonecase&utm_term=%E5%B9%B6%E5%8F%91&spm=1018.2226.3001.4450">转载自此</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/04/%E3%80%8AJava%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%20Java%20%E7%BA%BF%E7%A8%8B%EF%BC%9A%E5%AE%89%E5%85%A8%E6%80%A7/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
@@ -1963,19 +1859,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">高并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">查找</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2011,10 +1907,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">spring</a>
               </li>
              
@@ -2023,7 +1915,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2031,11 +1923,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Math</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
+                <a href="javascript:void(0)" class="js-tag color5">Math</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2071,7 +1963,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2079,11 +1971,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
