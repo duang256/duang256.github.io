@@ -292,6 +292,745 @@
 
 
   
+    <article id="post-MYSQL优化实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/28/MYSQL%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">MYSQL优化实践</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/28/MYSQL%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/" class="archive-article-date">
+  	<time datetime="2022-01-28T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-28</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h1 id="MYSQL优化实践"><a href="#MYSQL优化实践" class="headerlink" title="MYSQL优化实践"></a>MYSQL优化实践</h1><p>除非单表数据未来会一直不断上涨，否则不要一开始就考虑拆分，拆分会带来逻辑、部署、运维的各种复杂度，一般以整型值为主的表在<code>千万级</code>以下，字符串为主的表在<code>五百万</code>以下是没有太大问题的。而事实上很多时候MySQL单表的性能依然有不少优化空间，甚至能正常支撑千万级以上的数据量：</p>
+<h2 id="字段"><a href="#字段" class="headerlink" title="字段"></a>字段</h2><ul>
+<li>尽量使用<code>TINYINT</code>、<code>SMALLINT</code>、<code>MEDIUM_INT</code>作为整数类型而非<code>INT</code>，如果非负则加上<code>UNSIGNED</code></li>
+<li><code>VARCHAR</code>的长度只分配真正需要的空间</li>
+<li>使用枚举或整数代替字符串类型</li>
+<li>尽量使用<code>TIMESTAMP</code>而非<code>DATETIME</code>，</li>
+<li>单表不要有太多字段，建议在20以内</li>
+<li>避免使用NULL字段，很难查询优化且占用额外索引空间</li>
+<li>用整型来存IP</li>
+</ul>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><ul>
+<li>索引并不是越多越好，要根据查询有针对性的创建，考虑在<code>WHERE</code>和<code>ORDER BY</code>命令上涉及的列建立索引，可根据<code>EXPLAIN</code>来查看是否用了索引还是全表扫描</li>
+<li>应尽量避免在<code>WHERE</code>子句中对字段进行<code>NULL</code>值判断，否则将导致引擎放弃使用索引而进行全表扫描</li>
+<li>值分布很稀少的字段不适合建索引，例如”性别”这种只有两三个值的字段</li>
+<li>字符字段只建前缀索引</li>
+<li>字符字段最好不要做主键</li>
+<li>不用外键，由程序保证约束</li>
+<li>尽量不用<code>UNIQUE</code>，由程序保证约束</li>
+<li>使用多列索引时主意顺序和查询条件保持一致，同时删除不必要的单列索引</li>
+</ul>
+<h2 id="查询SQL"><a href="#查询SQL" class="headerlink" title="查询SQL"></a>查询SQL</h2><ul>
+<li><p>可通过开启慢查询日志来找出较慢的SQL</p>
+</li>
+<li><p>不做列运算：SELECT id WHERE age + 1 = 10，任何对列的操作都将导致表扫描，它包括数据库教程函数、计算表达式等等，查询时要尽可能将操作移至等号右边</p>
+<p>sql语句尽可能简单：一条sql只能在一个cpu运算；大语句拆小语句，减少锁时间；一条大sql可以堵死整个库</p>
+</li>
+<li><p>不用<code>SELECT *</code></p>
+</li>
+<li><p><code>OR</code>改写成<code>IN</code>：<code>OR</code>的效率是n级别，<code>IN</code>的效率是log(n)级别，in的个数建议控制在200以内</p>
+</li>
+<li><p>不用函数和触发器，在应用程序实现</p>
+</li>
+<li><p>避免<code>%xxx</code>式查询</p>
+</li>
+<li><p>少用<code>JOIN</code></p>
+</li>
+<li><p>使用同类型进行比较，比如用<code>&#39;123&#39;</code>和<code>&#39;123&#39;</code>比，<code>123</code>和<code>123</code>比</p>
+</li>
+<li><p>尽量避免在<code>WHERE</code>子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描</p>
+</li>
+<li><p>对于连续数值，使用<code>BETWEEN</code>不用<code>IN</code>：<code>SELECT id FROM t WHERE num BETWEEN 1 AND 5</code></p>
+</li>
+<li><p>列表数据不要拿全表，要使用<code>LIMIT</code>来分页，每页数量也不要太大</p>
+</li>
+</ul>
+<h2 id="引擎"><a href="#引擎" class="headerlink" title="引擎"></a>引擎</h2><p>目前广泛使用的是MyISAM和InnoDB两种引擎：</p>
+<h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h3><p>MyISAM引擎是MySQL 5.1及之前版本的默认引擎，它的特点是：</p>
+<ul>
+<li>不支持行锁，读取时对需要读到的所有表加锁，写入时则对表加排它锁</li>
+<li>不支持事务</li>
+<li>不支持外键</li>
+<li>不支持崩溃后的安全恢复</li>
+<li>在表有读取查询的同时，支持往表中插入新纪录</li>
+<li>支持<code>BLOB</code>和<code>TEXT</code>的前500个字符索引，支持全文索引</li>
+<li>支持延迟更新索引，极大提升写入性能</li>
+<li>对于不会进行修改的表，支持压缩表，极大减少磁盘空间占用</li>
+</ul>
+<h3 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h3><p>InnoDB在MySQL 5.5后成为默认索引，它的特点是：</p>
+<ul>
+<li>支持行锁，采用MVCC来支持高并发</li>
+<li>支持事务</li>
+<li>支持外键</li>
+<li>支持崩溃后的安全恢复</li>
+<li>不支持全文索引</li>
+</ul>
+<p>总体来讲，MyISAM适合<code>SELECT</code>密集型的表，而InnoDB适合<code>INSERT</code>和<code>UPDATE</code>密集型的表</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/28/MYSQL%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-MySQL日志" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/27/MySQL%E6%97%A5%E5%BF%97/">MYSQL日志</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/27/MySQL%E6%97%A5%E5%BF%97/" class="archive-article-date">
+  	<time datetime="2022-01-27T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-27</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h2 id="MySQL里的那些日志们"><a href="#MySQL里的那些日志们" class="headerlink" title="MySQL里的那些日志们"></a>MySQL里的那些日志们</h2><p>同大多数关系型数据库一样，日志文件是MySQL数据库的重要组成部分。MySQL有几种不同的日志文件，通常包括错误日志文件，二进制日志，通用日志，慢查询日志，等等。这些日志可以帮助我们定位mysqld内部发生的事件，数据库性能故障，记录数据的变更历史，用户恢复数据库等等。本文主要描述错误日志文件。</p>
+<h3 id="1-MySQL日志文件系统的组成"><a href="#1-MySQL日志文件系统的组成" class="headerlink" title="1.MySQL日志文件系统的组成"></a>1.MySQL日志文件系统的组成</h3><p>a、错误日志：记录启动、运行或停止mysqld时出现的问题。 b、通用日志：记录建立的客户端连接和执行的语句。 c、更新日志：记录更改数据的语句。该日志在MySQL 5.1中已不再使用。 d、二进制日志：记录所有更改数据的语句。还用于复制。 e、慢查询日志：记录所有执行时间超过long_query_time秒的所有查询或不使用索引的查询。 f、Innodb日志：innodb redo log 和undo log</p>
+<p>缺省情况下，所有日志创建于mysqld数据目录中。 可以通过刷新日志，来强制mysqld来关闭和重新打开日志文件（或者在某些情况下切换到一个新的日志）。 当你执行一个FLUSH LOGS语句或执行mysqladmin flush-logs或mysqladmin refresh时，则日志被老化。 对于存在MySQL复制的情形下，从复制服务器将维护更多日志文件，被称为接替日志。</p>
+<h3 id="2-错误日志"><a href="#2-错误日志" class="headerlink" title="2.错误日志"></a>2.错误日志</h3><p>错误日志是一个文本文件。 错误日志记录了MySQL Server每次启动和关闭的详细信息以及运行过程中所有较为严重的警告和错误信息。 可以用–log-error[=file_name]选项来开启mysql错误日志，该选项指定mysqld保存错误日志文件的位置。 对于指定–log-error[=file_name]选项而未给定file_name值，mysqld使用错误日志名host_name.err 并在数据目录中写入日志文件。 在mysqld正在写入错误日志到文件时，执行FLUSH LOGS 或者mysqladmin flush-logs时，服务器将关闭并重新打开日志文件。 建议在flush之前手动重命名错误日志文件，之后mysql服务将使用原始文件名打开一个新文件。 以下为错误日志备份方法： shell&gt; mv host_name.err host_name.err-old shell&gt; mysqladmin flush-logs shell&gt; mv host_name.err-old backup-directory</p>
+<h3 id="3-InnoDB中的日志"><a href="#3-InnoDB中的日志" class="headerlink" title="3.InnoDB中的日志"></a>3.InnoDB中的日志</h3><p>MySQL数据库InnoDB存储引擎Log漫游</p>
+<p>1 – Undo Log</p>
+<p><strong>Undo Log 是为了实现事务的原子性</strong>，在MySQL数据库InnoDB存储引擎中，还用Undo Log来实现多版本并发控制(简称：MVCC)。</p>
+<ul>
+<li>事务的原子性(Atomicity) 事务中的所有操作，要么全部完成，要么不做任何操作，不能只做部分操作。如果在执行的过程中发生 了错误，要回滚(Rollback)到事务开始前的状态，就像这个事务从来没有执行过。</li>
+<li>原理 Undo Log的原理很简单，为了满足事务的原子性，在操作任何数据之前，首先将数据备份到一个地方 （这个存储数据备份的地方称为Undo Log）。然后进行数据的修改。如果出现了错误或者用户执行了 ROLLBACK语句，系统可以利用Undo Log中的备份将数据恢复到事务开始之前的状态。</li>
+</ul>
+<p>除了可以保证事务的原子性，<strong>Undo Log也可以用来辅助完成事务的持久化</strong>。</p>
+<ul>
+<li>事务的持久性(Durability) 事务一旦完成，该事务对数据库所做的所有修改都会持久的保存到数据库中。为了保证持久性，数据库 系统会将修改后的数据完全的记录到持久的存储上。</li>
+<li>用Undo Log实现原子性和持久化的事务的简化过程 假设有A、B两个数据，值分别为1,2。 A.事务开始. B.记录A=1到undo log. C.修改A=3. D.记录B=2到undo log. E.修改B=4. F.将undo log写到磁盘。 G.将数据写到磁盘。 H.事务提交 这里有一个隐含的前提条件：‘数据都是先读到内存中，然后修改内存中的数据，最后将数据写回磁盘’。</li>
+<li>之所以能同时保证原子性和持久化，是因为以下特点： A. 更新数据前记录Undo log。 B. 为了保证持久性，必须将数据在事务提交前写到磁盘。只要事务成功提交，数据必然已经持久化。 C. Undo log必须先于数据持久化到磁盘。如果在G,H之间系统崩溃，undo log是完整的， 可以用来回滚事务。 D. 如果在A-F之间系统崩溃,因为数据没有持久化到磁盘。所以磁盘上的数据还是保持在事务开始前的状态。</li>
+</ul>
+<p>缺陷：每个事务提交前将数据和Undo Log写入磁盘，这样会导致大量的磁盘IO，因此性能很低。</p>
+<p>如果能够将数据缓存一段时间，就能减少IO提高性能。但是这样就会丧失事务的持久性。因此引入了另外一 种机制来实现持久化，即Redo Log.</p>
+<p>2 – Redo Log</p>
+<ul>
+<li>原理 和Undo Log相反，<strong>Redo Log记录的是新数据的备份</strong>。在事务提交前，只要将Redo Log持久化即可， 不需要将数据持久化。当系统崩溃时，虽然数据没有持久化，但是Redo Log已经持久化。系统可以根据 Redo Log的内容，将所有数据恢复到最新的状态。</li>
+<li>Undo + Redo事务的简化过程 假设有A、B两个数据，值分别为1,2. A.事务开始. B.记录A=1到undo log. C.修改A=3. D.记录A=3到redo log. E.记录B=2到undo log. F.修改B=4. G.记录B=4到redo log. H.将redo log写入磁盘。 I.事务提交<br><strong>undo log 保存的是修改前的数据,并且保存到内存中,回滚的时候在读取里面的内容(从而实现了原子性),redolog保存的是修改后的数据(对新数据的备份,同时也会将redo log备份),在事务提交写入到磁盘,从而保证了持久性</strong></li>
+</ul>
+<h3 id="4-慢查询日志"><a href="#4-慢查询日志" class="headerlink" title="4- 慢查询日志"></a>4- 慢查询日志</h3><p>概述 　　数据库查询快慢是影响项目性能的一大因素，对于数据库，我们除了要优化 SQL，更重要的是得先找到需要优化的 SQL。如何找到低效的 SQL 是写这篇文章的主要目的。</p>
+<p>MySQL 数据库有一个“慢查询日志”功能，用来记录查询时间超过某个设定值的SQL，这将极大程度帮助我们快速定位到问题所在，以便对症下药。至于查询时间的多少才算慢，每个项目、业务都有不同的要求，传统企业的软件允许查询时间高于某个值，但是把这个标准放在互联网项目或者访问量大的网站上，估计就是一个bug，甚至可能升级为一个功能性缺陷。</p>
+<p>为避免误导读者，特申明本文的讨论限制在 Win 64位 + MySQL 5.6 范围内。其他平台或数据库种类及版本，我没有尝试过，不做赘述。</p>
+<p>设置日志功能 关于慢查询日志，主要涉及到下面几个参数：</p>
+<p>slow_query_log ：是否开启慢查询日志功能（必填） long_query_time ：超过设定值，将被视作慢查询，并记录至慢查询日志文件中（必填） log-slow-queries ：慢查询日志文件（不可填），自动在 \data\ 创建一个 [hostname]-slow.log 文件 　　也就是说，只有满足以上三个条件，“慢查询功能”才可能正确开启或关闭。</p>
+<h3 id="5-二进制日志"><a href="#5-二进制日志" class="headerlink" title="5.二进制日志"></a>5.二进制日志</h3><ul>
+<li>主从复制的基础：binlog日志和relaylog日志</li>
+</ul>
+<p>什么是MySQL主从复制 简单来说就是保证主SQL（Master）和从SQL（Slave）的数据是一致性的，向Master插入数据后，Slave会自动从Master把修改的数据同步过来（有一定的延迟），通过这种方式来保证数据的一致性，就是主从复制</p>
+<p>复制方式 MySQL5.6开始主从复制有两种方式：基于日志（binlog）、基于GTID（全局事务标示符）。 本文只涉及基于日志binlog的主从配置</p>
+<p>复制原理 1、Master将数据改变记录到二进制日志(binary log)中，也就是配置文件log-bin指定的文件，这些记录叫做二进制日志事件(binary log events) 2、Slave通过I/O线程读取Master中的binary log events并写入到它的中继日志(relay log) 3、Slave重做中继日志中的事件，把中继日志中的事件信息一条一条的在本地执行一次，完成数据在本地的存储，从而实现将改变反映到它自己的数据(数据重放)</p>
+<p>1、什么是binlog binlog是一个二进制格式的文件，用于记录用户对数据库更新的SQL语句信息，例如更改数据库表和更改内容的SQL语句都会记录到binlog里，但是对库表等内容的查询不会记录。</p>
+<p>默认情况下，binlog日志是二进制格式的，不能使用查看文本工具的命令（比如，cat，vi等）查看，而使用mysqlbinlog解析查看。</p>
+<p>2.binlog的作用 当有数据写入到数据库时，还会同时把更新的SQL语句写入到对应的binlog文件里，这个文件就是上文说的binlog文件。使用mysqldump备份时，只是对一段时间的数据进行全备，但是如果备份后突然发现数据库服务器故障，这个时候就要用到binlog的日志了。</p>
+<p>主要作用是用于数据库的主从复制及数据的增量恢复。</p>
+<p>1.啥是binlog? 记录数据库增删改,不记录查询的二进制日志. 2.作用:用于数据同步. 3、如何开启binlog日志功能 在mysql的配置文件my.cnf中，增加log_bin参数即可开启binlog日志，也可以通过赋值来指定binlog日志的文件名，实例如下：</p>
+<p>[root@DB02 ~]# grep log_bin /etc/my.cnf log_bin = /application/mysql/logs/dadong-bin</p>
+<p>log_bin</p>
+<p>[root@DB02 ~]# 提示：也可以按“log_bin = /application/mysql/logs/dadong-bin”命名，目录要存在 为什么要刷新binlog?找到全备数据和binlog文件的恢复临界点.</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>mysql数据库的binlog和relay log日志有着举足轻重的作用，并且relay log仅仅存在于mysql 的slave库，它的作用就是记录slave库中的io进程接收的从主库传过来的binlog,然后等待slave库的sql进程去读取和应用，保证主从同步，但是binlog主库和从库（slave）都可以存在，记录对数据发生或潜在发生更改的SQL语句，并以二进制的形式保存在磁盘，所以可以通过binlog来实时备份和恢复数据库。</p>
+<p>1、什么是binlog binlog是一个二进制格式的文件，用于记录用户对数据库更新的SQL语句信息，例如更改数据库表和更改内容的SQL语句都会记录到binlog里，但是对库表等内容的查询不会记录。</p>
+<p>默认情况下，binlog日志是二进制格式的，不能使用查看文本工具的命令（比如，cat，vi等）查看，而使用mysqlbinlog解析查看。</p>
+<p>2.binlog的作用 当有数据写入到数据库时，还会同时把更新的SQL语句写入到对应的binlog文件里，这个文件就是上文说的binlog文件。使用mysqldump备份时，只是对一段时间的数据进行全备，但是如果备份后突然发现数据库服务器故障，这个时候就要用到binlog的日志了。</p>
+<p>主要作用是用于数据库的主从复制及数据的增量恢复。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108415360">文章出处</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/27/MySQL%E6%97%A5%E5%BF%97/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-Innodb中的事务隔离级别和锁的关系" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/26/Innodb%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%92%8C%E9%94%81%E7%9A%84%E5%85%B3%E7%B3%BB/">Innodb中的事务隔离级别和锁的关系</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/26/Innodb%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%92%8C%E9%94%81%E7%9A%84%E5%85%B3%E7%B3%BB/" class="archive-article-date">
+  	<time datetime="2022-01-26T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-26</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h2 id="Innodb中的事务隔离级别和锁的关系"><a href="#Innodb中的事务隔离级别和锁的关系" class="headerlink" title="Innodb中的事务隔离级别和锁的关系"></a>Innodb中的事务隔离级别和锁的关系</h2><blockquote>
+<p>前言:</p>
+<p>我们都知道事务的几种性质，数据库为了维护这些性质，尤其是一致性和隔离性，一般使用加锁这种方式。同时数据库又是个高并发的应用，同一时间会有大量的并发访问，如果加锁过度，会极大的降低并发处理能力。所以对于加锁的处理，可以说就是数据库对于事务处理的精髓所在。这里通过分析MySQL中InnoDB引擎的加锁机制，来抛砖引玉，让读者更好的理解，在事务处理中数据库到底做了什么。</p>
+</blockquote>
+<p>一次封锁or两段锁？ 因为有大量的并发访问，为了预防死锁，一般应用中推荐使用<strong>一次封锁法</strong>，就是<strong>在方法的开始阶段，已经预先知道会用到哪些数据，然后全部锁住，在方法运行之后，再全部解锁</strong>。这种方式可以有效的避免循环死锁，但在数据库中却不适用，因为在事务开始阶段，<strong>数据库并不知道会用到哪些数据</strong>。 数据库遵循的是两段锁协议，将事务分成两个阶段，加锁阶段和解锁阶段（所以叫两段锁）</p>
+<ul>
+<li>加锁阶段：在该阶段可以进行加锁操作。在对任何数据进行读操作之前要申请并获得S锁（共享锁，其它事务可以继续加共享锁，但不能加排它锁），在进行写操作之前要申请并获得X锁（排它锁，其它事务不能再获得任何锁）。<strong>加锁不成功，则事务进入等待状态，直到加锁成功才继续执行。</strong></li>
+<li>解锁阶段：当事务释放了一个封锁以后，事务进入解锁阶段，在该阶段只能进行解锁操作不能再进行加锁操作。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>事务</th>
+<th>加锁/解锁处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin；</td>
+<td></td>
+</tr>
+<tr>
+<td>insert into test …</td>
+<td>加insert对应的锁</td>
+</tr>
+<tr>
+<td>update test set…</td>
+<td>加update对应的锁</td>
+</tr>
+<tr>
+<td>delete from test …</td>
+<td>加delete对应的锁</td>
+</tr>
+<tr>
+<td>commit;</td>
+<td>事务提交时，同时释放insert、update、delete对应的锁</td>
+</tr>
+</tbody></table>
+<p>这种方式虽然<strong>无法避免死锁</strong>，但是两段锁协议<strong>可以保证事务的并发调度是串行化</strong>（串行化很重要，尤其是在数据恢复和备份的时候）的。</p>
+<h2 id="事务中的加锁方式"><a href="#事务中的加锁方式" class="headerlink" title="事务中的加锁方式"></a>事务中的加锁方式</h2><p>事务的四种隔离级别 </p>
+<p>在数据库操作中，为了有效保证并发读取数据的正确性，提出的事务隔离级别。我们的数据库锁，也是为了构建这些隔离级别存在的。</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读（Dirty Read）</th>
+<th>不可重复读（NonRepeatable Read）</th>
+<th>幻读（Phantom Read）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>未提交读（Read uncommitted）</td>
+<td>可能</td>
+<td>可能</td>
+<td>可能</td>
+</tr>
+<tr>
+<td>已提交读（Read committed）</td>
+<td>不可能</td>
+<td>可能</td>
+<td>可能</td>
+</tr>
+<tr>
+<td>可重复读（Repeatable read）</td>
+<td>不可能</td>
+<td>不可能</td>
+<td>可能</td>
+</tr>
+<tr>
+<td>可串行化（Serializable ）</td>
+<td>不可能</td>
+<td>不可能</td>
+<td>不可能</td>
+</tr>
+</tbody></table>
+<ul>
+<li>未提交读(Read Uncommitted)：允许脏读，也就是可能读取到其他会话中未提交事务修改的数据</li>
+<li>提交读(Read Committed)：只能读取到已经提交的数据。Oracle等多数数据库默认都是该级别 (不重复读)</li>
+<li>可重复读(Repeated Read)：可重复读。在同一个事务内的查询都是事务开始时刻一致的，InnoDB默认级别。在SQL标准中，该隔离级别消除了不可重复读，但是还存在幻读</li>
+<li>串行读(Serializable)：完全串行化的读，每次读都需要获得<strong>表级共享锁</strong>，读写相互都会阻塞</li>
+</ul>
+<p>Read Uncommitted这种级别，数据库一般都不会用，而且任何操作都不会加锁，这里就不讨论了。</p>
+<h2 id="MySQL中锁的种类"><a href="#MySQL中锁的种类" class="headerlink" title="MySQL中锁的种类"></a>MySQL中锁的种类</h2><p>MySQL中锁的种类很多，有常见的表锁和行锁，也有新加入的Metadata Lock等等,表锁是对一整张表加锁，虽然可分为读锁和写锁，但毕竟是锁住整张表，会导致并发能力下降，一般是做ddl处理时使用。</p>
+<p>行锁则是锁住数据行，这种加锁方法比较复杂，但是由于只锁住有限的数据，对于其它数据不加限制，所以并发能力强，MySQL一般都是用行锁来处理并发事务。这里主要讨论的也就是行锁。</p>
+<h3 id="Read-Committed（读取提交内容）"><a href="#Read-Committed（读取提交内容）" class="headerlink" title="Read Committed（读取提交内容）"></a>Read Committed（读取提交内容）</h3><p>在RC级别中，数据的读取都是不加锁的，但是数据的写入、修改和删除是需要加锁的。效果如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">MySQL<span class="operator">&gt;</span> <span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">table</span> class_teacher \G\</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="keyword">Table</span>: class_teacher</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="keyword">Create</span> <span class="keyword">Table</span>: <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `class_teacher` (</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"> `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"> `class_name` <span class="type">varchar</span>(<span class="number">100</span>) <span class="keyword">COLLATE</span> utf8mb4_unicode_ci <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"> `teacher_id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"> <span class="keyword">PRIMARY</span> KEY (`id`),</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"> KEY `idx_teacher_id` (`teacher_id`)</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">5</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4 <span class="keyword">COLLATE</span><span class="operator">=</span>utf8mb4_unicode_ci</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.02</span> sec)</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">MySQL<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> class_teacher;</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------------+------------+</span></span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> class_name   <span class="operator">|</span> teacher_id <span class="operator">|</span></span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------------+------------+</span></span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 初三一班     <span class="operator">|</span>          <span class="number">1</span> <span class="operator">|</span></span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 初二一班     <span class="operator">|</span>          <span class="number">2</span> <span class="operator">|</span></span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">|</span>  <span class="number">4</span> <span class="operator">|</span> 初二二班     <span class="operator">|</span>          <span class="number">2</span> <span class="operator">|</span></span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line">​</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------------+------------+</span></span><br></pre></td></tr></table></figure>
+
+<p>由于MySQL的InnoDB默认是使用的RR级别，所以我们先要将该session开启成RC级别，并且设置binlog的模式</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> session transaction isolation level read committed;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> SESSION binlog_format <span class="operator">=</span> <span class="string">&#x27;ROW&#x27;</span>;（或者是MIXED）</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>update class_teacher set class_name=‘初三二班’ where teacher_id=1;</td>
+<td>update class_teacher set class_name=‘初三三班’ where teacher_id=1;</td>
+</tr>
+<tr>
+<td></td>
+<td>ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction</td>
+</tr>
+<tr>
+<td>commit;</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>为了防止并发过程中的修改冲突，事务A中MySQL给teacher_id=1的数据行加锁，并一直不commit（释放锁），那么事务B也就一直拿不到该行锁，wait直到超时。</p>
+<p>这时我们要注意到，teacher_id是有索引的，如果是没有索引的class_name呢？update class_teacher set teacher_id=3 where class_name = ‘初三一班’; 那么MySQL会给整张表的所有数据行的加行锁。这里听起来有点不可思议，但是当sql运行的过程中，MySQL并不知道哪些数据行是 class_name = ‘初三一班’的（没有索引嘛），如果一个条件无法通过索引快速过滤，存储引擎层面就会将所有记录加锁后返回，再由MySQL Server层进行过滤。</p>
+<p>但在实际使用过程当中，MySQL做了一些改进，在MySQL Server过滤条件，发现不满足后，会调用unlock_row方法，把不满足条件的记录释放锁 (违背了二段锁协议的约束)。这样做，保证了最后只会持有满足条件记录上的锁，但是每条记录的加锁操作还是不能省略的。可见即使是MySQL，为了效率也是会违反规范的。（参见《高性能MySQL》中文第三版p181）</p>
+<p>这种情况同样适用于MySQL的默认隔离级别RR。所以对一个数据量很大的表做批量修改的时候，如果无法使用相应的索引，MySQL Server过滤数据的的时候特别慢，就会出现虽然没有修改某些行的数据，但是它们还是被锁住了的现象。</p>
+<h3 id="Repeatable-Read（可重读）"><a href="#Repeatable-Read（可重读）" class="headerlink" title="Repeatable Read（可重读）"></a>Repeatable Read（可重读）</h3><p>这是MySQL中InnoDB默认的隔离级别。我们姑且分“读”和“写”两个模块来讲解。</p>
+<p>####读 读就是可重读，可重读这个概念是一事务的多个实例在并发读取数据时，会看到同样的数据行，有点抽象，我们来看一下效果。</p>
+<p>RC（不可重读）模式下的展现</p>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=1; idclass_name,teacher_id1初三二班12初三一班1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>update class_teacher set class_name=‘初三三班’ where id=1;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=1; idclass_name,teacher_id1初三三班12初三一班1 读到了事务B修改的数据，和第一次查询的结果不一样，是不可重读的。</td>
+<td></td>
+</tr>
+<tr>
+<td>commit;</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>事务B修改id=1的数据提交之后，事务A同样的查询，后一次和前一次的结果不一样，这就是不可重读（重新读取产生的结果不一样）。这就很可能带来一些问题，那么我们来看看在RR级别中MySQL的表现：</p>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+<th>事务C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=1;idclass_nameteacher_id1初三二班12初三一班1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>update class_teacher set class_name=‘初三三班’ where id=1;commit;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>insert into class_teacher values (null,‘初三三班’,1); commit;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=1;idclass_nameteacher_id1初三二班12初三一班1 没有读到事务B修改的数据，和第一次sql读取的一样，是可重复读的。没有读到事务C新添加的数据。</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>commit;</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>我们注意到，当teacher_id=1时，事务A先做了一次读取，事务B中间修改了id=1的数据，并commit之后，事务A第二次读到的数据和第一次完全相同。所以说它是可重读的。那么MySQL是怎么做到的呢？这里姑且卖个关子，我们往下看。</p>
+<h3 id="不可重复读和幻读的区别"><a href="#不可重复读和幻读的区别" class="headerlink" title="不可重复读和幻读的区别"></a>不可重复读和幻读的区别</h3><p>很多人容易搞混不可重复读和幻读，确实这两者有些相似。但不可重复读重点在于update和delete，而幻读的重点在于insert。</p>
+<p>果使用锁机制来实现这两种隔离级别，在可重复读中，该sql第一次读取到数据后，就将这些数据加锁，其它事务无法修改这些数据，就可以实现可重复读了。但这种方法却无法锁住insert的数据，所以当事务A先前读取了数据，或者修改了全部数据，事务B还是可以insert数据提交，这时事务A就会发现莫名其妙多了一条之前没有的数据，这就是幻读，不能通过行锁来避免。需要Serializable隔离级别 ，读用读锁，写用写锁，读锁和写锁互斥，这么做可以有效的避免幻读、不可重复读、脏读等问题，但会极大的降低数据库的并发能力。</p>
+<p>所以说不可重复读和幻读最大的区别，就在于如何通过锁机制来解决他们产生的问题。</p>
+<p>上文说的，是使用悲观锁机制来处理这两种问题，但是MySQL、ORACLE、PostgreSQL等成熟的数据库，出于性能考虑，都是使用了以乐观锁为理论基础的MVCC（多版本并发控制）来避免这两种问题。</p>
+<h3 id="悲观锁和乐观锁"><a href="#悲观锁和乐观锁" class="headerlink" title="悲观锁和乐观锁"></a>悲观锁和乐观锁</h3><ul>
+<li>悲观锁</li>
+</ul>
+<p>正如其名，它指的是对数据被外界（包括本系统当前的其他事务，以及来自外部系统的事务处理）修改持保守态度，因此，在整个数据处理过程中，将数据处于锁定状态。悲观锁的实现，往往依靠数据库提供的锁机制（也只有数据库层提供的锁机制才能真正保证数据访问的排他性，否则，即使在本系统中实现了加锁机制，也无法保证外部系统不会修改数据）。</p>
+<p>在悲观锁的情况下，为了保证事务的隔离性，就需要一致性锁定读。读取数据时给加锁，其它事务无法修改这些数据。修改删除数据时也要加锁，其它事务无法读取这些数据。</p>
+<ul>
+<li>乐观锁</li>
+</ul>
+<p>相对悲观锁而言，乐观锁机制采取了更加宽松的加锁机制。悲观锁大多数情况下依靠数据库的锁机制实现，以保证操作最大程度的独占性。但随之而来的就是数据库性能的大量开销，特别是对长事务而言，这样的开销往往无法承受。</p>
+<p>而乐观锁机制在一定程度上解决了这个问题。乐观锁，大多是基于数据版本（ Version ）记录机制实现。何谓数据版本？即为数据增加一个版本标识，在基于数据库表的版本解决方案中，一般是通过为数据库表增加一个 “version” 字段来实现。读取出数据时，将此版本号一同读出，之后更新时，对此版本号加一。此时，将提交数据的版本数据与数据库表对应记录的当前版本信息进行比对，如果提交的数据版本号大于数据库表当前版本号，则予以更新，否则认为是过期数据。</p>
+<p>要说明的是，MVCC的实现没有固定的规范，每个数据库都会有不同的实现方式，这里讨论的是InnoDB的MVCC。</p>
+<h2 id="MVCC在MySQL的InnoDB中的实现"><a href="#MVCC在MySQL的InnoDB中的实现" class="headerlink" title="MVCC在MySQL的InnoDB中的实现"></a>MVCC在MySQL的InnoDB中的实现</h2><p>在InnoDB中，会在<strong>每行数据后添加两个额外的隐藏的值来实现MVCC</strong>，这两个值一个记录这行数据何时被创建，另外一个记录这行数据何时过期（或者被删除）。  在实际操作中，<strong>存储的并不是时间，而是事务的版本号</strong>，每开启一个新事务，事务的版本号就会递增。 在<strong>可重读</strong>Repeatable reads事务隔离级别下：</p>
+<ul>
+<li><strong>SELECT时，读取创建版本号&lt;=当前事务版本号，删除版本号为空或&gt;当前事务版本号。</strong></li>
+<li><strong>INSERT时，保存当前事务版本号为行的创建版本号</strong></li>
+<li><strong>DELETE时，保存当前事务版本号为行的删除版本号</strong></li>
+<li><strong>UPDATE时，插入一条新纪录，保存当前事务版本号为行创建版本号，同时保存当前事务版本号到原来删除的行</strong></li>
+</ul>
+<p>通过MVCC，虽然每行记录都需要额外的存储空间，更多的行检查工作以及一些额外的维护工作，但可以减少锁的使用，大多数读操作<strong>都不用加锁</strong>，读数据操作很简单，性能很好，并且也能保证只会读取到符合标准的行，也只锁住必要行。</p>
+<p>我们不管从数据库方面的教课书中学到，还是从网络上看到，大都是上文中事务的四种隔离级别这一模块列出的意思，RR级别是可重复读的，但无法解决幻读，而只有在Serializable级别才能解决幻读。于是我就加了一个事务C来展示效果。在事务C中添加了一条teacher_id=1的数据commit，RR级别中应该会有幻读现象，事务A在查询teacher_id=1的数据时会读到事务C新加的数据。但是测试后发现，在MySQL中是不存在这种情况的，在事务C提交后，事务A还是不会读到这条数据。可见在MySQL的RR级别中，是解决了幻读的读问题的。参见下图</p>
+<p>读问题解决了，根据MVCC的定义，并发提交数据时会出现冲突，那么冲突时如何解决呢？我们再来看看InnoDB中RR级别对于写数据的处理。</p>
+<h2 id="“读”与“读”的区别"><a href="#“读”与“读”的区别" class="headerlink" title="“读”与“读”的区别"></a>“读”与“读”的区别</h2><p>可能有读者会疑惑，事务的隔离级别其实都是对于读数据的定义，但到了这里，就被拆成了读和写两个模块来讲解。这主要是因为MySQL中的读，和事务隔离级别中的读，是不一样的。</p>
+<p>我们且看，在<strong>RR级别中，通过MVCC机制，虽然让数据变得可重复读</strong>，但我们读到的数据可能是历史数据，是不及时的数据，不是数据库当前的数据！这在一些对于数据的时效特别敏感的业务中，就很可能出问题。</p>
+<p>对于这种读取历史数据的方式，我们叫它**快照读 (snapshot read)**，而读取数据库当前版本数据的方式，叫当前读 (current read)。很显然，在MVCC中：</p>
+<ul>
+<li>快照读：就是select<ul>
+<li>select * from table …;</li>
+</ul>
+</li>
+<li>当前读：特殊的读操作，插入/更新/删除操作，属于当前读，处理的都是当前的数据，需要加锁。<ul>
+<li>select * from table where ? lock in share mode;</li>
+<li>select * from table where ? for update;</li>
+<li>insert;</li>
+<li>update ;</li>
+<li>delete;</li>
+</ul>
+</li>
+</ul>
+<p>事务的隔离级别实际上都是定义了当前读的级别，MySQL为了减少锁处理（包括等待其它锁）的时间，提升并发能力，引入了快照读的概念，使得select不用加锁。而update、insert这些“当前读”，就需要另外的模块来解决了。</p>
+<p>###写（“当前读”） 事务的隔离级别中虽然只定义了读数据的要求，实际上这也可以说是写数据的要求。上文的“读”，实际是讲的快照读；而这里说的“写”就是当前读了。 为了解决当前读中的幻读问题，MySQL事务使用了Next-Key锁。</p>
+<p>####Next-Key锁 Next-Key锁是行锁和GAP（间隙锁）的合并，行锁上文已经介绍了，接下来说下GAP间隙锁。</p>
+<p>行锁可以防止不同事务版本的数据修改提交时造成数据冲突的情况。但如何避免别的事务插入数据就成了问题。我们可以看看RR级别和RC级别的对比</p>
+<p>RC级别：</p>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三二班30</td>
+<td></td>
+</tr>
+<tr>
+<td>update class_teacher set class_name=‘初三四班’ where teacher_id=30;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert into class_teacher values (null,‘初三二班’,30);commit;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三四班3010初三二班30</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>RR级别：</p>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三二班30</td>
+<td></td>
+</tr>
+<tr>
+<td>update class_teacher set class_name=‘初三四班’ where teacher_id=30;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert into class_teacher values (null,‘初三二班’,30);waiting…</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher where teacher_id=30;idclass_nameteacher_id2初三四班30</td>
+<td></td>
+</tr>
+<tr>
+<td>commit;</td>
+<td>事务Acommit后，事务B的insert执行。</td>
+</tr>
+</tbody></table>
+<p>通过对比我们可以发现，在RC级别中，事务A修改了所有teacher_id=30的数据，但是当事务B insert进新数据后，事务A发现莫名其妙多了一行teacher_id=30的数据，而且没有被之前的update语句所修改，这就是“当前读”的幻读。</p>
+<p>RR级别中，事务A在update后加锁，事务B无法插入新数据，这样事务A在update前后读的数据保持一致，避免了幻读。这个锁，就是Gap锁。</p>
+<p>MySQL是这么实现的：</p>
+<p>在class_teacher这张表中，teacher_id是个索引，那么它就会维护一套B+树的数据关系，为了简化，我们用链表结构来表达（实际上是个树形结构，但原理相同）</p>
+<p>如图所示，InnoDB使用的是聚集索引，teacher_id身为二级索引，就要维护一个索引字段和主键id的树状结构（这里用链表形式表现），并保持顺序排列。</p>
+<p>Innodb将这段数据分成几个个区间</p>
+<ul>
+<li>(negative infinity, 5],</li>
+<li>(5,30],</li>
+<li>(30,positive infinity)；</li>
+</ul>
+<p>update class_teacher set class_name=‘初三四班’ where teacher_id=30;不仅用行锁，锁住了相应的数据行；同时也在两边的区间，（5,30]和（30，positive infinity），都加入了gap锁。这样事务B就无法在这个两个区间insert进新数据。</p>
+<p>受限于这种实现方式，Innodb很多时候会锁住不需要锁的区间。如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+<th>事务C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>select id,class_name,teacher_id from class_teacher;idclass_nameteacher_id1初三一班52初三二班30</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>update class_teacher set class_name=‘初一一班’ where teacher_id=20;</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert into class_teacher values (null,‘初三五班’,10);waiting …</td>
+<td>insert into class_teacher values (null,‘初三五班’,40);</td>
+</tr>
+<tr>
+<td>commit;</td>
+<td>事务A commit之后，这条语句才插入成功</td>
+<td>commit;</td>
+</tr>
+<tr>
+<td></td>
+<td>commit;</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>update的teacher_id=20是在(5，30]区间，即使没有修改任何数据，Innodb也会在这个区间加gap锁，而其它区间不会影响，事务C正常插入。</p>
+<p>如果使用的是没有索引的字段，比如update class_teacher set teacher_id=7 where class_name=‘初三八班（即使没有匹配到任何数据）’,那么会给全表加入gap锁。同时，它不能像上文中行锁一样经过MySQL Server过滤自动解除不满足条件的锁，因为没有索引，则这些字段也就没有排序，也就没有区间。除非该事务提交，否则其它事务无法插入任何数据。</p>
+<p>行锁防止别的事务修改或删除，GAP锁防止别的事务新增，行锁和GAP锁结合形成的的Next-Key锁共同解决了RR级别在写数据时的幻读问题。</p>
+<p>###Serializable 这个级别很简单，读加共享锁，写加排他锁，读写互斥。使用的悲观锁的理论，实现简单，数据更加安全，但是并发能力非常差。如果你的业务并发的特别少或者没有并发，同时又要求数据及时可靠的话，可以使用这种模式。</p>
+<p>这里要吐槽一句，不要看到select就说不会加锁了，在Serializable这个级别，还是会加锁的！</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108415345">文章出处</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/26/Innodb%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%92%8C%E9%94%81%E7%9A%84%E5%85%B3%E7%B3%BB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-thymeleaf" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -431,6 +1170,280 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/26/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-MyIsam与InnoDB引擎的锁实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/">MyIsam与InnoDB引擎的锁实现</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/" class="archive-article-date">
+  	<time datetime="2022-01-25T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h1 id="MyIsam与InnoDB引擎的锁实现"><a href="#MyIsam与InnoDB引擎的锁实现" class="headerlink" title="MyIsam与InnoDB引擎的锁实现"></a>MyIsam与InnoDB引擎的锁实现</h1><h2 id="三类常见引擎："><a href="#三类常见引擎：" class="headerlink" title="三类常见引擎："></a>三类常见引擎：</h2><p>MyIsam ：不支持事务，不支持外键，所以访问速度快。锁机制是表锁，支持全文索引</p>
+<p>InnoDB ：支持事务、支持外键，所以对比MyISAM，InnoDB的处理效率差一些，并要占更多的磁盘空间保留数据和索引。锁机制是行锁，不支持全文索引</p>
+<p>Memory：数据是存放在内存中的，默认哈希索引，非常适合存储临时数据，服务器关闭后，数据会丢失掉。</p>
+<h3 id="如何选择存储引擎："><a href="#如何选择存储引擎：" class="headerlink" title="如何选择存储引擎："></a>如何选择存储引擎：</h3><p>MyISAM：应用是以读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不是很高。</p>
+<p>InnoDB：用于事务处理应用程序，支持外键，如果应用对事务的完整性有比较高的要求，在并发条件下要求数据的一致性。更新删除等频繁（InnoDB可以有效的降低由于删除和更新导致的锁定），对于数据准确性要求比较高的，此引擎适合。</p>
+<p>Memory：通常用于更新不太频繁的小表，用以快速得到访问结果。</p>
+<h3 id="Mysql中的锁"><a href="#Mysql中的锁" class="headerlink" title="Mysql中的锁"></a>Mysql中的锁</h3><p>如果熟悉多线程，那么对锁肯定是有概念的，锁是计算机协调多个进程或线程对某一资源并发访问的机制。</p>
+<p>Mysql中的锁分为表锁和行锁：</p>
+<p>顾名思义，表锁就是锁住一张表，而行锁就是锁住一行。</p>
+<p>表锁的特点：开销小，不会产生死锁，发生锁冲突的概率高，并且并发度低。</p>
+<p>行锁的特点：开销大，会产生死锁，发生锁冲突的概率低，并发度高。</p>
+<p>因此MyISAM和Memory引擎采用的是表锁，而InnoDB存储引擎采用的是行锁。</p>
+<h3 id="MyISAM的锁机制："><a href="#MyISAM的锁机制：" class="headerlink" title="MyISAM的锁机制："></a>MyISAM的锁机制：</h3><p>分为共享读锁和独占写锁。</p>
+<p>读锁是：当某一进程对某张表进行读操作时（select），其他线程也可以读，但是不能写。简单的理解就是，我读的时候你不能写。</p>
+<p>写锁是：当某一进程对某种表某张表的写时（insert，update，，delete），其他线程不能写也不能读。可以理解为，我写的时候，你不能读，也不能写。</p>
+<p>因此MyISAM的读操作和写操作，以及写操作之间是串行的！MyISAM在执行读写操作的时候会自动给表加相应的锁（也就是说不用显示的使用lock table命令），MyISAM总是一次获得SQL语句所需要的全部锁，这也是MyISAM不会出现死锁的原因。</p>
+<p>下面分别举关于写锁和读锁的例子：</p>
+<p>写锁：</p>
+<table>
+<thead>
+<tr>
+<th><strong>事务1</strong></th>
+<th><strong>事务2</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>取得first_test表的写锁：mysql&gt; lock table first_test write;Query OK, 0 rows affected (0.00 sec)</td>
+<td></td>
+</tr>
+<tr>
+<td>当前事务对查询、更新和插入操作都可以执行mysql&gt; select * from first_test ;±—±—–+</td>
+<td>id</td>
+</tr>
+<tr>
+<td>mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
+<td>等待</td>
+</tr>
+<tr>
+<td></td>
+<td>mysql&gt; select * from first_test;±—±—–+</td>
+</tr>
+</tbody></table>
+<p>读锁例子如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>事务1</strong></th>
+<th><strong>事务2</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>获得表first_read的锁定mysql&gt; lock table first_test read;Query OK, 0 rows affected (0.00 sec)</td>
+<td></td>
+</tr>
+<tr>
+<td>当前事务可以查询该表记录：mysql&gt; select * from first_test;±—±—–+</td>
+<td>id</td>
+</tr>
+<tr>
+<td>但是当前事务不能查询没有锁定的表：mysql&gt; select * from goods;ERROR 1100 (HY000): Table ‘goods’ was not locked with LOCK TABLES</td>
+<td>其他事务可以查询或更新未锁定的表：mysql&gt; select * from goods;±—±———–±—–+</td>
+</tr>
+<tr>
+<td>而且插入更新锁定的表都会报错：mysql&gt; insert into first_test(age) values(15);ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updatedmysql&gt; update first_test set age=100 where id =1;ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updated</td>
+<td>当更新被锁定的表时会等待：mysql&gt; update first_test set age=100 where id =1;等待…</td>
+</tr>
+<tr>
+<td>mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
+<td>mysql&gt; update first_test set age=100 where id =1;Query OK, 1 row affected (38.82 sec)Rows matched: 1 Changed: 1 Warnings: 0</td>
+</tr>
+</tbody></table>
+<h3 id="并发插入"><a href="#并发插入" class="headerlink" title="并发插入"></a>并发插入</h3><p>刚说到Mysql在插入和修改的时候都是串行的，但是MyISAM也支持查询和插入的并发操作。</p>
+<p>MyISAM中有一个系统变量concurrent_insert（默认为1），用以控制并发插入（用户在表尾插入数据）行为。</p>
+<p>当concurrent_insert为0时，不允许并发插入。</p>
+<p>当concurrent_insert为1时，如果表中没有空洞（中间没有被删除的行），MyISAM允许一个进程在读表的同时，另一个进程从表尾插入记录。</p>
+<p>当concurrent_insert为2时，无论MyISAM表中有没有空洞，都可以在末尾插入记录</p>
+<table>
+<thead>
+<tr>
+<th><strong>事务1</strong></th>
+<th><strong>事务2</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mysql&gt; lock table first_test read local;Query OK, 0 rows affected (0.00 sec)–加入local选项是说明，在表满足并发插入的前提下，允许在末尾插入数据</td>
+<td></td>
+</tr>
+<tr>
+<td>当前进程不能进行插入和更新操作mysql&gt; insert into first_test(age) values(15);ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updatedmysql&gt; update first_test set age=200 where id =1;ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updated</td>
+<td>其他进程可以进行插入，但是更新会等待：mysql&gt; insert into first_test(age) values(15);Query OK, 1 row affected (0.00 sec)mysql&gt; update first_test set age=200 where id =2;等待…</td>
+</tr>
+<tr>
+<td>当前进程不能不能访问其他进程插入的数据mysql&gt; select * from first_test;±—±—–+</td>
+<td>id</td>
+</tr>
+<tr>
+<td>释放锁以后皆大欢喜mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
+<td>等待</td>
+</tr>
+<tr>
+<td>插入的和更新的都出来的：mysql&gt; select * from first_test;±—±—–+</td>
+<td>id</td>
+</tr>
+</tbody></table>
+<p>需要注意的：</p>
+<p>并发插入是解决对同一表中的查询和插入的锁争用。</p>
+<p>如果对有空洞的表进行并发插入会产生碎片，所以在空闲时可以利用optimize table命令回收因删除记录产生的空洞。</p>
+<h3 id="锁调度"><a href="#锁调度" class="headerlink" title="锁调度"></a>锁调度</h3><p>在MyISAM中当一个进程请求某张表的读锁，而另一个进程同时也请求写锁，Mysql会先让后者获得写锁。即使读请求比写请求先到达锁等待队列，写锁也会插入到读锁之前。</p>
+<p>因为Mysql总是认为写请求一般比读请求重要，这也就是MyISAM不太适合有大量的读写操作的应用的原因，因为大量的写请求会让查询操作很难获取到读锁，有可能永远阻塞。</p>
+<p>处理办法：</p>
+<p>1、指定Insert、update、delete语句的low_priority属性，降低其优先级。</p>
+<p>2、指定启动参数low-priority-updates，使得MyISAM默认给读请求优先的权利。</p>
+<p>3、执行命令set low_priority_updates=1，使该连接发出的请求降低。</p>
+<p>4、指定max_write_lock_count设置一个合适的值，当写锁达到这个值后，暂时降低写请求的优先级，让读请求获取锁。</p>
+<p>但是上面的处理办法造成的原因就是当遇到复杂的查询语句时，写请求可能很难获取到锁，这是一个很纠结的问题，所以我们一般避免使用复杂的查询语句，如果如法避免，则可以再数据库空闲阶段（深夜）执行。</p>
+<p>我们知道mysql在以前，存储引擎默认是MyISAM，但是随着对事务和并发的要求越来越高，便引入了InnoDB引擎，它具有支持事务安全等一系列特性。</p>
+<h3 id="InnoDB锁模式"><a href="#InnoDB锁模式" class="headerlink" title="InnoDB锁模式"></a>InnoDB锁模式</h3><p>InnoDB实现了两种类型的行锁。</p>
+<p>共享锁（S）：允许一个事务去读一行，阻止其他事务获得相同的数据集的排他锁。</p>
+<p>排他锁（X）：允许获得排他锁的事务更新数据，但是组织其他事务获得相同数据集的共享锁和排他锁。</p>
+<p>可以这么理解：</p>
+<p>共享锁就是我读的时候，你可以读，但是不能写。排他锁就是我写的时候，你不能读也不能写。其实就是MyISAM的读锁和写锁，但是针对的对象不同了而已。</p>
+<p>除此之外InnoDB还有两个表锁：</p>
+<p>意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁</p>
+<p>意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
+<p>InnoDB行锁模式兼容列表：</p>
+<p><img src="https://img-blog.csdn.net/20150809115556064?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>注意：</p>
+<p>当一个事务请求的锁模式与当前的锁兼容，InnoDB就将请求的锁授予该事务；反之如果请求不兼容，则该事务就等待锁释放。</p>
+<p>意向锁是InnoDB自动加的，不需要用户干预。</p>
+<p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。</p>
+<p>共享锁：select * from table_name where …lock in share mode</p>
+<p>排他锁：select * from table_name where …for update</p>
+<p>加入共享锁的例子：</p>
+<p><img src="https://img-blog.csdn.net/20150809115652652" alt="img"></p>
+<p>利用select …for update加入排他锁</p>
+<p><img src="https://img-blog.csdn.net/20150809115737527" alt="img"></p>
+<h3 id="锁的实现方式："><a href="#锁的实现方式：" class="headerlink" title="锁的实现方式："></a>锁的实现方式：</h3><p>InnoDB行锁是通过给索引项加锁实现的，如果没有索引，InnoDB会通过隐藏的聚簇索引来对记录加锁。</p>
+<p>也就是说：如果不通过索引条件检索数据，那么InnoDB将对表中所有数据加锁，实际效果跟表锁一样。</p>
+<p>行锁分为三种情形：</p>
+<p>Record lock ：对索引项加锁，即锁定一条记录。</p>
+<p>Gap lock：对索引项之间的‘间隙’、对第一条记录前的间隙或最后一条记录后的间隙加锁，即锁定一个范围的记录，不包含记录本身</p>
+<p>Next-key Lock：锁定一个范围的记录并包含记录本身（上面两者的结合）。</p>
+<p>注意：InnoDB默认级别是repeatable-read级别，所以下面说的都是在RR级别中的。</p>
+<p>之前一直搞不懂Gap Lock和Next-key Lock的区别，直到在网上看到一句话豁然开朗，希望对各位有帮助。</p>
+<p>Next-Key Lock是行锁与间隙锁的组合，这样，当InnoDB扫描索引记录的时候，会首先对选中的索引记录加上行锁（Record Lock），再对索引记录两边的间隙加上间隙锁（Gap Lock）。如果一个间隙被事务T1加了锁，其它事务是不能在这个间隙插入记录的。</p>
+<p>干巴巴的说没意思，我们来看看具体实例：假设我们有一张表：</p>
+<p>±—±—–+</p>
+<p>| id | age |</p>
+<p>±—±—–+</p>
+<p>| 1 | 3 |</p>
+<p>| 2 | 6 |</p>
+<p>| 3 | 9 |</p>
+<p>±—±—–+</p>
+<p>表结构如下：</p>
+<p>CREATE TABLE test (<br>id int(11) NOT NULL AUTO_INCREMENT,<br>age int(11) DEFAULT NULL,<br>PRIMARY KEY (id),<br>KEY keyname (age)<br>) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=gbk ;</p>
+<p>这样我们age段的索引就分为</p>
+<p>(negative infinity, 3],</p>
+<p>(3,6],</p>
+<p>(6,9],</p>
+<p>(9,positive infinity)；</p>
+<p>我们来看一下几种情况：</p>
+<p>1、当事务A执行以下语句：</p>
+<p>mysql&gt; select * from fenye where age=6for update ;</p>
+<p>不仅使用行锁锁住了相应的数据行，同时也在两边的区间，（5,6]和（6，9] 都加入了gap锁。</p>
+<p>这样事务B就无法在这个两个区间insert进新数据,但是事务B可以在两个区间外的区间插入数据。</p>
+<p>2、当事务A执行</p>
+<p>select * from fenye where age=7 for update ;</p>
+<p>那么就会给(6,9]这个区间加锁，别的事务无法在此区间插入或更新数据。</p>
+<p>3、如果查询的数据不再范围内，</p>
+<p>比如事务A执行 select * from fenye where age=100 for update ;</p>
+<p>那么加锁区间就是(9,positive infinity)。</p>
+<p>小结：</p>
+<p>行锁防止别的事务修改或删除，GAP锁防止别的事务新增，行锁和GAP锁结合形成的的Next-Key锁共同解决了RR级别在写数据时的幻读问题。</p>
+<h3 id="何时在InnoDB中使用表锁："><a href="#何时在InnoDB中使用表锁：" class="headerlink" title="何时在InnoDB中使用表锁："></a>何时在InnoDB中使用表锁：</h3><p>InnoDB在绝大部分情况会使用行级锁，因为事务和行锁往往是我们选择InnoDB的原因，但是有些情况我们也考虑使用表级锁。</p>
+<p>1、当事务需要更新大部分数据时，表又比较大，如果使用默认的行锁，不仅效率低，而且还容易造成其他事务长时间等待和锁冲突。</p>
+<p>2、事务比较复杂，很可能引起死锁导致回滚。</p>
+<h3 id="死锁："><a href="#死锁：" class="headerlink" title="死锁："></a>死锁：</h3><p>我们说过MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。</p>
+<p>在上面的例子中我们可以看到，当两个事务都需要获得对方持有的锁才能够继续完成事务，导致双方都在等待，产生死锁。</p>
+<p>发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
+<h3 id="避免死锁："><a href="#避免死锁：" class="headerlink" title="避免死锁："></a>避免死锁：</h3><p>有多种方法可以避免死锁，这里只介绍常见的三种：</p>
+<p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。</p>
+<p>2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率；</p>
+<p>3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108415316">文章出处</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/">展开全文 >></a>
         </p>
       
 
@@ -633,91 +1646,6 @@
 
 
   
-    <article id="post-springboot-日志管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/25/springboot-%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/">Springboot-日志管理</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/25/springboot-%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/" class="archive-article-date">
-  	<time datetime="2022-01-25T10:46:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>springboot默认使用Logback组件作为日志管理。Logback是由log4j创始人设计的一个开源日志组件。<br>在springboot项目中我们不需要额外的添加Logback的依赖，因为在spring-boot-starter或者spring-boot-starter-web中已经包含了Logback的依赖</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/25/springboot-%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
     <article id="post-springboot-整合shiro" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -807,264 +1735,9 @@
 
 
   
-    <article id="post-springboot-项目打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/">Springboot-项目打包</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2022-01-25T10:46:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><p>这个是打包用的插件，如果用脚手架工具创建的会自动有这个插件</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/25/springboot-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-springboot整合Mybatis" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/25/springboot%E6%95%B4%E5%90%88Mybatis/">Springboot整合Mybatis</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/25/springboot%E6%95%B4%E5%90%88Mybatis/" class="archive-article-date">
-  	<time datetime="2022-01-25T10:46:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="demo样式"><a href="#demo样式" class="headerlink" title="demo样式"></a>demo样式</h1>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/25/springboot%E6%95%B4%E5%90%88Mybatis/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-springboot服务端数据校验" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/25/springboot%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/">Springboot服务端数据校验</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/25/springboot%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/" class="archive-article-date">
-  	<time datetime="2022-01-25T10:46:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="技术特点"><a href="#技术特点" class="headerlink" title="技术特点"></a>技术特点</h1><p>SpringBoot使用Hibernate-validator校验框架<br>pom依赖（后边@NotNull 注解需要依赖它，BindingResult注解依赖的spring-context jar包）</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/25/springboot%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+      <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
     </nav>
   
 
@@ -1176,7 +1849,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1184,7 +1861,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1196,11 +1873,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1216,11 +1893,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color4">位运算</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">位运算</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1229,10 +1906,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1288,19 +1961,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
