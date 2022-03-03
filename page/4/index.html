@@ -207,6 +207,91 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-springboot快速上手" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/21/springboot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/">springboot快速上手</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/21/springboot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" class="archive-article-date">
+  	<time datetime="2022-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-21</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这里要注意的是，如果你idea是社区版，不会有Spring Assistant,两种解决方式：</p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/21/springboot%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-过滤器-&amp;-监听器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1047,116 +1132,6 @@
 
 
   
-    <article id="post-表的分页操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/09/%E8%A1%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%93%8D%E4%BD%9C/">表的分页操作</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/09/%E8%A1%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%93%8D%E4%BD%9C/" class="archive-article-date">
-  	<time datetime="2022-01-09T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-09</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <span id="more"></span>
-
-<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p>create table flower(<br>id int(5) not null AUTO_INCREMENT PRIMARY KEY comment ‘编号’,<br>name varchar(100) not null comment ‘名称’,<br>price double(20,1) not null comment ‘价格’,<br>production varchar(100) not null comment ‘产地’<br>) comment ‘花卉信息表’;</p>
-<p>insert into flower values(default,“牵牛花”,10.0,“中国”);<br>insert into flower values(default,“水仙花”,15.0,“波兰”);<br>insert into flower values(default,“玫瑰花”,20.0,“漂亮国”);</p>
-<h2 id="实体层"><a href="#实体层" class="headerlink" title="实体层"></a>实体层</h2><h3 id="Flower-java"><a href="#Flower-java" class="headerlink" title="Flower.java"></a>Flower.java</h3><h3 id="PageInfo-java"><a href="#PageInfo-java" class="headerlink" title="PageInfo.java"></a>PageInfo.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> pageSize;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> pageNumber;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> total;</span><br><span class="line">	<span class="keyword">private</span> List&lt;Flower&gt; list;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> StartNumber;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>pageSize：每页数据个数，可以给默认值，或者由jsp传入</li>
-<li>total：总共页数，在Impl中进行计算</li>
-<li>pageNumber：现在的页数，初始值设定为1，点击上一页（下一页）变化</li>
-<li>list：当前页数数据集合，去除list进行数据的展示</li>
-<li>startNumber：当前页面从第几条数据之后开始，由pageNumber进行计算得出，和pageSize一起构成limit的两个要素</li>
-<li>dao中selByPage方法传入PageInfo对象，返回List，count方法返回数据总条数</li>
-<li><strong>Impl中默认pageNumber为1,pageSize默认为某值，请求传入这两个参数，可能为null或””，需要进行条件判断，否则就按照默认值设置PageInfo对象的pageNumber、pageSize、pageStart，调用selByPage返回list，并设置list，调用Count并设置total.将PageInfo请求转发给jsp</strong></li>
-<li>jsp中使用jstl技术拿到PageInfo对象<h2 id="数据访问层（dao）"><a href="#数据访问层（dao）" class="headerlink" title="数据访问层（dao）"></a>数据访问层（dao）</h2></li>
-</ul>
-<h3 id="FlowerDao（cn-wit-Dao）"><a href="#FlowerDao（cn-wit-Dao）" class="headerlink" title="FlowerDao（cn.wit.Dao）"></a>FlowerDao（cn.wit.Dao）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FlowerDao</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">count</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function">List&lt;Flower&gt; <span class="title">selByPage</span><span class="params">(PageInfo pi)</span></span>;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="FlowerDaoImpl-cn-wit-DaoImpl"><a href="#FlowerDaoImpl-cn-wit-DaoImpl" class="headerlink" title="FlowerDaoImpl(cn.wit.DaoImpl)"></a>FlowerDaoImpl(cn.wit.DaoImpl)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlowerDaoImpl</span> <span class="keyword">implements</span> <span class="title">FlowerDao</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">count</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Connection conn=<span class="keyword">null</span>;</span><br><span class="line">		PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">		ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//类加载驱动</span></span><br><span class="line">			Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">			<span class="comment">//创建连接对象</span></span><br><span class="line">			conn=DriverManager.getConnection(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">			<span class="comment">//创建sql命名</span></span><br><span class="line">			String sql=<span class="string">&quot;select count(*) from flower&quot;</span>;</span><br><span class="line">			<span class="comment">//创建sql命令对象</span></span><br><span class="line">			ps=conn.prepareStatement(sql);</span><br><span class="line">			<span class="comment">//执行sql命令</span></span><br><span class="line">			rs=ps.executeQuery();</span><br><span class="line">			<span class="keyword">int</span>  i=<span class="number">0</span>;</span><br><span class="line">			<span class="keyword">if</span>(rs.next()) &#123;</span><br><span class="line">			i=rs.getInt(<span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> i;</span><br><span class="line">		&#125;  <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">			</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					rs.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e1) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e1.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					ps.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					conn.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Flower&gt; <span class="title">selByPage</span><span class="params">(PageInfo pi)</span> </span>&#123;</span><br><span class="line">		Connection conn=<span class="keyword">null</span>;</span><br><span class="line">		PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">		ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//类加载驱动</span></span><br><span class="line">			Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">			<span class="comment">//创建连接对象</span></span><br><span class="line">			conn=DriverManager.getConnection(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">			<span class="comment">//创建sql命令</span></span><br><span class="line">			String sql=<span class="string">&quot;select *from flower limit ?,?&quot;</span>;</span><br><span class="line">			ps=conn.prepareStatement(sql);</span><br><span class="line">			ps.setObject(<span class="number">1</span>,pi.getStartNumber());</span><br><span class="line">			ps.setObject(<span class="number">2</span>, pi.getPageSize());</span><br><span class="line">			rs=ps.executeQuery();</span><br><span class="line">			List&lt;Flower&gt;list=<span class="keyword">new</span> ArrayList&lt;Flower&gt;();</span><br><span class="line">			<span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">				Flower flower=<span class="keyword">new</span> Flower();</span><br><span class="line">				flower.setId(rs.getInt(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">				flower.setName(rs.getString(<span class="string">&quot;name&quot;</span>));</span><br><span class="line">				flower.setPrice(rs.getDouble(<span class="string">&quot;price&quot;</span>));</span><br><span class="line">				flower.setProduction(rs.getString(<span class="string">&quot;production&quot;</span>));</span><br><span class="line">				list.add(flower);</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">return</span> list;</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">		&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					rs.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e1) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e1.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					ps.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">					conn.close();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="业务逻辑"><a href="#业务逻辑" class="headerlink" title="业务逻辑"></a>业务逻辑</h2><h3 id="FlowerService-cn-wit-service"><a href="#FlowerService-cn-wit-service" class="headerlink" title="FlowerService(cn.wit.service)"></a>FlowerService(cn.wit.service)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FlowerService</span> </span>&#123;</span><br><span class="line">	<span class="function">PageInfo  <span class="title">selByPage</span><span class="params">(String pageNumber,String pageSizeStr)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="FlowerServiceImpl-cn-wit-serviceImpl"><a href="#FlowerServiceImpl-cn-wit-serviceImpl" class="headerlink" title="FlowerServiceImpl(cn.wit.serviceImpl)"></a>FlowerServiceImpl(cn.wit.serviceImpl)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> PageInfo <span class="title">selByPage</span><span class="params">(String pageNumberStr,String pageSizeStr)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> pageNumber=<span class="number">1</span>;</span><br><span class="line">		<span class="keyword">int</span> pageSize=<span class="number">3</span>;</span><br><span class="line">		<span class="keyword">if</span>(pageNumberStr!=<span class="keyword">null</span>&amp;&amp;!pageNumberStr.equals(<span class="string">&quot;&quot;</span>))&#123;</span><br><span class="line">			pageNumber=Integer.parseInt(pageNumberStr);</span><br><span class="line">		&#125;</span><br><span class="line">		logger.debug(<span class="string">&quot;pageNumber:&quot;</span>+pageNumber);</span><br><span class="line">		<span class="keyword">if</span>(pageSizeStr!=<span class="keyword">null</span>&amp;&amp;!pageSizeStr.equals(<span class="string">&quot;&quot;</span>))&#123;</span><br><span class="line">			pageSize=Integer.parseInt(pageSizeStr);</span><br><span class="line">		&#125;</span><br><span class="line">		logger.debug(<span class="string">&quot;pageSize:&quot;</span>+pageSize);</span><br><span class="line">		</span><br><span class="line">		PageInfo pi=<span class="keyword">new</span> PageInfo();</span><br><span class="line">		FlowerDao fd=<span class="keyword">new</span> FlowerDaoImpl();</span><br><span class="line">		<span class="keyword">int</span> count = fd.count();</span><br><span class="line">		pi.setTotal(count%pageSize==<span class="number">0</span>?count/pageSize:count/pageSize+<span class="number">1</span>);</span><br><span class="line">		pi.setPageSize(pageSize);</span><br><span class="line">		pi.setStartNumber((pageNumber-<span class="number">1</span>)*pageSize);</span><br><span class="line">		pi.setPageNumber(pageNumber);</span><br><span class="line">		logger.debug(pageNumber);</span><br><span class="line">		pi.setList(fd.selByPage(pi));</span><br><span class="line">		 </span><br><span class="line">		<span class="keyword">return</span> pi;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="控制器层"><a href="#控制器层" class="headerlink" title="控制器层"></a>控制器层</h2><h3 id="PageServlet-cn-wit-Servlet"><a href="#PageServlet-cn-wit-Servlet" class="headerlink" title="PageServlet(cn.wit.Servlet)"></a>PageServlet(cn.wit.Servlet)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet(&quot;/page&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageSerlvet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">	FlowerService fs=<span class="keyword">new</span> FlowerServiceImpl();</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		String pageNumber=req.getParameter(<span class="string">&quot;pageNumber&quot;</span>);</span><br><span class="line">		String pageSize=req.getParameter(<span class="string">&quot;pageSize&quot;</span>);</span><br><span class="line">		PageInfo pi = fs.selByPage(pageNumber, pageSize);</span><br><span class="line">		<span class="keyword">if</span>(pi!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			req.setAttribute(<span class="string">&quot;pi&quot;</span>, pi);</span><br><span class="line">			<span class="comment">//路径</span></span><br><span class="line">				<span class="comment">//相对路径 </span></span><br><span class="line">					<span class="comment">//从上一个文件夹中出发</span></span><br><span class="line">				<span class="comment">//绝对路径</span></span><br><span class="line">					<span class="comment">//静态资源，静态资源都在webcontent中，写绝对路径应该是/项目名/webcontent中路径</span></span><br><span class="line">					<span class="comment">//请求转发从项目下出发  /page.jsp  </span></span><br><span class="line">					<span class="comment">//写类的绝对路径时是从src下出发</span></span><br><span class="line">			req.getRequestDispatcher(<span class="string">&quot;/page.jsp&quot;</span>).forward(req, resp);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><h3 id="page-jsp"><a href="#page-jsp" class="headerlink" title="page.jsp"></a>page.jsp</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html PUBLIC <span class="string">&quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;</span> <span class="string">&quot;http://www.w3.org/TR/html4/loose.dtd&quot;</span>&gt;</span><br><span class="line">&lt;%<span class="meta">@taglib</span> prefix=<span class="string">&quot;c&quot;</span> uri=<span class="string">&quot;http://java.sun.com/jsp/jstl/core&quot;</span>%&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;table border=<span class="string">&quot;1px&quot;</span> &gt;</span><br><span class="line">   		&lt;tr&gt;</span><br><span class="line">   			&lt;th&gt;编号&lt;/th&gt;</span><br><span class="line">   			&lt;th&gt;花名&lt;/th&gt;</span><br><span class="line">   			&lt;th&gt;价格&lt;/th&gt;</span><br><span class="line">   			&lt;th&gt;产地&lt;/th&gt;</span><br><span class="line">   		&lt;/tr&gt;</span><br><span class="line">   		</span><br><span class="line">   		&lt;c:forEach items=<span class="string">&quot;$&#123;pi.list&#125;&quot;</span> <span class="keyword">var</span>=<span class="string">&quot;flower&quot;</span>&gt;</span><br><span class="line">   			&lt;tr&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.id&#125;&lt;/td&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.name&#125;&lt;/td&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.price&#125;&lt;/td&gt;</span><br><span class="line">   				&lt;td&gt;$&#123;flower.production&#125;&lt;/td&gt;</span><br><span class="line">   			&lt;/tr&gt;</span><br><span class="line">   		&lt;/c:forEach&gt;</span><br><span class="line">   	</span><br><span class="line">   	&lt;/table&gt;</span><br><span class="line">   	&lt;a href=<span class="string">&quot;page?pageNumber=$&#123;pi.pageNumber-1 &#125;&amp;pageSize=$&#123;pi.pageSize&#125;&quot;</span> &lt;c:<span class="keyword">if</span> test=<span class="string">&quot;$&#123;pi.pageNumber&lt;= 1&#125;&quot;</span>&gt;         onclick=<span class="string">&quot;javascript:return false;&quot;</span>          &lt;/c:<span class="keyword">if</span>&gt;&gt;上一页&lt;/a&gt;</span><br><span class="line">   	&lt;a href=<span class="string">&quot;page?pageNumber=$&#123;pi.pageNumber+1 &#125;&amp;pageSize=$&#123;pi.pageSize&#125;&quot;</span> &lt;c:<span class="keyword">if</span> test=<span class="string">&quot;$&#123;pi.pageNumber&gt;= pi.total&#125;&quot;</span>&gt;  onclick=<span class="string">&quot;javascript:return false;&quot;</span>          &lt;/c:<span class="keyword">if</span>&gt;&gt;下一页&lt;/a&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/09/%E8%A1%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%93%8D%E4%BD%9C/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
@@ -1279,11 +1254,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1315,11 +1290,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">位运算</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color4">位运算</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1339,11 +1314,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1363,11 +1338,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数组</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1383,19 +1358,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
