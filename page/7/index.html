@@ -183,6 +183,144 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-shiro认证" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/02/shiro%E8%AE%A4%E8%AF%81/">shiro认证</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/02/shiro%E8%AE%A4%E8%AF%81/" class="archive-article-date">
+  	<time datetime="2022-01-02T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-02</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在应用中通过某些标识信息来证明用户的身份，用户需要将身份和凭证给shiro<br><strong>Principals</strong></p>
+<ul>
+<li>用户 的身份信息，是subject的标识属性，至少在数据库中应该具有唯一性。如：电话号码，邮箱，账号等</li>
+</ul>
+<p><strong>Credentials</strong> </p>
+<ul>
+<li>凭证：是只被subject知道的秘密值，可以是密码，也可以是数字证书等。Principals/Credentials最常见的形式就是用户名和密码。通常使用<strong>usernamePasswordToken</strong>来指定身份和凭证信息</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/2021013113493729.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>下边写一个测试Demo</p>
+<h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><h2 id="jar包"><a href="#jar包" class="headerlink" title="jar包"></a>jar包</h2><p>这里边只有shiro-all是核心包，其他都是日志包<br><img src="https://img-blog.csdnimg.cn/20210131163114843.png" alt="在这里插入图片描述"></p>
+<h2 id="log4j-properties"><a href="#log4j-properties" class="headerlink" title="log4j.properties"></a>log4j.properties</h2><p>因为建的是普通java项目，所以日志的写法是这样事儿的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log4j.rootLogger=debug, stdout </span><br><span class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender </span><br><span class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout </span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n</span><br></pre></td></tr></table></figure>
+<h2 id="shiro-ini"><a href="#shiro-ini" class="headerlink" title="shiro.ini"></a>shiro.ini</h2><p>eclipse中没有ini后缀<br><img src="https://img-blog.csdnimg.cn/20210508194404875.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508194551434.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508194638772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508195015110.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>这个文件是暂时用来存放数据，相当于数据库的角色，在这个demo里边放用户账号密码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[users]</span><br><span class="line">zhangsan=<span class="number">1111</span></span><br></pre></td></tr></table></figure>
+<h2 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h2><p>SecurityManager需要导一下包org.apache.shiro.mgt.SecurityManager(java.lang中有一个同名的，后边的包也都是导入org.apache.shiro前缀的)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//创建SecurityManager工厂 读取配置文件</span></span><br><span class="line">		Factory&lt;SecurityManager&gt; factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		<span class="comment">//通过SecurityManager工厂获取SecurityManager的实例</span></span><br><span class="line">		SecurityManager securityManager=factory.getInstance();</span><br><span class="line">		<span class="comment">//将SecurityManager对象设置到运行环境中</span></span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		<span class="comment">//通过SecurityUtils获取主体subject</span></span><br><span class="line">		Subject subject=SecurityUtils.getSubject();</span><br><span class="line">		<span class="comment">//假如用户名 zhangsan和1111,这里测试的数据是模拟登录时用户输入的数据</span></span><br><span class="line">		<span class="comment">//而ini文件中的数据相当于数据库中的数据</span></span><br><span class="line">		UsernamePasswordToken token=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;1111&quot;</span>);</span><br><span class="line">		<span class="comment">//用户身份验证</span></span><br><span class="line">		subject.login(token);</span><br><span class="line">		<span class="comment">//通过subject判断用户是否通过验证,isAuthenticated表示用户是否被验证过</span></span><br><span class="line">		<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;用户名或密码不正确&quot;</span>); <span class="comment">//这里如果密码错误实际上会爆出异常（见下边异常处理），需要用异常处理的方法，这里只是写出一个逻辑</span></span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>我们使用Shiro的IniSecurityManager实现来提取我们的shir.ini文件，它位于classpath的根目录。该实现反应了shiro对工厂设计模式的支持。classpath:前缀是一个资源定位符，用来告诉shiro去哪加载ini文件（其他前缀，如url：file:也同样被支持）</li>
+<li>factory.getInstance()方法被调用，它来解析INI文件并返回该配置的SecurityManager实例</li>
+<li>在这个简单的例子中，我们把SecurityManager设置为一个静态的单例，能够跨JVM访问。但实际上这是不可取的，如果在单个JVM中会有不止一个启用shiro的应用程序，对于这个简单的程序而言，这并没有问题，但更复杂的应用程序环境通常将SecurityManager置于应用程序特定的存储中，在web应用中的ServletContext或Spring</li>
+</ul>
+<h1 id="常见的异常信息及处理"><a href="#常见的异常信息及处理" class="headerlink" title="常见的异常信息及处理"></a>常见的异常信息及处理</h1><p>在认证过程中有AuthenticationException，该异常有几个子类，分别对应不同的异常情况</p>
+<p><img src="https://img-blog.csdnimg.cn/20210131164620578.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>DisabledAccountException账户失效异常</li>
+<li>ExcessiveAttemptsException尝试次数过多</li>
+<li>UnknownAccountException用户名不正确</li>
+<li>ExpiredCredentialException 凭证过期</li>
+<li>IncorrectCredentialException 凭证不正确<br>虽然shiro为每一种异常都提供了准确的异常信息，但是在编写代码过程中应提示给用户的异常信息为模糊的，这样有助于安全，常见的处理方式为</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//用户身份验证</span></span><br><span class="line">			subject.login(token);</span><br><span class="line">			<span class="comment">//通过subject判断用户是否通过验证,isAuthenticated表示用户是否被验证过</span></span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			System.out.println(<span class="string">&quot;用户名或密码不正确&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;用户名或密码不正确&quot;</span>);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="login认证源码过程"><a href="#login认证源码过程" class="headerlink" title="login认证源码过程"></a>login认证源码过程</h2><p>通过shiro相关api，创建securityManager以及获取subject（这个过程不研究）<br>封装token信息<br><img src="https://img-blog.csdnimg.cn/2021050822165478.png" alt="在这里插入图片描述"><br>UsernamePasswordToken中rememberMe默认false<br><img src="https://img-blog.csdnimg.cn/dff9cb3679aa42dba5f43ffaa245f235.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/1c179008a410416c8132b7a46af06992.png" alt="在这里插入图片描述"><br>跳转this</p>
+<p><img src="https://img-blog.csdnimg.cn/2021050822195086.png" alt="在这里插入图片描述"></p>
+<p>通过subject.login（token）进行用户认证</p>
+<p>从login进去源码<br><img src="https://img-blog.csdnimg.cn/20210201203923642.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/94a495e29ad043bbaa7dc515b45f035e.png" alt="在这里插入图片描述"></p>
+<p>subject类层次,实现类为DelegatingSubject<br><img src="https://img-blog.csdnimg.cn/20210201204009939.png" alt="在这里插入图片描述"><br>subject将token给了securityManager来完成认证，而且里边调用的方法名也叫login，（当成功之后，subject.isAuthenticated返回true）,所以<strong>真正的认证的核心部分是在这个securityManager.login方法里边(不是subject在做，是securityManager在做)</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/a9018d5cb7304c3c949f272d169e38d4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/d03c84f3f19a4531afc63d383ca2ce4d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>SecurityManager本身是一个接口，SecurityManager继承了三个接口，分别是Authenticator ，Authorizer ，SessionManager（三个主体功能）<br><img src="https://img-blog.csdnimg.cn/20210508230109240.png" alt="在这里插入图片描述"><br>SecurityManager的类层次，下边有很多个抽象实现类，而且他们的嵌套的，每往下一个就多一个功能（比如Caching是实现缓存的，Realm是实现域的，Authenticating是实现认证的，Authorizing是实现授权的，Sessions实现Session管理，Default实现web），最终的实现类是DefaultSecurityManager（<strong>这个里边就有login方法</strong>）<br><img src="https://img-blog.csdnimg.cn/20210201204145237.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>调用了authenticate方法（该方法是由AuthenticatingSecurityManager完成的）给info赋值（这个AuthenticationInfo里边其实就是获取身份和凭证），至此就是认证调用认证器的过程<br><img src="https://img-blog.csdnimg.cn/20210201204238325.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>下图是AuthenticationInfo中<br><img src="https://img-blog.csdnimg.cn/20210508232448327.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="AuthenticationInfo中"></p>
+<p>调用authenticate方法回到了AuthenticatingSecurityManager中（是它实现的认证功能），它调用了authenticator（验证器）的authenticate，所以真正的认证工作还是由认证器来完成的</p>
+<p><img src="https://img-blog.csdnimg.cn/20210201205146814.png" alt="在这里插入图片描述"></p>
+<p>AuthenticatingSecurityManager里边有Authenticator,使用的是ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/609eded9ed6642a69ab281867a3ed336.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>认证器设置Realm是由DefaultWebSecurityManager调用<br><img src="https://img-blog.csdnimg.cn/1ec9878cf7f547649b72eac0a2c3949f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>上面调用的setRealms在RealmSecurityManager中实现<br><img src="https://img-blog.csdnimg.cn/72a47badab104129806821540a33365b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>在AuthenticatingSecurityManager中将realm传递给ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/2e8299c613f542e2b9d873a656119fc1.png" alt="在这里插入图片描述"></p>
+<p>Authenticator接口<br><img src="https://img-blog.csdnimg.cn/20210508233314454.png" alt="在这里插入图片描述"><br>Authenticator接口有一个默认的实现类ModularRealmAuthenticator 来完成认证（里面的realm是在AuthenticatingSecurityManager中传过来的）</p>
+<p><img src="https://img-blog.csdnimg.cn/20210508233502573.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20210508233729919.png" alt="在这里插入图片描述"><br>当调用authenticate方法时，实际上调用的是AbstractAuthenticator（ModularRealmAuthenticator的父类）的方法，这个方法里边又调用了<strong>doAuthenticator</strong>（这个是ModularRealmAuthenticator的方法）<br><img src="https://img-blog.csdnimg.cn/20210508233911945.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>最终由ModularRealmAuthenticator的doAuthenticator进行认证，获取域，如果一个realm只需要token符合这个域就算认证成功，如果有多个realm就需要Authentication strategy（认证策略，上边第一个图里边有）来完成对应的认证工作（认证策略有多种，后边会单独写文章）</p>
+<p>doSingleRealmAuthentication  realm只一个<br>doMultiRealmAuthentication    realm多个<br><img src="https://img-blog.csdnimg.cn/2021050823414944.png" alt="在这里插入图片描述"></p>
+<p>进入doSingleRealmAuthentication<br><img src="https://img-blog.csdnimg.cn/20210510224918596.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>进入realm，首先是获取缓存，如果没有缓存就进入doGetAuthenticationInfo<br><img src="https://img-blog.csdnimg.cn/20210510225418888.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>doGetAuthenticationInfo是一个抽象方法，下边的realm都有实现这个方法（<font color=red>自定义的也会实现这个方法，都会返回AuthenticationInfo</font>）<br><img src="https://img-blog.csdnimg.cn/20210510225804278.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210510225742317.png" alt="在这里插入图片描述"></p>
+<p>JdbcRealm<br><img src="https://img-blog.csdnimg.cn/4c215eb506d34086bd700d3ddad1707c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><strong>到此认证完成，回到subject（isAuthenticated）判断是否认证成功，如果认证失败会抛出指定的异常 信息</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/02/shiro%E8%AE%A4%E8%AF%81/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-Role-Based-Access-Control" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -575,91 +713,6 @@
 
 
   
-    <article id="post-LeetCode-1002-查找共用字符--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">LeetCode-1002 查找共用字符--查找</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-common-characters/submissions/">LeetCode-1002 查找共用字符</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
     <article id="post-LeetCode-1137-第-N-个泰波那契数--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -745,19 +798,19 @@
 
 
   
-    <article id="post-LeetCode-12-整数转罗马数字--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LeetCode-1002-查找共用字符--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">LeetCode-12 整数转罗马数字--贪心</a>
+      <a class="article-title" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">LeetCode-1002 查找共用字符--查找</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+        <a href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -774,7 +827,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-to-roman/">LeetCode-12 整数转罗马数字–贪心</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-common-characters/submissions/">LeetCode-1002 查找共用字符</a></p>
         
       
 
@@ -788,7 +841,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
         		</li>
       		
 		</ul>
@@ -798,7 +851,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
         </p>
       
 
@@ -915,6 +968,91 @@
 
 
   
+    <article id="post-LeetCode-12-整数转罗马数字--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">LeetCode-12 整数转罗马数字--贪心</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-to-roman/">LeetCode-12 整数转罗马数字–贪心</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-LeetCode-135分发糖果-贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1000,19 +1138,19 @@
 
 
   
-    <article id="post-LeetCode-142环形链表II--链表-双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LeetCode-167两数之和 II - 输入有序数组-数组 双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-142%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II--%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88/">LeetCode-142环形链表II--链表 双指针</a>
+      <a class="article-title" href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/">LeetCode-167两数之和 II - 输入有序数组-数组 双指针</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-142%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II--%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
+        <a href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -1029,7 +1167,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/linked-list-cycle-ii/">LeetCode-142环形链表II–链表 双指针</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/">LeetCode-167两数之和 II - 输入有序数组-数组 双指针</a></p>
         
       
 
@@ -1053,7 +1191,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-142%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II--%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
         </p>
       
 
@@ -1139,91 +1277,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-198-打家劫舍--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">LeetCode-198 打家劫舍--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/house-robber/">LeetCode-198 打家劫舍–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">展开全文 >></a>
         </p>
       
 
@@ -1397,11 +1450,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1493,6 +1546,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
@@ -1502,10 +1559,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
