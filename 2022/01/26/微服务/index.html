@@ -15,14 +15,14 @@
 <meta property="og:site_name" content="yueyan">
 <meta property="og:description" content="微服务微服务（Microservice）是什么？微服务（Microservice）虽然是当下刚兴起的比较流行的新名词，但本质上来说，微服务并非什么新的概念。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1616826940006-65d9e60c-cb35-45c6-89fb-b0ff95084049.png">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1616828312763-c3905b26-1854-4b67-88e9-0bdceaf1862d.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/62b820a71eb844fc74b610e107a5f507.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/b04b8246036885530de8aa3ec3ab5fdd.png">
 <meta property="article:published_time" content="2022-01-26T02:51:49.000Z">
-<meta property="article:modified_time" content="2022-02-05T17:01:33.818Z">
+<meta property="article:modified_time" content="2022-03-08T01:58:34.573Z">
 <meta property="article:author" content="yueyan">
-<meta property="article:tag" content="spring">
+<meta property="article:tag" content="分布式">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2021/png/12418439/1616826940006-65d9e60c-cb35-45c6-89fb-b0ff95084049.png">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/62b820a71eb844fc74b610e107a5f507.png">
   
     <link rel="alternative" href="/atom.xml" title="yueyan" type="application/atom+xml">
   
@@ -230,7 +230,7 @@
 <p>当然，之所以叫微服务，是与之前的服务化思路和实践相比较而来的。</p>
 <p>早些年的服务实现和实施思路是将很多功能从开发到交付都打包成一个很大的服务单元（一般称为 Monolith），而微服务实现和实施思路则更强调功能趋向单一，服务单元小型化和微型化。</p>
 <p>如果用“茶壶煮饺子”来打比方的话，原来我们是在一个茶壶里煮很多个饺子，现在（微服务化之后）则基本上是在一个茶壶煮一个饺子，而这些饺子就是服务的功能，茶壶则是将这些服务功能打包交付的服务单元，如图 1 所示。</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/png/12418439/1616826940006-65d9e60c-cb35-45c6-89fb-b0ff95084049.png" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/62b820a71eb844fc74b610e107a5f507.png" alt="img"></p>
 <p>​           图 1 论茶壶里煮“饺子”的不同形式</p>
 <p>所以，从思路和理念上来讲，微服务就是要倡导大家尽量将功能进行拆分，将服务粒度做小，使之可以独立承担对外服务的职责，沿着这个思路开发和交付的软件服务实体就叫作“微服务”，而围绕着这个思路和理念构建的一系列基础设施和指导思想，笔者将它称为“微服务体系”。</p>
 <h2 id="微服务是怎么来的？"><a href="#微服务是怎么来的？" class="headerlink" title="微服务是怎么来的？"></a>微服务是怎么来的？</h2><p>微服务的概念我们应该大体了解了，那么微服务又是怎么来的？原来将很多功能打包为一个很大的服务单元进行交付的做法不能满足需求吗？</p>
@@ -272,7 +272,7 @@
 <p>记得时任黑猫宅急便社长的小仓昌男在其所著的《黑猫宅急便的经营学》中提到一个故事，日本国铁曾经采用不同于国际标准的集装箱和铁路规格，然后发现货物的运输效率很低，经过考察发现，原来是货物从国际标准集装箱卸载之后，在通过日本国铁运输之前，需要先拆箱，重新装入日本国铁规格的集装箱，然后装载到日本国铁上进行运输。</p>
 <p>但是，如果日本国铁采用国际标准的集装箱规格，那么货物集装箱从远洋轮船上卸载之后就可以直接装上国铁，这将大大加快运输效率（日本，国铁改革后也证明确实如此）。日本国铁在前期采用私有方案时，只关注了自己的利益和效率，舍弃了互通，也带来了效率的低下。</p>
 <p>所以，在开发和交付微服务的时候，尤其是在多语言生态下开发和交付微服务，我们从一开始就要将互通性作为首要考虑因素，从而不会因为执迷于某些服务或者系统的单点效率而失去了整个微服务体系的整体效率。</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/png/12418439/1616828312763-c3905b26-1854-4b67-88e9-0bdceaf1862d.png" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/b04b8246036885530de8aa3ec3ab5fdd.png" alt="img"></p>
 <p>​                                         图 1 多语言的微服务生态</p>
 <h2 id="实现微服务会带来哪些挑战？"><a href="#实现微服务会带来哪些挑战？" class="headerlink" title="实现微服务会带来哪些挑战？"></a>实现微服务会带来哪些挑战？</h2><p>微服务给我们带来的并非只有好处，还有相应的一些挑战。</p>
 <p>服务“微”化之后，一个显著的特点就是服务的数量增多了。如果将软件开发和交付也作为一种生产模式看待，那么数量众多的微服务实际上就类似于传统生产线上的产品，而在传统生产模型下，为了能够高效地生产大量产品，通常采用的就是标准化生产。</p>
@@ -333,7 +333,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">spring</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">分布式</a>
         		</li>
       		
 		</ul>
@@ -607,11 +607,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -703,7 +703,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -711,7 +715,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
