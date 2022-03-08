@@ -183,20 +183,20 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-LeetCode-1002-查找共用字符--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-《Java-并发编程实战》阅读笔记-Java-线程：使用篇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">LeetCode-1002 查找共用字符--查找</a>
+      <a class="article-title" href="/2022/01/02/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-Java-%E7%BA%BF%E7%A8%8B%EF%BC%9A%E4%BD%BF%E7%94%A8%E7%AF%87/">《Java 并发编程实战》阅读笔记 Java 线程：使用篇</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+        <a href="/2022/01/02/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-Java-%E7%BA%BF%E7%A8%8B%EF%BC%9A%E4%BD%BF%E7%94%A8%E7%AF%87/" class="archive-article-date">
+  	<time datetime="2022-01-02T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-02</time>
 </a>
 		
 		
@@ -212,8 +212,95 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-common-characters/submissions/">LeetCode-1002 查找共用字符</a></p>
-        
+        <span id="more"></span>
+
+<h1 id="Java-线程：使用篇"><a href="#Java-线程：使用篇" class="headerlink" title="Java 线程：使用篇"></a>Java 线程：使用篇</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#java-%E7%BA%BF%E7%A8%8B%E4%BD%BF%E7%94%A8%E7%AF%87">Java 线程：使用篇</a></p>
+<ul>
+<li>如何在 Java 中使用多线程<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#%E7%BB%A7%E6%89%BF-thread-%E7%B1%BB">继承 Thread 类</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#%E5%AE%9E%E7%8E%B0-runnable-%E6%8E%A5%E5%8F%A3">实现 Runnable 接口</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#%E5%AE%9E%E7%8E%B0-callable-%E6%8E%A5%E5%8F%A3">实现 Callable 接口</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%85%8D%E7%BD%AE%E5%8E%9F%E5%88%99">线程数配置原则</a></li>
+<li>线程间的通信方式<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#%E9%80%89%E6%8B%A9%E9%80%9A%E4%BF%A1">选择通信</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033867#%E9%80%89%E6%8B%A9%E4%B8%8D%E9%80%9A%E4%BF%A1">选择不通信</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="如何在-Java-中使用多线程"><a href="#如何在-Java-中使用多线程" class="headerlink" title="如何在 Java 中使用多线程"></a>如何在 Java 中使用多线程</h2><h3 id="继承-Thread-类"><a href="#继承-Thread-类" class="headerlink" title="继承 Thread 类"></a>继承 Thread 类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义线程对象</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="comment">// 线程需要执行的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建线程对象并启动线程</span></span><br><span class="line">MyThread myThread = <span class="keyword">new</span> MyThread();</span><br><span class="line">myThread.start();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Java 的 Thread 类中，所有关键方法都是 native 的，说明这些方法无法使用平台无关的手段实现。</p>
+</blockquote>
+<h3 id="实现-Runnable-接口"><a href="#实现-Runnable-接口" class="headerlink" title="实现 Runnable 接口"></a>实现 Runnable 接口</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现 Runnable 接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Runner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 线程需要执行的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建线程对象并启动线程</span></span><br><span class="line">Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner());</span><br><span class="line">thread.start();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="实现-Callable-接口"><a href="#实现-Callable-接口" class="headerlink" title="实现 Callable 接口"></a>实现 Callable 接口</h3><p>Callable 接口的使用需要搭配线程池，由于这里还没有介绍线程池的概念，提前介绍可能会造成理解障碍，所以放在后续介绍线程池的部分，详见。。。</p>
+<h2 id="线程数配置原则"><a href="#线程数配置原则" class="headerlink" title="线程数配置原则"></a>线程数配置原则</h2><p>一般我们使用多线程是为了提高性能，这里的性能一般指的是 <strong>延迟</strong> 和 <strong>吞吐量</strong>，<strong>我们的目标是降低延迟，提高吞吐量</strong>。</p>
+<ul>
+<li><strong>延迟：</strong> 发出请求到收到响应这个过程的时间。</li>
+<li><strong>吞吐量：</strong> 单位时间内能处理请求的数量。</li>
+</ul>
+<p>为了降低延迟，提高吞吐量，一般有以下两种常用手段：</p>
+<ul>
+<li>优化算法。</li>
+<li>将硬件的性能发挥到极致。</li>
+</ul>
+<p>在并发编程领域，提升性能本质上就是提升硬件的利用率，尽可能的将硬件的能力压榨到极致。也就是说，我们的目标是让 CPU 时刻保持着 100% 的利用率，一刻也不停歇的工作着！</p>
+<p>然而，线程也不是越多越好的，当一个 CPU 上同时又多个线程运行时，我们所看到的多个线程并行运行其实是一种伪并行，在同一时刻，真正运行的线程其实只有一个，只不过 CPU 在多个线程的运行之间不停的切换，让我们看起来好像是这些个线程在同时运行罢了。然而，线程运行的切换不是没有代价的，每次切换时，我们首先需要保存当前线程的上下文，然后再将下一个线程的上下文设置好。这个过程也是要消耗 CPU 时间的，如果 CPU 将大量的时间都花在了切换线程上，而非执行线程的任务上，那就得不偿失了。</p>
+<blockquote>
+<p> 在线程切换中，上下文一般指 CPU 寄存器和程序计数器中的内容。</p>
+</blockquote>
+<p>那么我们应当创建多少线程合适呢？这要视线程执行的任务类型而定了。</p>
+<p>一般我们的任务有以下两种类型：<strong>CPU 密集型的任务</strong> 和 <strong>I/O 密集型的任务</strong>，并且它们之间有着本质的区别：</p>
+<p><strong>CPU 密集型的任务：</strong> <code>最佳线程数 = CPU 核数 + 1</code></p>
+<ul>
+<li>大多数时间里，只要在运行就有产出；</li>
+<li>因此希望一个任务一直运行到底再运行下一个，而不是将时间耗费到线程的切换上（即上下文切换）。</li>
+<li>后面的 “+1” 是为了一旦线程因为偶尔的内存页失效或其他原因导致阻塞时，这个额外的线程可以顶上，以保证 CPU 的利用率。</li>
+</ul>
+<p><strong>I/O 密集型的任务：</strong> <code>最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]</code></p>
+<ul>
+<li>一个任务从开始到完成的时间可能很长，但其间真正在干活（使用 CPU）的时间可能很短，大部分时间都在等待，如等待网络发来的数据包，或等待写入或读取磁盘上的数据等；</li>
+<li>因此希望在没有产出的等待时间里，CPU 不是闲呆着，而是去做其他的事情</li>
+<li>示例：如 CPU 计算和 I/O 操作的耗时是 1:2，那多少个线程合适呢？答：3 个线程。<ul>
+<li>理想情况下，CPU 在线程 A、B、C 之间按如下方式进行切换，理论上可以实现 100% 的 CPU 利用率（当然这个得是超级理想了，现实中是基本不可能的）。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/77e6a9405f3f0870515802ab040ef5e6.png" alt="三个线程的切换示例"></p>
+<p>当然，以上对于线程数量配置的公式只是一个参考，Java 的老版本对于 Docker 容器的支持还不是那么的好，比如有时程序员在 Docker 容器中直接使用 <code>Runtime.getRuntime().availableProcessors() * 2</code> 配置线程池大小，对于早期版本的 JVM，这个 Runtime.getRuntime().availableProcessors() 会忽略 cgroup 的限制，返回实际物理机的 CPU 数，而当同一物理机上的有好多容器都进行了这样的线程池大小设置操作时，有一下子开启好多线程的风险，可能会导致物理机的崩溃，这种场景我们需要额外注意！</p>
+<h2 id="线程间的通信方式"><a href="#线程间的通信方式" class="headerlink" title="线程间的通信方式"></a>线程间的通信方式</h2><h3 id="选择通信"><a href="#选择通信" class="headerlink" title="选择通信"></a>选择通信</h3><p>synchronized 和 volatile 关键字</p>
+<ul>
+<li><p>这两个关键字可以保障线程对变量访问的可见性</p>
+</li>
+<li><p>等待/通知机制</p>
+<ul>
+<li>详见 <code>Ch3-Java并发高级主题/00-Java中的锁.md</code></li>
+</ul>
+</li>
+<li><p>Thread#join()</p>
+<ul>
+<li>如果一个线程 A 执行了 <code>threadA.join()</code>，那么只有当线程 A 执行完之后，<code>threadA.join()</code> 之后的语句才会继续执行，类似于创建 A 的线程要等待 A 执行完后才继续执行；</li>
+<li>使用 join 方法中线程被中断的效果 == 使用 wait 方法中线程被中断的效果，即会抛出 InterruptedException。因为 join 方法内部就是用 wait 方法实现的；</li>
+<li>join 还有一个带参数的方法：<code>join(long)</code>，这个方法是等待传入的参数的毫秒数，如果计时过程中等待的方法执行完了，就接着往下执行，如果计时结束等待的方法还没有执行完，就不再继续等待，而是往下执行。<ul>
+<li>join(long) 和 sleep(long) 的区别<ul>
+<li>如果等待的方法提前结束，join(long) 不会再计时了，而是往下执行，而 sleep(long) 一定要等待够足够的毫秒数</li>
+<li>join(long) 会释放锁，sleep(long) 不会释放锁，原因是 join(long) 方法内部是用 wait(long) 方法实现的。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>管道流：<code>PipedInputStream</code> &amp; <code>PipedOutputStream</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PipedStreamDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> PipedInputStream in = <span class="keyword">new</span> PipedInputStream();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> PipedOutputStream out = <span class="keyword">new</span> PipedOutputStream();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2000</span>];</span><br><span class="line">                <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        out.write(bytes, <span class="number">0</span>, <span class="number">2000</span>);</span><br><span class="line">                        System.out.println(<span class="string">&quot;Send Success&quot;</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                        System.out.println(<span class="string">&quot;Send Failed&quot;</span>);</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">receive</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">100</span>];</span><br><span class="line">                <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        len = in.read(bytes, <span class="number">0</span>, <span class="number">100</span>);</span><br><span class="line">                        System.out.println(<span class="string">&quot;len = &quot;</span> + len);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                        System.out.println(<span class="string">&quot;Receive Failed&quot;</span>);</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            in.connect(out);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        receive();</span><br><span class="line">        send();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="选择不通信"><a href="#选择不通信" class="headerlink" title="选择不通信"></a>选择不通信</h3><p>有时，你也可以选择不通信，将变量封闭在线程内部，使用 ThreadLocal 可以实现这一效果，详见 。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769">转载自此</a></p>
+
       
 
       
@@ -226,7 +313,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
         		</li>
       		
 		</ul>
@@ -236,7 +327,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/02/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-Java-%E7%BA%BF%E7%A8%8B%EF%BC%9A%E4%BD%BF%E7%94%A8%E7%AF%87/">展开全文 >></a>
         </p>
       
 
@@ -322,6 +413,91 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-1002-查找共用字符--查找" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">LeetCode-1002 查找共用字符--查找</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-common-characters/submissions/">LeetCode-1002 查找共用字符</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">查找</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-1002-%E6%9F%A5%E6%89%BE%E5%85%B1%E7%94%A8%E5%AD%97%E7%AC%A6--%E6%9F%A5%E6%89%BE/">展开全文 >></a>
         </p>
       
 
@@ -523,91 +699,6 @@
 
 
   
-    <article id="post-LeetCode-135分发糖果-贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">LeetCode-135分发糖果-贪心</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/candy/submissions/">LeetCode-135分发糖果-贪心</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
     <article id="post-LeetCode-139-单词拆分--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -662,6 +753,91 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/01/LeetCode-139-%E5%8D%95%E8%AF%8D%E6%8B%86%E5%88%86--DP/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-LeetCode-135分发糖果-贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">LeetCode-135分发糖果-贪心</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/candy/submissions/">LeetCode-135分发糖果-贪心</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/LeetCode-135%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C-%E8%B4%AA%E5%BF%83/">展开全文 >></a>
         </p>
       
 
@@ -832,91 +1008,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/01/LeetCode-167%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%20II%20-%20%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E6%95%B0%E7%BB%84%20%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-198-打家劫舍--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">LeetCode-198 打家劫舍--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/house-robber/">LeetCode-198 打家劫舍–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-198-%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D--DP/">展开全文 >></a>
         </p>
       
 
@@ -1139,11 +1230,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1159,11 +1250,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color1">JUnit</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1175,11 +1266,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
