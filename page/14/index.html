@@ -261,6 +261,198 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-《Java-并发编程实战》阅读笔记-Java线程-概念篇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/01/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-Java%E7%BA%BF%E7%A8%8B-%E6%A6%82%E5%BF%B5%E7%AF%87/">《Java 并发编程实战》阅读笔记 Java线程-概念篇</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/01/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-Java%E7%BA%BF%E7%A8%8B-%E6%A6%82%E5%BF%B5%E7%AF%87/" class="archive-article-date">
+  	<time datetime="2022-01-01T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h1 id="Java-线程"><a href="#Java-线程" class="headerlink" title="Java 线程"></a>Java 线程</h1><ul>
+<li>线程是比进程更轻量级的调度执行单位，CPU 调度的基本单位就是线程。</li>
+<li>线程的引入，将一个进程的资源分配和执行调度分开。</li>
+<li>各个线程既可以共享进程资源（内存地址、文件 I/O 等），又可独立调度。</li>
+</ul>
+<h4 id="Java-线程学习地图"><a href="#Java-线程学习地图" class="headerlink" title="Java 线程学习地图"></a>Java 线程学习地图</h4><p><img src="https://img-blog.csdnimg.cn/img_convert/5ee1331d946a661ea4f75f92f03aa1d3.png" alt="Java线程-xmind"></p>
+<h1 id="Java-线程：概念篇"><a href="#Java-线程：概念篇" class="headerlink" title="Java 线程：概念篇"></a>Java 线程：概念篇</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%7B%22request_id%22:%22164609363916780271580606%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450#java-%E7%BA%BF%E7%A8%8B%E6%A6%82%E5%BF%B5%E7%AF%87">Java 线程：概念篇</a></p>
+<ul>
+<li>线程的生命周期状态<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%7B%22request_id%22:%22164609363916780271580606%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450#%E9%80%9A%E7%94%A8%E7%9A%84%E7%BA%BF%E7%A8%8B%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">通用的线程生命周期</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%7B%22request_id%22:%22164609363916780271580606%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450#java-%E4%B8%AD%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">Java 中线程的生命周期</a></li>
+</ul>
+</li>
+<li>线程的生命周期状态转换<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%7B%22request_id%22:%22164609363916780271580606%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450#%E5%8F%AF%E8%BF%90%E8%A1%8C%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81---%E4%BC%91%E7%9C%A0%E7%8A%B6%E6%80%81"><code>可运行/运行状态 -&gt; 休眠状态</code></a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%7B%22request_id%22:%22164609363916780271580606%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450#%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81---%E5%8F%AF%E8%BF%90%E8%A1%8C%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81"><code>初始状态 -&gt; 可运行/运行状态</code></a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%7B%22request_id%22:%22164609363916780271580606%22,%22scm%22:%2220140713.130102334.pc_blog.%22%7D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450#%E5%8F%AF%E8%BF%90%E8%A1%8C%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81---%E4%B8%AD%E6%AD%A2%E7%8A%B6%E6%80%81"><code>可运行/运行状态 -&gt; 中止状态</code></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="线程的生命周期状态"><a href="#线程的生命周期状态" class="headerlink" title="线程的生命周期状态"></a>线程的生命周期状态</h2><p>想要了解线程，我们可以先从它的程（人）生轨迹入手，也就是它的生命周期，线程是操作系统中的一个重要概念，而 Java 线程本质上只是对操作系统的线程进行了封装，简单打个比方就是，Java 线程相当于<br>所以我们先来看看通用的线程生命周期是什么样的，再来看看 Java 都对其进行了怎样的封装。</p>
+<h3 id="通用的线程生命周期"><a href="#通用的线程生命周期" class="headerlink" title="通用的线程生命周期"></a>通用的线程生命周期</h3><p>首先，通用的线程生命周期模型将线程的状态分为了以下五种：</p>
+<p><strong>初始状态：</strong></p>
+<ul>
+<li>线程仅仅在编程语言层面被创建，在操作系统中并没有被创建，因此还不能被分配 CPU 资源；</li>
+<li>相当于现在只是在 Java 中 new 了个 <code>Thread</code> 对象，还没调用 <code>start()</code> 方法。</li>
+</ul>
+<p><strong>可运行状态：</strong></p>
+<ul>
+<li>真正的操作系统线程此时已经成功被创建，线程已经可以被分配 CPU 资源了。</li>
+</ul>
+<p><strong>运行状态：</strong></p>
+<ul>
+<li>当有空闲的 CPU 资源时，操作系统会将其分配给一个处于可运行状态的线程，可运行状态的线程一旦被分配的 CPU，它的状态将变为运行状态。</li>
+</ul>
+<p><strong>休眠状态：</strong></p>
+<ul>
+<li>运行状态的线程如果调用了某个阻塞式 API（如以阻塞方式读文件），那么这个线程将变为休眠状态，并放弃自己的 CPU 使用权；</li>
+<li>当它的阻塞状态结束了，它的状态会变为可运行状态，等待再次被分配 CPU 资源。</li>
+</ul>
+<p><strong>终止状态：</strong></p>
+<ul>
+<li>当线程执行完或出现异常时，它就会进入终止状态，这是一个终态（只进不出的饕餮状态），就是挂了。</li>
+</ul>
+<p>它们之间的状态流转关系为：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/8d408be5449cac7c3536136cf995b6fd.png" alt="通用线程生命周期"></p>
+<h3 id="Java-中线程的生命周期"><a href="#Java-中线程的生命周期" class="headerlink" title="Java 中线程的生命周期"></a>Java 中线程的生命周期</h3><p>对于 Java 线程而言，它对操作系统的线程状态划分略有不满。</p>
+<p>首先，它觉得可运行状态和运行状态还搞两个状态有点麻烦，这两个状态只对操作系统调度层面有用，而 Java 秉承不重复造轮子的原则，将线程的调度交给操作系统处理了。所以，它把这两个状态合并成一个状态，即 RUNNABLE。</p>
+<p>接下来，它又嫌弃休眠状态的分类太过笼统，所以它又细化了休眠状态，根据休眠的原因，将其细分为了：BLOCKED、WAITING、TIME_WAITING 状态。</p>
+<p>最后，Java 将线程的生命周期状态改成了如下形式：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/a4e5274f4e2d4015a685ccfbde64b11d.png" alt="Java线程生命周期"></p>
+<p>接下来，我们将这些状态之间的流转规则进行探究，主要有以下三条链路：</p>
+<ul>
+<li><code>RUNNABLE -&gt; BLOCKED/WAITING/TIME_WAITING</code></li>
+<li><code>NEW -&gt; RUNNABLE</code></li>
+<li><code>RUNNABLE -&gt; TERMINATED</code></li>
+</ul>
+<h2 id="线程的生命周期状态转换"><a href="#线程的生命周期状态转换" class="headerlink" title="线程的生命周期状态转换"></a>线程的生命周期状态转换</h2><h3 id="可运行-运行状态-gt-休眠状态"><a href="#可运行-运行状态-gt-休眠状态" class="headerlink" title="可运行/运行状态 -&gt; 休眠状态"></a><code>可运行/运行状态 -&gt; 休眠状态</code></h3><ul>
+<li><p>```<br>RUNNABLE -&gt; BLOCKED</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - 线程等待 synchronized 的隐式锁时，触发该状态转换。</span><br><span class="line"></span><br><span class="line">- ```</span><br><span class="line">  RUNNABLE -&gt; WAITING</span><br></pre></td></tr></table></figure>
+
+<p>：</p>
+<ul>
+<li>有三种场景会触发这种转换：<ul>
+<li>已获取 synchronized 隐式锁的线程，调用无参数的 <code>Object.wait()</code> 方法。</li>
+<li>调用无参数的 <code>Thread.join()</code> 方法。因为 <code>Thread.join()</code> 其实是通过调用线程对象本身的 <code>wait(0)</code> 方法实现的。</li>
+<li>调用 <code>LockSupport.park()</code> 方法。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>RUNNABLE -&gt; TIMED_WAITING</code>：</p>
+</li>
+</ul>
+<p>​               -   有五种场景会触发这种转换：</p>
+<p>​                          - 调用带超时参数的 <code>Thread.sleep(long millis)</code> 方法；</p>
+<p>​                          - 获得 synchronized 隐式锁的线程，调用带超时参数的 <code>Object.wait(long timeout)</code> 方法；</p>
+<p>​                          - 调用带超时参数的 <code>Thread.join(long millis)</code> 方法；</p>
+<p>​                          - 调用带超时参数的 <code>LockSupport.parkNanos(Object blocker, long deadline)</code> 方法；</p>
+<p>​                          - 调用带超时参数的 <code>LockSupport.parkUntil(long deadline)</code> 方法。</p>
+<blockquote>
+<h4 id="LockSupport-对象说明："><a href="#LockSupport-对象说明：" class="headerlink" title="LockSupport 对象说明："></a>LockSupport 对象说明：</h4><p>Java 并发包中的锁，都是基于该对象实现的，其使用方法如下：</p>
+<ul>
+<li>调用 <code>LockSupport.park()</code> 方法，当前线程会阻塞，线程的状态会从 RUNNABLE 转换到 WAITING。</li>
+<li>调用 <code>LockSupport.park()</code> 方法，当前线程会阻塞，线程的状态会从 RUNNABLE 转换到 WAITING。</li>
+</ul>
+</blockquote>
+<h3 id="初始状态-gt-可运行-运行状态"><a href="#初始状态-gt-可运行-运行状态" class="headerlink" title="初始状态 -&gt; 可运行/运行状态"></a><code>初始状态 -&gt; 可运行/运行状态</code></h3><p>Java 刚创建出来的 <code>Thread thread</code> 对象就是 NEW 状态，调用了 <code>thread.start()</code> 方法后，线程就进入了 RUNNABLE 状态。</p>
+<h3 id="可运行-运行状态-gt-中止状态"><a href="#可运行-运行状态-gt-中止状态" class="headerlink" title="可运行/运行状态 -&gt; 中止状态"></a><code>可运行/运行状态 -&gt; 中止状态</code></h3><ul>
+<li>线程执行完 <code>run()</code> 方法后，会自动转换到 TERMINATED 状态。</li>
+<li>线程在执行 <code>run()</code> 方法的时，有异常抛出，线程也会被终止。</li>
+</ul>
+<blockquote>
+<h4 id="如何强制中断-run-方法的执行？"><a href="#如何强制中断-run-方法的执行？" class="headerlink" title="如何强制中断 run() 方法的执行？"></a>如何强制中断 <code>run()</code> 方法的执行？</h4><p>当 <code>run()</code> 方法中调用了一个耗时很长的方法时，我们等的不耐烦了，此时我们需要强制中断 <code>run()</code> 方法的执行。</p>
+<p>在 Java 的 Thread 中，倒是给我们提供了一个 <code>stop()</code> 方法，不过该方法已经被标记为 <code>@Deprecated</code> 的了，官方已经不推荐我们使用它了。</p>
+<p>不推荐它的原因是它太危险了，<code>stop()</code> 方法不会给线程任何处理后事的机会，直接就杀掉线程，如果此时线程正好持有 ReentrantLock 锁，它被干掉后会导致这个锁永远不会被释放，这实在是太危险了。</p>
+<p>一种比较优雅的取消线程的方式是 <strong>中断</strong>，即调用 <code>interrupt()</code> 方法，这个方法并没做什么实质上的事情，它相当于只是给线程打上了一个标记，而后我们可以通过一些手段（如调用 <code>Thread.interrupted()</code> 方法）来检测当前线程是否被打上了中断标记，来决定如何终止线程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Thread.interrupted()) &#123; <span class="comment">// Clears interrupted status!</span></span><br><span class="line">    <span class="comment">// do something like lock.unlock()</span></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/113033769?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164609363916780271580606%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=164609363916780271580606&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-3-113033769.nonecase&utm_term=Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B&spm=1018.2226.3001.4450">转载自此</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/01/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-Java%E7%BA%BF%E7%A8%8B-%E6%A6%82%E5%BF%B5%E7%AF%87/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-ElasticStack" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1038,95 +1230,6 @@
 
 
   
-    <article id="post-JVM内存与垃圾回收系列：垃圾回收相关算法(15)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/07/15/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95(15)/">JVM内存与垃圾回收系列：垃圾回收相关算法(15)</a>
-    </h1>
-  
-
-        
-        <a href="/2021/07/15/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95(15)/" class="archive-article-date">
-  	<time datetime="2021-07-15T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-15</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>JVM（15）</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/07/15/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95(15)/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/13/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/15/">下一页</a>
@@ -1229,11 +1332,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1241,11 +1344,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1265,19 +1368,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">高并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1325,11 +1428,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1365,6 +1468,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
@@ -1374,10 +1481,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
