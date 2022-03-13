@@ -261,6 +261,91 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Cookie和Session" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/20/Cookie%E5%92%8CSession/">Cookie和Session</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/20/Cookie%E5%92%8CSession/" class="archive-article-date">
+  	<time datetime="2022-01-19T16:49:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-20</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Servletconfig容器"><a href="#Servletconfig容器" class="headerlink" title="Servletconfig容器"></a>Servletconfig容器</h2>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Javaweb</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/20/Cookie%E5%92%8CSession/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-设计模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1411,131 +1496,6 @@
 
 
   
-    <article id="post-shiro-授权" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/06/shiro-%E6%8E%88%E6%9D%83/">shiro-授权</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/06/shiro-%E6%8E%88%E6%9D%83/" class="archive-article-date">
-  	<time datetime="2022-01-06T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-06</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="https://img-blog.csdnimg.cn/20210510102409630.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h2 id="测试有关方法"><a href="#测试有关方法" class="headerlink" title="测试有关方法"></a>测试有关方法</h2><p>ini配置文件使用默认的realm，使用IOC的方式对subject进行注入角色和权限，如果使用自定义的realm，就需要从数据库中提取该用户的角色和权限进行set到shiro中</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[users]</span><br><span class="line">zhangsan=<span class="number">123</span>,role1,role2</span><br><span class="line">lisi=<span class="number">456</span>,role2</span><br><span class="line">[roles]</span><br><span class="line">role1:users:add,users:delete,users:update,users:select</span><br><span class="line">role2:users:add</span><br></pre></td></tr></table></figure>
-<p>hasRole检查是否有该角色返回Boolean，checkRole如果没有权限就报错，ispermitted检查是否有该权限返回Boolean，check同理（下边代码测试授权，<strong>授权必须在认证通过之后才能进行</strong>，所以写的时候还是要前边先写认证，并且认证成功才执行下面代码）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">//仅测试部分基础方法</span></span><br><span class="line">		<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authenticator</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//相当于配置realm</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		<span class="comment">//模拟拿到用户登录信息</span></span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;lisi&quot;</span>,<span class="string">&quot;456&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:select&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:add&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:update&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;users:delete&quot;</span>));</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="授权常用的三种方式"><a href="#授权常用的三种方式" class="headerlink" title="授权常用的三种方式"></a>授权常用的三种方式</h2><p>一般web用的都是第二种和第三种，这里不是很清晰，后边整合web再详解，<strong>授权分为基于角色的授权和基于资源（表的crud）的授权</strong></p>
-<p>条件判断</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(subject.hasRole(“admin”)) &#123;</span><br><span class="line"> <span class="comment">//有权限 </span></span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="comment">//无权限 </span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>注解式：通过在执行的 Java 方法上放置相应的注解完成：（具体用法后边web整合中详细介绍）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiresRoles(&quot;admin&quot;)</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span> </span>&#123; </span><br><span class="line"><span class="comment">//有权限 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>没有权限将抛出相应的异常； JSP/GSP 标签：在 JSP/GSP 页面通过相应的标签完成：（需要导入taglib ）（具体用法后边web整合中详细介绍）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">    &lt;!-- 依赖 --&gt;</span><br><span class="line">    &lt;%<span class="meta">@taglib</span> prefix=<span class="string">&quot;shiro&quot;</span> uri=<span class="string">&quot;http://shiro.apache.org/tags&quot;</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html PUBLIC <span class="string">&quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;</span> <span class="string">&quot;http://www.w3.org/TR/html4/loose.dtd&quot;</span>&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;shiro:hasPermission name=<span class="string">&quot;users:update&quot;</span>&gt;</span><br><span class="line">&lt;a href=<span class="string">&quot;#&quot;</span>&gt;&lt;/a&gt;</span><br><span class="line">&lt;/shiro:hasPermission&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-
-<h2 id="自定义realm授权（一个用户一个角色）（参考rbac）"><a href="#自定义realm授权（一个用户一个角色）（参考rbac）" class="headerlink" title="自定义realm授权（一个用户一个角色）（参考rbac）"></a>自定义realm授权（一个用户一个角色）（参考rbac）</h2><h3 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h3><p>用户表<br><img src="https://img-blog.csdnimg.cn/20210204222027960.png" alt="在这里插入图片描述"><br>角色表<br><img src="https://img-blog.csdnimg.cn/20210204222203272.png" alt="在这里插入图片描述"><br>权限表<br><img src="https://img-blog.csdnimg.cn/20210204222236116.png" alt="在这里插入图片描述"></p>
-<p><img src="https://img-blog.csdnimg.cn/20210204223823221.png" alt="在这里插入图片描述"></p>
-<h2 id="ini文件"><a href="#ini文件" class="headerlink" title="ini文件"></a>ini文件</h2><p>只需要配置自定义的realm，因为数据源在自定义的realm中取得用户，角色等信息</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">realm=cn.wit.realm.UsersRealm</span><br><span class="line">securityManager.realm=$realm</span><br></pre></td></tr></table></figure>
-<h2 id="授权方法"><a href="#授权方法" class="headerlink" title="授权方法"></a>授权方法</h2><p>关于授权，只要把用户所拥有的权限返回给shiro，从数据库中利用rbac思想取得用户的所有权限，然后传给<font color=blue>SimpleAuthorizationInfo</font>对象的<font color=blue>addStringPermission</font>方法，最后认证的信息（认证是否成功），授权的信息（所拥有的权限），都会封装到subject里边</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthorizationInfo <span class="title">doGetAuthorizationInfo</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">			PrincipalCollection principals)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//授权主要的工作是将用户拥有的权限返回给shiro</span></span><br><span class="line">		</span><br><span class="line">		String username=principals.getPrimaryPrincipal().toString();</span><br><span class="line"></span><br><span class="line">		Connection conn=<span class="keyword">null</span>;</span><br><span class="line">        PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">        ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">        ComboPooledDataSource cpds=<span class="keyword">null</span>;</span><br><span class="line">        Users users=<span class="keyword">new</span> Users();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="comment">//c3p0获取数据库连接conn</span></span><br><span class="line">    		cpds= <span class="keyword">new</span> ComboPooledDataSource();</span><br><span class="line">    		cpds.setDriverClass(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">    		cpds.setJdbcUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>);</span><br><span class="line">    		cpds.setUser(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">    		cpds.setPassword(<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">    		conn = cpds.getConnection();</span><br><span class="line">            </span><br><span class="line">            String sql=<span class="string">&quot;select e.*,re.rid from element e join role_element re on e.id=re.eid  where rid =(select u.rid from users u where username=?)&quot;</span>;</span><br><span class="line">            ps= conn.prepareStatement(sql);</span><br><span class="line">            ps.setObject(<span class="number">1</span>,username);</span><br><span class="line">            rs=ps.executeQuery();</span><br><span class="line">            List&lt;String&gt;elements=<span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">            	elements.add(rs.getString(<span class="string">&quot;eleno&quot;</span>));</span><br><span class="line">            &#125;</span><br><span class="line">            users.setElement(elements);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (PropertyVetoException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            	<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            		rs.close();</span><br><span class="line">            	&#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            	<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            		ps.close();</span><br><span class="line">            	&#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            	<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            		conn.close();</span><br><span class="line">            	&#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">	</span><br><span class="line">		</span><br><span class="line">		SimpleAuthorizationInfo info=<span class="keyword">new</span> SimpleAuthorizationInfo();</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">			</span><br><span class="line">		<span class="keyword">for</span> (String element : users.getElement()) &#123;</span><br><span class="line">			System.out.println(element);</span><br><span class="line">			info.addStringPermission(element);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="main"><a href="#main" class="headerlink" title="main"></a>main</h2><p>当用户的权限都封装在subject之后，就可以根据上面讲的三种授权的方法，判断是否有权限之后编写业务逻辑</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//相当于配置realm</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		<span class="comment">//模拟拿到用户登录信息</span></span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:select&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:add&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:update&quot;</span>));</span><br><span class="line">		System.out.println(subject.isPermitted(<span class="string">&quot;flower:delete&quot;</span>));</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="源码跟踪"><a href="#源码跟踪" class="headerlink" title="源码跟踪"></a>源码跟踪</h2><p>subject进入</p>
-<p>subject的实现类<strong>DelegatingSubject</strong>的isPermitted（F4查看类结构）<br><img src="https://img-blog.csdnimg.cn/20210510185516816.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>和认证一样，同样是将授权交给securityManager处理，securityManager实现类是<strong>DefaultSecurityManager</strong>，授权部分是它的父类<strong>AuthorizingManager</strong>完成的<br><img src="https://img-blog.csdnimg.cn/20210510194822467.png" alt="在这里插入图片描述"></p>
-<p><img src="https://img-blog.csdnimg.cn/2021051019491068.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>调用的是authorizer的isPermitted方法，进入Authorizer<br><img src="https://img-blog.csdnimg.cn/20210510194927641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>授权器的实现类是<strong>ModularRealmAuthorizer</strong><br><img src="https://img-blog.csdnimg.cn/20210510195032202.png" alt="在这里插入图片描述"><br>它的isPermitted方法中有对realm强转，这里就会调用realm的isPermitted</p>
-<blockquote>
-<p>ModularRealmAuthorizer循环检查每一个Realm是否实现了Authorizer，检查通过则调用该Realm的权限验证方法。</p>
-</blockquote>
-<p><img src="https://img-blog.csdnimg.cn/20210510210136580.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>realm授权部分实际上是AuthorizingRealm实现的，当中也有isPermitted方法   ,此时如果传的权限是字符串，PermissionResolver的功能是将字符串转化为Permission（默认使用的PermissionResolver实例为WildcardPermissionResolver）</p>
-<p><img src="https://img-blog.csdnimg.cn/2021051021165289.png" alt="在这里插入图片描述"><br>进入PermissionResolver<br><img src="https://img-blog.csdnimg.cn/20210510211910450.png" alt="在这里插入图片描述"><br>之前被AuthorizingRealm调用的resolverpermission方法<br><img src="https://img-blog.csdnimg.cn/20210510212058140.png" alt="在这里插入图片描述"></p>
-<p>进入WildcardPermission （按照它的规则去进行转换，转换成功失败会返回Boolean）</p>
-<blockquote>
-<p>Shiro提供直观有力的表述语法——WildcardPermission。</p>
-</blockquote>
-<p><img src="https://img-blog.csdnimg.cn/20210510212215959.png" alt="在这里插入图片描述"><br>转换之后字符串变成Permission，调用参数为Permission类型放isPermitted，<br><img src="https://img-blog.csdnimg.cn/20210510212757850.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>进入第二个isPermitted的getAuthorizationInfo，获取权限信息<br><img src="https://img-blog.csdnimg.cn/20210510215637793.png" alt="在这里插入图片描述"><br>该方法返回值为AuthorizationInfo，如果有缓存则从缓存中提取数据<br><img src="https://img-blog.csdnimg.cn/20210510215812151.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如果没有缓存，就只能根据Principals从realm中重新拿数据（比如第一次登录），这里调用了doGetAuthorizationInfo<br><img src="https://img-blog.csdnimg.cn/20210510215910693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>进去有一个抽象方法，<br><img src="https://img-blog.csdnimg.cn/20210510220013235.png" alt="在这里插入图片描述"><br>realm都实现了这个方法<br><img src="https://img-blog.csdnimg.cn/20210510220135576.png" alt="在这里插入图片描述"><br>比如JdbcRealm实现<br><img src="https://img-blog.csdnimg.cn/20210510220518657.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这里边红框是最重要的代码，当自定义realm同样是实现的这个（<font color=red>自定义realm同样是实现doGetAuthorizationInfo这个方法</font>）<br><img src="https://img-blog.csdnimg.cn/20210510220528626.png" alt="在这里插入图片描述"><br>拿到权限信息后就可以和Permission对比，循环判断多个权限是否被该用户拥有<br><img src="https://img-blog.csdnimg.cn/20210510220828568.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p><strong>END</strong></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/06/shiro-%E6%8E%88%E6%9D%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
@@ -1698,11 +1658,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1774,11 +1734,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1790,7 +1746,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
