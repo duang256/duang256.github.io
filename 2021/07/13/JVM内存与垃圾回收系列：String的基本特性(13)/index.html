@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/3c801e129e80b4c38747cc4a88647e47.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/3f9d9436074892f6b61200f92b926177.png">
 <meta property="article:published_time" content="2021-07-13T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-02-09T04:12:47.218Z">
+<meta property="article:modified_time" content="2022-03-16T07:50:56.819Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="JVM">
@@ -474,14 +474,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="intern的使用：JDK6和JDK7"><a href="#intern的使用：JDK6和JDK7" class="headerlink" title="intern的使用：JDK6和JDK7"></a>intern的使用：JDK6和JDK7</h3><p>jdk6</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);  </span><br><span class="line">s.intern(); </span><br><span class="line">String s2 = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">System.out.println(s == s2); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line">String s3 = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>) + <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">s3.intern();</span><br><span class="line">String s4 = <span class="string">&quot;11&quot;</span>;</span><br><span class="line">System.out.println(s3 == s4); <span class="comment">// false</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>jdk7</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);  </span><br><span class="line">s.intern(); </span><br><span class="line">String s2 = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">System.out.println(s == s2); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line">String s3 = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>) + <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">s3.intern();</span><br><span class="line">String s4 = <span class="string">&quot;11&quot;</span>;</span><br><span class="line">System.out.println(s3 == s4); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<p>总结string的intern（）的使用：</p>
-<p>JDK1.6中，将这个字符串对象尝试放入串池。</p>
+<h3 id="intern的使用：JDK6和JDK7"><a href="#intern的使用：JDK6和JDK7" class="headerlink" title="intern的使用：JDK6和JDK7"></a>intern的使用：JDK6和JDK7</h3><p>JDK1.6中，将这个字符串对象尝试放入串池。</p>
 <ul>
 <li>如果串池中有，则并不会放入。返回已有的串池中的对象的地址</li>
 <li>如果没有，会把此<strong>对象复制一份</strong>，放入串池，并返回串池中的对象地址</li>
@@ -810,15 +803,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -830,11 +823,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">高并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color4">高并发</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -854,11 +847,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -910,15 +903,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数组</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -930,7 +923,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -946,7 +939,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
