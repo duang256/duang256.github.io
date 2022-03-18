@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/30aeeee5628178c52dc74c9d4535c0a7.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/62eb8c9824e88880d24455c8238b9832.png">
 <meta property="article:published_time" content="2020-12-20T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-03-01T14:18:31.716Z">
+<meta property="article:modified_time" content="2022-03-17T16:22:27.214Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="高并发">
@@ -360,11 +360,20 @@
 <h4 id="Thread和Runnable的异同"><a href="#Thread和Runnable的异同" class="headerlink" title="Thread和Runnable的异同"></a>Thread和Runnable的异同</h4><ul>
 <li>Thread 和 Runnable 的相同点：都是“多线程的实现方式”。</li>
 <li>Thread 和 Runnable 的不同点：<ul>
-<li>Thread 是类，而Runnable是接口；Thread本身是实现了Runnable接口的类。我们知道“一个类只能有一个父类，但是却能实现多个接口”，因此Runnable具有更好的扩展性。此外，Runnable还可以用于“资源的共享”。即，多个线程都是基于某一个Runnable对象建立的，它们会共享Runnable对象上的资源（变量）。通常，建议通过“Runnable”实现多线程！</li>
+<li>Thread 是类，而Runnable是接口；Thread本身是实现了Runnable接口的类。我们知道“一个类只能有一个父类，但是却能实现多个接口”，因此Runnable具有更好的扩展性。此外，Runnable还可以用于“资源的共享”是错误说法，是谣传（不合理demo得出的错误结论，两者之间本质相同，Thread是Runnbale的实现，提供更多方法而已）</li>
 </ul>
 </li>
 </ul>
-<h4 id="thread-start-和runnable-run-的区别"><a href="#thread-start-和runnable-run-的区别" class="headerlink" title="thread.start()和runnable.run()的区别"></a>thread.start()和runnable.run()的区别</h4><p>Thread类继承了Runnable接口，调用start()方法会启动一个新的线程来执行相应的run()方法；run()方法和普通的成员方法一样，可以被重复调用，会在当前线程中执行该方法，而不会启动新的线程。(参考上面通过实现Runnable接口来实现新线程)</p>
+<h4 id="thread-start-和runnable-run-的区别"><a href="#thread-start-和runnable-run-的区别" class="headerlink" title="thread.start()和runnable.run()的区别"></a>thread.start()和runnable.run()的区别</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test11</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		MyRunnbale3 mr = <span class="keyword">new</span> MyRunnbale3();</span><br><span class="line">		MyRunnbale3 mr2 = <span class="keyword">new</span> MyRunnbale3();</span><br><span class="line">		</span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(mr);</span><br><span class="line">		Thread t2 = <span class="keyword">new</span> Thread(mr2);</span><br><span class="line">		</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line"><span class="comment">//		t1.run();</span></span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyRunnbale3</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; <span class="number">5</span>;i++)&#123;</span><br><span class="line">			System.out.println(Thread.currentThread().getName() + <span class="string">&quot;:&quot;</span> + i);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//run方法结果</span></span><br><span class="line"><span class="comment">//main:0</span></span><br><span class="line"><span class="comment">//main:1</span></span><br><span class="line"><span class="comment">//main:2</span></span><br><span class="line"><span class="comment">//main:3</span></span><br><span class="line"><span class="comment">//main:4</span></span><br><span class="line"><span class="comment">//main:0</span></span><br><span class="line"><span class="comment">//main:1</span></span><br><span class="line"><span class="comment">//main:2</span></span><br><span class="line"><span class="comment">//main:3</span></span><br><span class="line"><span class="comment">//main:4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//start结果</span></span><br><span class="line"><span class="comment">//Thread-0:0</span></span><br><span class="line"><span class="comment">//Thread-1:0</span></span><br><span class="line"><span class="comment">//Thread-0:1</span></span><br><span class="line"><span class="comment">//Thread-1:1</span></span><br><span class="line"><span class="comment">//Thread-1:2</span></span><br><span class="line"><span class="comment">//Thread-1:3</span></span><br><span class="line"><span class="comment">//Thread-0:2</span></span><br><span class="line"><span class="comment">//Thread-0:3</span></span><br><span class="line"><span class="comment">//Thread-0:4</span></span><br><span class="line"><span class="comment">//Thread-1:4</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>直接调用run()方法时，run()方法中的代码将在调用run方法的同一个线程中执行，JVM此时并不会创建一个新的线程，也就是说，程序只有主线程一个线程，不会有新的线程被创建，等待run()方法中的代码执行完了，才会顺序执行后面的代码。</p>
+<p>当调用Thread.start()方法，JVM将会创建一个新的线程来执行run()方法里的代码，因此调用start()方法才会创建新的线程，在新线程执行run()方法里的代码的同时，后面的代码继续由主线程执行。</p>
+<p>start()和run()方法之间的另一个关键区别，就是可以调用run()方法n多次，JVM不会抛出任务错误，但是不能在同一个线程实例里重复调用start()方法。</p>
+<p>在同一个线程实例第一次调用start()方法，JVM会创建一个新的线程，但是第二次JVM会抛出java.lang.IllegalThreadStateException异常，因为这个线程已经存在，你不能再创建第二次，你可以中断这个线程，一旦它死了就会消失。</p>
 <h3 id="线程的优先级与守护线程"><a href="#线程的优先级与守护线程" class="headerlink" title="线程的优先级与守护线程"></a>线程的优先级与守护线程</h3><blockquote>
 <p>线程的优先级<br>Java中的线程优先级的范围是1～10，默认的优先级是5，10极最高。线程的优先级具有以下特性：<br>概率性: “高优先级线程”被分配CPU的概率高于“低优先级线程”<br>随机性: 根据时间片轮循调度，能够并发执行,无论是是级别相同还是不同，线程调用都不会绝对按照优先级执行，每次执行结果都不一样，调度算法无规律可循，所以线程之间不能有先后依赖关系。无时间片轮循机制时，高级别的线程优先执行，如果低级别的线程正在运行时，有高级别线程可运行状态，则会执行完低级别线程，再去执行高级别线程。如果低级别线程处于等待、睡眠、阻塞状态，或者调用yield()函数让当前运行线程回到可运行状态，以允许具有相同优先级或者高级别的其他线程获得运行机会。因此，使用yield()的目的是让相同优先级的线程之间能适当的轮转执行。但是，实际中无法保证yield()达到让步目的，因为让步的线程还有可能被线程调度程序再次选中。结论：yield()从未导致线程转到等待/睡眠/阻塞状态。在大多数情况下，yield()将导致线程从运行状态转到可运行状态，但有可能没有效果。<br>用户线程与守护线程<br>在Java中有两类线程：User Thread(用户线程)、Daemon Thread(守护线程)<br>用个比较通俗的比如，任何一个守护线程都是整个JVM中所有非守护线程的保姆。只要当前JVM实例中尚存在任何一个非守护线程没有结束，守护线程就全部工作；只有当最后一个非守护线程结束时，守护线程随着JVM一同结束工作。Daemon的作用是为其他线程的运行提供便利服务，守护线程最典型的应用就是 GC (垃圾回收器)，它就是一个很称职的守护者。User和Daemon两者几乎没有区别，唯一的不同之处就在于虚拟机的离开：如果 User Thread已经全部退出运行了，只剩下Daemon Thread存在了，虚拟机也就退出了。 因为没有了被守护者，Daemon也就没有工作可做了，也就没有继续运行程序的必要了。<br>值得一提的是，守护线程并非只有虚拟机内部提供，用户在编写程序时也可以自己设置守护线程。下面的方法就是用来设置守护线程的。</p>
 </blockquote>
@@ -899,15 +908,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">贪心</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -919,11 +928,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">位运算</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color4">位运算</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -951,11 +960,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -991,7 +1000,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1003,11 +1012,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
