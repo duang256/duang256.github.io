@@ -261,6 +261,154 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-《Java-并发编程实战》阅读笔记-并发程序测试" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/09/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-%E5%B9%B6%E5%8F%91%E7%A8%8B%E5%BA%8F%E6%B5%8B%E8%AF%95/">《Java 并发编程实战》阅读笔记 并发程序测试</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/09/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-%E5%B9%B6%E5%8F%91%E7%A8%8B%E5%BA%8F%E6%B5%8B%E8%AF%95/" class="archive-article-date">
+  	<time datetime="2022-01-09T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-09</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h1 id="并发程序测试"><a href="#并发程序测试" class="headerlink" title="并发程序测试"></a>并发程序测试</h1><p>并发程序测试</p>
+<ul>
+<li>并发程序测试的陷阱</li>
+<li>如何检查一个多生产者多消费者模式的正确</li>
+<li>阻塞队列性能比较</li>
+</ul>
+<h2 id="并发程序测试的陷阱"><a href="#并发程序测试的陷阱" class="headerlink" title="并发程序测试的陷阱"></a>并发程序测试的陷阱</h2><p><strong>垃圾回收</strong></p>
+<ul>
+<li><p>垃圾回收操作不可预测</p>
+</li>
+<li><p>解决方法</p>
+<ul>
+<li>测试运行时，GC一次都不执行</li>
+<li>测试运行时，GC多次运行，需要足够长的时间（几分钟）[更好]</li>
+</ul>
+</li>
+<li><p><strong>动态编译</strong></p>
+<ul>
+<li>JVM 是解释执行和编译执行相结合的。某个类第一次执行时，JVM 会通过解释字节码的方式执行它，在某个时刻，如果一个方法运行的次数足够多，动态编译器会将它编译为机器码，这样代码便由解释执行变为了编译执行（因为编译执行更快）。除此之外，代码还有可能被反编译和重新编译，并且编译的过程也是要消耗时间的。</li>
+<li>解决方法：<ul>
+<li>运行足够长的时间，使得编译时间和解释执行的时间可以忽略</li>
+<li>预先运行一段时间代码再开始测试，保证在测试前，代码已被完全编译</li>
+<li>运行程序时使用命令行选项：-xx: +PrintCompilation，会在动态编译运行时输出一条信息，可以通过这条消息验证动态编译是在测试运行前执行的</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>无用代码消除</p>
+<ul>
+<li>在 -server 模式下会比 -client 模式下运行的更好，因为 -server 模式更易于通过优化消除无用代码，如果我们要测试的代码被当成无用代码被消除了，测试就没有意义了</li>
+<li>解决方法：计算某个对象中域的散列值，并将它与 <code>System.nanoTime()</code> 进行比较<ul>
+<li><code>if (foo.x.hashCode() == System.nanoTime()) System.out.print(&quot; &quot;);</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>对代码路径的不真实采样</strong></p>
+<ul>
+<li>运行时，编译器会根据收集到的信息对已编译的代码进行优化，意味着在编译某个程序的方法M时生成的代码，可能与编译另一个程序中的方法M生成的代码不同，从而产生测试的差距。</li>
+</ul>
+</li>
+<li><p><strong>不真实的竞争程度</strong></p>
+</li>
+</ul>
+<h2 id="如何检查一个多生产者多消费者模式的正确性"><a href="#如何检查一个多生产者多消费者模式的正确性" class="headerlink" title="如何检查一个多生产者多消费者模式的正确性"></a>如何检查一个多生产者多消费者模式的正确性</h2><ul>
+<li>维护两个 <code>AtomicInteger</code>：<code>putSum</code> 和 <code>takeSum</code></li>
+<li>把数放入队列，并加到 <code>putSum</code></li>
+<li>把数从队列中取出，并加到 <code>takeSum</code></li>
+<li>检查： <code>putSum == takeSum</code></li>
+<li>通过 <code>CyclicBarrier</code> 保证线程的并发</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PutTakeTest</span> <span class="keyword">extends</span> <span class="title">TestCase</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">    <span class="keyword">protected</span> CyclicBarrier barrier;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> SemaphoreBoundedBuffer&lt;Integer&gt; bb;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> nTrials, nPairs;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> AtomicInteger putSum = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> AtomicInteger takeSum = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> PutTakeTest(<span class="number">10</span>, <span class="number">10</span>, <span class="number">100000</span>).test(); <span class="comment">// sample parameters</span></span><br><span class="line">        pool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PutTakeTest</span><span class="params">(<span class="keyword">int</span> capacity, <span class="keyword">int</span> npairs, <span class="keyword">int</span> ntrials)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bb = <span class="keyword">new</span> SemaphoreBoundedBuffer&lt;Integer&gt;(capacity);</span><br><span class="line">        <span class="keyword">this</span>.nTrials = ntrials;</span><br><span class="line">        <span class="keyword">this</span>.nPairs = npairs;</span><br><span class="line">        <span class="comment">// 使用CyclicBarrier保证生产者和消费者线程的并发执行</span></span><br><span class="line">        <span class="keyword">this</span>.barrier = <span class="keyword">new</span> CyclicBarrier(npairs * <span class="number">2</span> + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nPairs; i++) &#123;</span><br><span class="line">                pool.execute(<span class="keyword">new</span> Producer());</span><br><span class="line">                pool.execute(<span class="keyword">new</span> Consumer());</span><br><span class="line">            &#125;</span><br><span class="line">            barrier.await(); <span class="comment">// 阻塞主线程，等待所有线程就绪</span></span><br><span class="line">            barrier.await(); <span class="comment">// 等待所有线程执行完成，</span></span><br><span class="line">                             <span class="comment">// 即生产者和消费者线程中的第二个await执行完</span></span><br><span class="line">                             <span class="comment">// 相当于循环使用了两次CyclicBarrier</span></span><br><span class="line">            assertEquals(putSum.get(), takeSum.get());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 测试用的随机数生成代码</span></span><br><span class="line">    <span class="comment">// 使用方法：通过前一个seed生成后一个seed</span></span><br><span class="line">    <span class="comment">// int seed = (this.hashCode() ^ (int) System.nanoTime());</span></span><br><span class="line">    <span class="comment">// seed = xorShift(seed);</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">xorShift</span><span class="params">(<span class="keyword">int</span> y)</span> </span>&#123; </span><br><span class="line">        y ^= (y &lt;&lt; <span class="number">6</span>);</span><br><span class="line">        y ^= (y &gt;&gt;&gt; <span class="number">21</span>);</span><br><span class="line">        y ^= (y &lt;&lt; <span class="number">7</span>);</span><br><span class="line">        <span class="keyword">return</span> y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> seed = (<span class="keyword">this</span>.hashCode() ^ (<span class="keyword">int</span>) System.nanoTime());</span><br><span class="line">                <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">                barrier.await(); <span class="comment">// 通知主线程生产者线程开始执行准备就绪</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = nTrials; i &gt; <span class="number">0</span>; --i) &#123;</span><br><span class="line">                    bb.put(seed);</span><br><span class="line">                    sum += seed;</span><br><span class="line">                    seed = xorShift(seed);</span><br><span class="line">                &#125;</span><br><span class="line">                putSum.getAndAdd(sum);</span><br><span class="line">                barrier.await(); <span class="comment">// 通知主线程生产者线程执行结束</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                barrier.await(); <span class="comment">// 通知主线程消费者线程开始执行准备就绪</span></span><br><span class="line">                <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = nTrials; i &gt; <span class="number">0</span>; --i) &#123;</span><br><span class="line">                    sum += bb.take();</span><br><span class="line">                &#125;</span><br><span class="line">                takeSum.getAndAdd(sum);</span><br><span class="line">                barrier.await(); <span class="comment">// 通知主线程消费者线程执行结束</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="阻塞队列性能比较"><a href="#阻塞队列性能比较" class="headerlink" title="阻塞队列性能比较"></a>阻塞队列性能比较</h2><ul>
+<li><code>LinkedBlockingQueue</code> 的可伸缩性要优于 <code>ArrayBlockingQueue</code>。</li>
+<li>违背常理：因为链表元素在插入元素时要分配一个链表节点对象，理论上应该更费时间才对。</li>
+<li>原因：与基于数组的队列相比，链表队列的 put 和 take 方法支持更高的访问，因为一些优化后的链表队列能将队列的头节点的更新操作和尾节点的更新操作分离开来。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/09/%E3%80%8AJava-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98%E3%80%8B%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-%E5%B9%B6%E5%8F%91%E7%A8%8B%E5%BA%8F%E6%B5%8B%E8%AF%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-表的分页操作" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1762,109 +1910,6 @@
 
 
   
-    <article id="post-shiro-JdbcRealm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/03/shiro-JdbcRealm/">shiro-JdbcRealm</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/03/shiro-JdbcRealm/" class="archive-article-date">
-  	<time datetime="2022-01-03T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-03</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>shiro默认使用自带的IniRealm，IniRealm从ini配置文件中读取用户的信息。大部分情况下我们是需要从数据库中读取用户信 息，所以要自定义realm</p>
-<p><strong>[main]</strong><br>myRealm=xxxx<br>#依赖注入<br>SecurityManager.realm=$myRealm<br>配置应用程序的SecurityManager实例及任何它的依赖组件（比如Realms）<br><strong>[users]</strong><br>可以像认证demo中配置静态用户（张三=123）。还可以定义角色（lisi=456,role1,role2）</p>
-<p>将用户和用户和角色联系起来(<strong>这里就很rbac了！</strong>)<br>[users]<br>zhangsan=1111,role1<br>[roles]<br>role=user:add,user:delete</p>
-<p>使用JdbcRealm进行认证</p>
-<ul>
-<li><font color=blue>在指定的dataSource锁对应的数据库中应该有用户表users，该表中有username，password，password_salt等字段，</font>这些名称都是jdbcRealm源码中SQL语句中的，所以，如果创建数据库时不按照源码的字段名来建表，就没法使用JdbcRealm</li>
-</ul>
-<h2 id="JdbcRealm-demo"><a href="#JdbcRealm-demo" class="headerlink" title="JdbcRealm demo"></a>JdbcRealm demo</h2><h2 id="jar包"><a href="#jar包" class="headerlink" title="jar包"></a>jar包</h2><p><img src="https://img-blog.csdnimg.cn/20210201172252454.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p>这里password设计成32位，md5加密是32位<br><img src="https://img-blog.csdnimg.cn/20210509142135721.png" alt="在这里插入图片描述"></p>
-<p><img src="https://img-blog.csdnimg.cn/2021020119270516.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log4j.rootLogger=Info, stdout </span><br><span class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender </span><br><span class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout </span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n</span><br></pre></td></tr></table></figure>
-<h3 id="shiro-ini"><a href="#shiro-ini" class="headerlink" title="shiro.ini"></a>shiro.ini</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">dataSource=com.mchange.v2.c3p0.ComboPooledDataSource</span><br><span class="line">dataSource.driverClass=com.mysql.jdbc.Driver</span><br><span class="line">dataSource.jdbcUrl=jdbc:mysql:<span class="comment">//localhost:3306/login</span></span><br><span class="line">dataSource.user=root</span><br><span class="line">dataSource.password=wityy</span><br><span class="line">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm</span><br><span class="line">jdbcRealm.dataSource=$dataSource</span><br><span class="line">securityManager.realm=$jdbcRealm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>main中dataSource用c3p0数据库连接池 连接数据库，<font color=red>mysql专栏中有关于数据库连接池的内容。</font> ，配置完dataSource后，配置jdbcRealm，将dataSource给jdbcRealm，将jdbcRealm赋值给SecurityManager，赋值前加$</p>
-<h3 id="main"><a href="#main" class="headerlink" title="main"></a>main</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.shiro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.SecurityUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.IncorrectCredentialsException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UnknownAccountException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UsernamePasswordToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.config.IniSecurityManagerFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.realm.Realm;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.Subject;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.Factory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.mgt.SecurityManager;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 完成用户认证功能</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//拿到SecurityManager并将它放到环境当中</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			subject.login(taken);</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="验证策略"><a href="#验证策略" class="headerlink" title="验证策略"></a>验证策略</h2><p>在说具体内容之前先了解一下认证过程的源码<br><font color=blue> 从login进入源码的过程参见该篇文章：</font><a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/113470133">认证过程</a></p>
-<p>从进入认证器部分的源码开始</p>
-<p>查看Authenticator认证器 接口的类层次，具体的实现类是ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/2021020120290946.png" alt="在这里插入图片描述"></p>
-<p>l里边有个authenticationStratery类属性，继续跳转<img src="https://img-blog.csdnimg.cn/20210201203002851.png" alt="在这里插入图片描述"><br>该接口的类层次，<font color=red>三个类分别代表三种不同的认证策略</font><br>AtLeastOneSuccessfulStrategy  验证一个成功后<strong>继续验证后边的</strong>，最终由一个及以上就成功，否则失败（<strong>默认</strong>）<br>AllSuccessfulStrategy  只有所有realm验证成功才算总体验证成功<br>FirstSuccessfulStrategy  （验证成功一个后<strong>停止验证后边的</strong>，一个都没有就失败）<br><img src="https://img-blog.csdnimg.cn/20210201203055207.png" alt="在这里插入图片描述"><br>加入AllSuccessfulStrategy后的ini文件（可以用多realm进行验证，再新建一个数据库进行realm配置然后securityManager.realm后边跟多个就行了，下边代码仅仅展示authenticationStrategy用法）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">dataSource=com.mchange.v2.c3p0.DriverManagerDataSource</span><br><span class="line">dataSource.driverClass=com.mysql.jdbc.Driver</span><br><span class="line">dataSource.jdbcUrl=jdbc:mysql:<span class="comment">//localhost:3306/login</span></span><br><span class="line">dataSource.user=root</span><br><span class="line">dataSource.password=wityy</span><br><span class="line">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm</span><br><span class="line">jdbcRealm.dataSource=$dataSource</span><br><span class="line"></span><br><span class="line">authenticationStrategy=org.apache.shiro.authc.pam.AllSuccessfulStrategy</span><br><span class="line">securityManager.realm=$jdbcRealm</span><br><span class="line">securityManager.authenticator.authenticationStrategy=$authenticationStrategy</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/03/shiro-JdbcRealm/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/6/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/8/">下一页</a>
@@ -1967,11 +2012,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2011,15 +2056,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2087,11 +2132,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数组</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2107,15 +2152,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
               </li>
              
               <li class="article-tag-list-item">
