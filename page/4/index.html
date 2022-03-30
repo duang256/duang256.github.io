@@ -261,6 +261,280 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-MyIsam与InnoDB引擎的锁实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/">MyIsam与InnoDB引擎的锁实现</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/" class="archive-article-date">
+  	<time datetime="2022-01-25T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-25</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<h1 id="MyIsam与InnoDB引擎的锁实现"><a href="#MyIsam与InnoDB引擎的锁实现" class="headerlink" title="MyIsam与InnoDB引擎的锁实现"></a>MyIsam与InnoDB引擎的锁实现</h1><h2 id="三类常见引擎："><a href="#三类常见引擎：" class="headerlink" title="三类常见引擎："></a>三类常见引擎：</h2><p>MyIsam ：不支持事务，不支持外键，所以访问速度快。锁机制是表锁，支持全文索引</p>
+<p>InnoDB ：支持事务、支持外键，所以对比MyISAM，InnoDB的处理效率差一些，并要占更多的磁盘空间保留数据和索引。锁机制是行锁，不支持全文索引</p>
+<p>Memory：数据是存放在内存中的，默认哈希索引，非常适合存储临时数据，服务器关闭后，数据会丢失掉。</p>
+<h3 id="如何选择存储引擎："><a href="#如何选择存储引擎：" class="headerlink" title="如何选择存储引擎："></a>如何选择存储引擎：</h3><p>MyISAM：应用是以读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不是很高。</p>
+<p>InnoDB：用于事务处理应用程序，支持外键，如果应用对事务的完整性有比较高的要求，在并发条件下要求数据的一致性。更新删除等频繁（InnoDB可以有效的降低由于删除和更新导致的锁定），对于数据准确性要求比较高的，此引擎适合。</p>
+<p>Memory：通常用于更新不太频繁的小表，用以快速得到访问结果。</p>
+<h3 id="Mysql中的锁"><a href="#Mysql中的锁" class="headerlink" title="Mysql中的锁"></a>Mysql中的锁</h3><p>如果熟悉多线程，那么对锁肯定是有概念的，锁是计算机协调多个进程或线程对某一资源并发访问的机制。</p>
+<p>Mysql中的锁分为表锁和行锁：</p>
+<p>顾名思义，表锁就是锁住一张表，而行锁就是锁住一行。</p>
+<p>表锁的特点：开销小，不会产生死锁，发生锁冲突的概率高，并且并发度低。</p>
+<p>行锁的特点：开销大，会产生死锁，发生锁冲突的概率低，并发度高。</p>
+<p>因此MyISAM和Memory引擎采用的是表锁，而InnoDB存储引擎采用的是行锁。</p>
+<h3 id="MyISAM的锁机制："><a href="#MyISAM的锁机制：" class="headerlink" title="MyISAM的锁机制："></a>MyISAM的锁机制：</h3><p>分为共享读锁和独占写锁。</p>
+<p>读锁是：当某一进程对某张表进行读操作时（select），其他线程也可以读，但是不能写。简单的理解就是，我读的时候你不能写。</p>
+<p>写锁是：当某一进程对某种表某张表的写时（insert，update，，delete），其他线程不能写也不能读。可以理解为，我写的时候，你不能读，也不能写。</p>
+<p>因此MyISAM的读操作和写操作，以及写操作之间是串行的！MyISAM在执行读写操作的时候会自动给表加相应的锁（也就是说不用显示的使用lock table命令），MyISAM总是一次获得SQL语句所需要的全部锁，这也是MyISAM不会出现死锁的原因。</p>
+<p>下面分别举关于写锁和读锁的例子：</p>
+<p>写锁：</p>
+<table>
+<thead>
+<tr>
+<th><strong>事务1</strong></th>
+<th><strong>事务2</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>取得first_test表的写锁：mysql&gt; lock table first_test write;Query OK, 0 rows affected (0.00 sec)</td>
+<td></td>
+</tr>
+<tr>
+<td>当前事务对查询、更新和插入操作都可以执行mysql&gt; select * from first_test ;±—±—–+</td>
+<td>id</td>
+</tr>
+<tr>
+<td>mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
+<td>等待</td>
+</tr>
+<tr>
+<td></td>
+<td>mysql&gt; select * from first_test;±—±—–+</td>
+</tr>
+</tbody></table>
+<p>读锁例子如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>事务1</strong></th>
+<th><strong>事务2</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>获得表first_read的锁定mysql&gt; lock table first_test read;Query OK, 0 rows affected (0.00 sec)</td>
+<td></td>
+</tr>
+<tr>
+<td>当前事务可以查询该表记录：mysql&gt; select * from first_test;±—±—–+</td>
+<td>id</td>
+</tr>
+<tr>
+<td>但是当前事务不能查询没有锁定的表：mysql&gt; select * from goods;ERROR 1100 (HY000): Table ‘goods’ was not locked with LOCK TABLES</td>
+<td>其他事务可以查询或更新未锁定的表：mysql&gt; select * from goods;±—±———–±—–+</td>
+</tr>
+<tr>
+<td>而且插入更新锁定的表都会报错：mysql&gt; insert into first_test(age) values(15);ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updatedmysql&gt; update first_test set age=100 where id =1;ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updated</td>
+<td>当更新被锁定的表时会等待：mysql&gt; update first_test set age=100 where id =1;等待…</td>
+</tr>
+<tr>
+<td>mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
+<td>mysql&gt; update first_test set age=100 where id =1;Query OK, 1 row affected (38.82 sec)Rows matched: 1 Changed: 1 Warnings: 0</td>
+</tr>
+</tbody></table>
+<h3 id="并发插入"><a href="#并发插入" class="headerlink" title="并发插入"></a>并发插入</h3><p>刚说到Mysql在插入和修改的时候都是串行的，但是MyISAM也支持查询和插入的并发操作。</p>
+<p>MyISAM中有一个系统变量concurrent_insert（默认为1），用以控制并发插入（用户在表尾插入数据）行为。</p>
+<p>当concurrent_insert为0时，不允许并发插入。</p>
+<p>当concurrent_insert为1时，如果表中没有空洞（中间没有被删除的行），MyISAM允许一个进程在读表的同时，另一个进程从表尾插入记录。</p>
+<p>当concurrent_insert为2时，无论MyISAM表中有没有空洞，都可以在末尾插入记录</p>
+<table>
+<thead>
+<tr>
+<th><strong>事务1</strong></th>
+<th><strong>事务2</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mysql&gt; lock table first_test read local;Query OK, 0 rows affected (0.00 sec)–加入local选项是说明，在表满足并发插入的前提下，允许在末尾插入数据</td>
+<td></td>
+</tr>
+<tr>
+<td>当前进程不能进行插入和更新操作mysql&gt; insert into first_test(age) values(15);ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updatedmysql&gt; update first_test set age=200 where id =1;ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updated</td>
+<td>其他进程可以进行插入，但是更新会等待：mysql&gt; insert into first_test(age) values(15);Query OK, 1 row affected (0.00 sec)mysql&gt; update first_test set age=200 where id =2;等待…</td>
+</tr>
+<tr>
+<td>当前进程不能不能访问其他进程插入的数据mysql&gt; select * from first_test;±—±—–+</td>
+<td>id</td>
+</tr>
+<tr>
+<td>释放锁以后皆大欢喜mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
+<td>等待</td>
+</tr>
+<tr>
+<td>插入的和更新的都出来的：mysql&gt; select * from first_test;±—±—–+</td>
+<td>id</td>
+</tr>
+</tbody></table>
+<p>需要注意的：</p>
+<p>并发插入是解决对同一表中的查询和插入的锁争用。</p>
+<p>如果对有空洞的表进行并发插入会产生碎片，所以在空闲时可以利用optimize table命令回收因删除记录产生的空洞。</p>
+<h3 id="锁调度"><a href="#锁调度" class="headerlink" title="锁调度"></a>锁调度</h3><p>在MyISAM中当一个进程请求某张表的读锁，而另一个进程同时也请求写锁，Mysql会先让后者获得写锁。即使读请求比写请求先到达锁等待队列，写锁也会插入到读锁之前。</p>
+<p>因为Mysql总是认为写请求一般比读请求重要，这也就是MyISAM不太适合有大量的读写操作的应用的原因，因为大量的写请求会让查询操作很难获取到读锁，有可能永远阻塞。</p>
+<p>处理办法：</p>
+<p>1、指定Insert、update、delete语句的low_priority属性，降低其优先级。</p>
+<p>2、指定启动参数low-priority-updates，使得MyISAM默认给读请求优先的权利。</p>
+<p>3、执行命令set low_priority_updates=1，使该连接发出的请求降低。</p>
+<p>4、指定max_write_lock_count设置一个合适的值，当写锁达到这个值后，暂时降低写请求的优先级，让读请求获取锁。</p>
+<p>但是上面的处理办法造成的原因就是当遇到复杂的查询语句时，写请求可能很难获取到锁，这是一个很纠结的问题，所以我们一般避免使用复杂的查询语句，如果如法避免，则可以再数据库空闲阶段（深夜）执行。</p>
+<p>我们知道mysql在以前，存储引擎默认是MyISAM，但是随着对事务和并发的要求越来越高，便引入了InnoDB引擎，它具有支持事务安全等一系列特性。</p>
+<h3 id="InnoDB锁模式"><a href="#InnoDB锁模式" class="headerlink" title="InnoDB锁模式"></a>InnoDB锁模式</h3><p>InnoDB实现了两种类型的行锁。</p>
+<p>共享锁（S）：允许一个事务去读一行，阻止其他事务获得相同的数据集的排他锁。</p>
+<p>排他锁（X）：允许获得排他锁的事务更新数据，但是组织其他事务获得相同数据集的共享锁和排他锁。</p>
+<p>可以这么理解：</p>
+<p>共享锁就是我读的时候，你可以读，但是不能写。排他锁就是我写的时候，你不能读也不能写。其实就是MyISAM的读锁和写锁，但是针对的对象不同了而已。</p>
+<p>除此之外InnoDB还有两个表锁：</p>
+<p>意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁</p>
+<p>意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
+<p>InnoDB行锁模式兼容列表：</p>
+<p><img src="https://img-blog.csdn.net/20150809115556064?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>注意：</p>
+<p>当一个事务请求的锁模式与当前的锁兼容，InnoDB就将请求的锁授予该事务；反之如果请求不兼容，则该事务就等待锁释放。</p>
+<p>意向锁是InnoDB自动加的，不需要用户干预。</p>
+<p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。</p>
+<p>共享锁：select * from table_name where …lock in share mode</p>
+<p>排他锁：select * from table_name where …for update</p>
+<p>加入共享锁的例子：</p>
+<p><img src="https://img-blog.csdn.net/20150809115652652" alt="img"></p>
+<p>利用select …for update加入排他锁</p>
+<p><img src="https://img-blog.csdn.net/20150809115737527" alt="img"></p>
+<h3 id="锁的实现方式："><a href="#锁的实现方式：" class="headerlink" title="锁的实现方式："></a>锁的实现方式：</h3><p>InnoDB行锁是通过给索引项加锁实现的，如果没有索引，InnoDB会通过隐藏的聚簇索引来对记录加锁。</p>
+<p>也就是说：如果不通过索引条件检索数据，那么InnoDB将对表中所有数据加锁，实际效果跟表锁一样。</p>
+<p>行锁分为三种情形：</p>
+<p>Record lock ：对索引项加锁，即锁定一条记录。</p>
+<p>Gap lock：对索引项之间的‘间隙’、对第一条记录前的间隙或最后一条记录后的间隙加锁，即锁定一个范围的记录，不包含记录本身</p>
+<p>Next-key Lock：锁定一个范围的记录并包含记录本身（上面两者的结合）。</p>
+<p>注意：InnoDB默认级别是repeatable-read级别，所以下面说的都是在RR级别中的。</p>
+<p>之前一直搞不懂Gap Lock和Next-key Lock的区别，直到在网上看到一句话豁然开朗，希望对各位有帮助。</p>
+<p>Next-Key Lock是行锁与间隙锁的组合，这样，当InnoDB扫描索引记录的时候，会首先对选中的索引记录加上行锁（Record Lock），再对索引记录两边的间隙加上间隙锁（Gap Lock）。如果一个间隙被事务T1加了锁，其它事务是不能在这个间隙插入记录的。</p>
+<p>干巴巴的说没意思，我们来看看具体实例：假设我们有一张表：</p>
+<p>±—±—–+</p>
+<p>| id | age |</p>
+<p>±—±—–+</p>
+<p>| 1 | 3 |</p>
+<p>| 2 | 6 |</p>
+<p>| 3 | 9 |</p>
+<p>±—±—–+</p>
+<p>表结构如下：</p>
+<p>CREATE TABLE test (<br>id int(11) NOT NULL AUTO_INCREMENT,<br>age int(11) DEFAULT NULL,<br>PRIMARY KEY (id),<br>KEY keyname (age)<br>) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=gbk ;</p>
+<p>这样我们age段的索引就分为</p>
+<p>(negative infinity, 3],</p>
+<p>(3,6],</p>
+<p>(6,9],</p>
+<p>(9,positive infinity)；</p>
+<p>我们来看一下几种情况：</p>
+<p>1、当事务A执行以下语句：</p>
+<p>mysql&gt; select * from fenye where age=6for update ;</p>
+<p>不仅使用行锁锁住了相应的数据行，同时也在两边的区间，（5,6]和（6，9] 都加入了gap锁。</p>
+<p>这样事务B就无法在这个两个区间insert进新数据,但是事务B可以在两个区间外的区间插入数据。</p>
+<p>2、当事务A执行</p>
+<p>select * from fenye where age=7 for update ;</p>
+<p>那么就会给(6,9]这个区间加锁，别的事务无法在此区间插入或更新数据。</p>
+<p>3、如果查询的数据不再范围内，</p>
+<p>比如事务A执行 select * from fenye where age=100 for update ;</p>
+<p>那么加锁区间就是(9,positive infinity)。</p>
+<p>小结：</p>
+<p>行锁防止别的事务修改或删除，GAP锁防止别的事务新增，行锁和GAP锁结合形成的的Next-Key锁共同解决了RR级别在写数据时的幻读问题。</p>
+<h3 id="何时在InnoDB中使用表锁："><a href="#何时在InnoDB中使用表锁：" class="headerlink" title="何时在InnoDB中使用表锁："></a>何时在InnoDB中使用表锁：</h3><p>InnoDB在绝大部分情况会使用行级锁，因为事务和行锁往往是我们选择InnoDB的原因，但是有些情况我们也考虑使用表级锁。</p>
+<p>1、当事务需要更新大部分数据时，表又比较大，如果使用默认的行锁，不仅效率低，而且还容易造成其他事务长时间等待和锁冲突。</p>
+<p>2、事务比较复杂，很可能引起死锁导致回滚。</p>
+<h3 id="死锁："><a href="#死锁：" class="headerlink" title="死锁："></a>死锁：</h3><p>我们说过MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。</p>
+<p>在上面的例子中我们可以看到，当两个事务都需要获得对方持有的锁才能够继续完成事务，导致双方都在等待，产生死锁。</p>
+<p>发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
+<h3 id="避免死锁："><a href="#避免死锁：" class="headerlink" title="避免死锁："></a>避免死锁：</h3><p>有多种方法可以避免死锁，这里只介绍常见的三种：</p>
+<p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。</p>
+<p>2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率；</p>
+<p>3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108415316">文章出处</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-springboot-CRUD" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1504,355 +1778,9 @@
 
 
   
-    <article id="post-Mysql索引实现原理和相关数据结构算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/22/Mysql%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%92%8C%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AE%97%E6%B3%95/">Mysql索引实现原理和相关数据结构算法</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/22/Mysql%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%92%8C%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AE%97%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2022-01-22T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-22</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <span id="more"></span>
-
-<h1 id="Mysql索引实现原理和相关数据结构算法"><a href="#Mysql索引实现原理和相关数据结构算法" class="headerlink" title="Mysql索引实现原理和相关数据结构算法"></a>Mysql索引实现原理和相关数据结构算法</h1><h2 id="MySQL索引"><a href="#MySQL索引" class="headerlink" title="MySQL索引"></a>MySQL索引</h2><h3 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h3><p>MySQL目前主要有以下几种索引类型：</p>
-<p>1.普通索引<br>2.唯一索引<br>3.主键索引<br>4.组合索引<br>5.全文索引</p>
-<h3 id="二、语句"><a href="#二、语句" class="headerlink" title="二、语句"></a>二、语句</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE table_name[col_name data type]</span><br><span class="line">[unique|fulltext][index|key][index_name](col_name[length])[asc|desc]</span><br></pre></td></tr></table></figure>
-
-<p>1.unique|fulltext为可选参数，分别表示唯一索引、全文索引<br>2.index和key为同义词，两者作用相同，用来指定创建索引</p>
-<p>3.col_name为需要创建索引的字段列，该列必须从数据表中该定义的多个列中选择<br>4.index_name指定索引的名称，为可选参数，如果不指定，默认col_name为索引值</p>
-<p>5.length为可选参数，表示索引的长度，只有字符串类型的字段才能指定索引长度<br>6.asc或desc指定升序或降序的索引值存储</p>
-<h3 id="三、索引类型"><a href="#三、索引类型" class="headerlink" title="三、索引类型"></a>三、索引类型</h3><p>1.普通索引<br>是最基本的索引，它没有任何限制。它有以下几种创建方式：<br>（1）直接创建索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX index_name <span class="keyword">ON</span> <span class="keyword">table</span>(<span class="keyword">column</span>(length))</span><br></pre></td></tr></table></figure>
-
-<p>（2）修改表结构的方式添加索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">ADD</span> INDEX index_name <span class="keyword">ON</span> (<span class="keyword">column</span>(length))</span><br></pre></td></tr></table></figure>
-
-<p>（3）创建表的时候同时创建索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">table</span>` (</span><br><span class="line">    `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT ,</span><br><span class="line">    `title` <span class="type">char</span>(<span class="number">255</span>) <span class="type">CHARACTER</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> ,</span><br><span class="line">    `content` text <span class="type">CHARACTER</span> <span class="keyword">NULL</span> ,</span><br><span class="line">    `<span class="type">time</span>` <span class="type">int</span>(<span class="number">10</span>) <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> , <span class="keyword">PRIMARY</span> KEY (`id`), INDEX index_name (title(length))</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>（4）删除索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> INDEX index_name <span class="keyword">ON</span> <span class="keyword">table</span></span><br></pre></td></tr></table></figure>
-
-<p>2.唯一索引<br>与前面的普通索引类似，不同的就是：索引列的值必须唯一，但允许有空值。如果是组合索引，则列值的组合必须唯一。它有以下几种创建方式：</p>
-<p>1）创建唯一索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> INDEX indexName <span class="keyword">ON</span> <span class="keyword">table</span>(<span class="keyword">column</span>(length))</span><br></pre></td></tr></table></figure>
-
-<p>（2）修改表结构</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">ADD</span> <span class="keyword">UNIQUE</span> indexName <span class="keyword">ON</span> (<span class="keyword">column</span>(length))</span><br></pre></td></tr></table></figure>
-
-<p>（3）创建表的时候直接指定</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">table</span>` (</span><br><span class="line">    `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT ,</span><br><span class="line">    `title` <span class="type">char</span>(<span class="number">255</span>) <span class="type">CHARACTER</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> ,</span><br><span class="line">    `content` text <span class="type">CHARACTER</span> <span class="keyword">NULL</span> ,</span><br><span class="line">    `<span class="type">time</span>` <span class="type">int</span>(<span class="number">10</span>) <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> , <span class="keyword">UNIQUE</span> indexName (title(length))</span><br></pre></td></tr></table></figure>
-
-<p>3.主键索引<br>是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般是在建表的时候同时创建主键索引：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">table</span>` (</span><br><span class="line">    `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT ,</span><br><span class="line">    `title` <span class="type">char</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> , <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<p>4.组合索引<br>指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用组合索引时遵循最左前缀集合</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> `<span class="keyword">table</span>` <span class="keyword">ADD</span> INDEX name_city_age (name,city,age); </span><br></pre></td></tr></table></figure>
-
-<p>5.全文索引<br>主要用来查找文本中的关键字，而不是直接与索引中的值相比较。fulltext索引跟其它索引大不相同，它更像是一个搜索引擎，而不是简单的where语句的参数匹配。fulltext索引配合match against操作使用，而不是一般的where语句加like。</p>
-<p>它可以在create table，alter table ，create index使用，不过目前只有char、varchar，text 列上可以创建全文索引。值得一提的是，在数据量较大时候，现将数据放入一个没有全局索引的表中，然后再用CREATE index创建fulltext索引，要比先为一张表建立fulltext然后再将数据写入的速度快很多。<br>（1）创建表的适合添加全文索引</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `table` (</span><br><span class="line">    `id` <span class="keyword">int</span>(<span class="number">11</span>) NOT NULL AUTO_INCREMENT ,</span><br><span class="line">    `title` <span class="keyword">char</span>(<span class="number">255</span>) CHARACTER NOT NULL ,</span><br><span class="line">    `content` text CHARACTER NULL ,</span><br><span class="line">    `time` <span class="keyword">int</span>(<span class="number">10</span>) NULL DEFAULT NULL , <span class="function">PRIMARY <span class="title">KEY</span> <span class="params">(`id`)</span>,</span></span><br><span class="line"><span class="function">    <span class="title">FULLTEXT</span> <span class="params">(content)</span></span></span><br><span class="line"><span class="function">)</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>（2）修改表结构添加全文索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> article <span class="keyword">ADD</span> FULLTEXT index_content(content)</span><br></pre></td></tr></table></figure>
-
-<p>（3）直接创建索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> FULLTEXT INDEX index_content <span class="keyword">ON</span> article(content)</span><br></pre></td></tr></table></figure>
-
-<h3 id="四、缺点"><a href="#四、缺点" class="headerlink" title="四、缺点"></a>四、缺点</h3><p>1.虽然索引大大提高了查询速度，同时却会降低更新表的速度，如对表进行insert、update和delete。因为更新表时，不仅要保存数据，还要保存一下索引文件。</p>
-<p>2.建立索引会占用磁盘空间的索引文件。一般情况这个问题不太严重，但如果你在一个大表上创建了多种组合索引，索引文件的会增长很快。</p>
-<p>索引只是提高效率的一个因素，如果有大数据量的表，就需要花时间研究建立最优秀的索引，或优化查询语句。</p>
-<h3 id="五、注意事项"><a href="#五、注意事项" class="headerlink" title="五、注意事项"></a>五、注意事项</h3><p>使用索引时，有以下一些技巧和注意事项：</p>
-<p>1.索引不会包含有null值的列</p>
-<p>只要列中包含有null值都将不会被包含在索引中，复合索引中只要有一列含有null值，那么这一列对于此复合索引就是无效的。所以我们在数据库设计时不要让字段的默认值为null。</p>
-<p>2.使用短索引</p>
-<p>对串列进行索引，如果可能应该指定一个前缀长度。例如，如果有一个char(255)的列，如果在前10个或20个字符内，多数值是惟一的，那么就不要对整个列进行索引。短索引不仅可以提高查询速度而且可以节省磁盘空间和I/O操作。</p>
-<p>3.索引列排序<br>查询只使用一个索引，因此如果where子句中已经使用了索引的话，那么order by中的列是不会使用索引的。因此数据库默认排序可以符合要求的情况下不要使用排序操作；尽量不要包含多个列的排序，如果需要最好给这些列创建复合索引。</p>
-<p>4.like语句操作<br>一般情况下不推荐使用like操作，如果非使用不可，如何使用也是一个问题。like “%aaa%” 不会使用索引而like “aaa%”可以使用索引。</p>
-<p>5.不要在列上进行运算<br>这将导致索引失效而进行全表扫描，例如</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> table_name <span class="keyword">WHERE</span> <span class="keyword">YEAR</span>(column_name)<span class="operator">&lt;</span><span class="number">2017</span>;</span><br></pre></td></tr></table></figure>
-
-<p>6.不使用not in和&lt;&gt;操作</p>
-<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>本文以MySQL数据库为研究对象，讨论与数据库索引相关的一些话题。特别需要说明的是，MySQL支持诸多存储引擎，而各种存储引擎对索引的支持也各不相同，因此MySQL数据库支持多种索引类型，如BTree索引，哈希索引，全文索引等等。为了避免混乱，本文将只关注于BTree索引，因为这是平常使用MySQL时主要打交道的索引，至于哈希索引和全文索引本文暂不讨论。</p>
-<p>文章主要内容分为三个部分。</p>
-<p>第一部分主要从数据结构及算法理论层面讨论MySQL数据库索引的数理基础。</p>
-<p>第二部分结合MySQL数据库中MyISAM和InnoDB数据存储引擎中索引的架构实现讨论聚集索引、非聚集索引及覆盖索引等话题。</p>
-<p>第三部分根据上面的理论基础，讨论MySQL中高性能使用索引的策略。</p>
-<h1 id="数据结构及算法基础"><a href="#数据结构及算法基础" class="headerlink" title="数据结构及算法基础"></a>数据结构及算法基础</h1><h2 id="索引的本质"><a href="#索引的本质" class="headerlink" title="索引的本质"></a>索引的本质</h2><p>MySQL官方对索引的定义为：索引（Index）是帮助MySQL高效获取数据的数据结构。提取句子主干，就可以得到索引的本质：索引是数据结构。</p>
-<p>我们知道，数据库查询是数据库的最主要功能之一。我们都希望查询数据的速度能尽可能的快，因此数据库系统的设计者会从查询算法的角度进行优化。最基本的查询算法当然是<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Linear_search">顺序查找</a>（linear search），这种复杂度为O(n)的算法在数据量很大时显然是糟糕的，好在计算机科学的发展提供了很多更优秀的查找算法，例如<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Binary_search_algorithm">二分查找</a>（binary search）、<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Binary_search_tree">二叉树查找</a>（binary tree search）等。如果稍微分析一下会发现，每种查找算法都只能应用于特定的数据结构之上，例如二分查找要求被检索数据有序，而二叉树查找只能应用于<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Binary_search_tree">二叉查找树</a>上，但是数据本身的组织结构不可能完全满足各种数据结构（例如，理论上不可能同时将两列都按顺序进行组织），所以，在数据之外，数据库系统还维护着满足特定查找算法的数据结构，这些数据结构以某种方式引用（指向）数据，这样就可以在这些数据结构上实现高级查找算法。这种数据结构，就是索引。</p>
-<p>看一个例子：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMS5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图1展示了一种可能的索引方式。左边是数据表，一共有两列七条记录，最左边的是数据记录的物理地址（注意逻辑上相邻的记录在磁盘上也并不是一定物理相邻的）。为了加快Col2的查找，可以维护一个右边所示的二叉查找树，每个节点分别包含索引键值和一个指向对应数据记录物理地址的指针。</p>
-<p>虽然这是一个货真价实的索引，但是实际的数据库系统几乎没有使用二叉查找树或其进化品种<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Red-black_tree">红黑树</a>（red-black tree）实现的，原因会在下文介绍。</p>
-<h2 id="B-Tree和B-Tree"><a href="#B-Tree和B-Tree" class="headerlink" title="B-Tree和B+Tree"></a>B-Tree和B+Tree</h2><p>目前大部分数据库系统及文件系统都采用B-Tree或其变种B+Tree作为索引结构，在本文的下一节会结合存储器原理及计算机存取原理讨论为什么B-Tree和B+Tree在被如此广泛用于索引，这一节先单纯从数据结构角度描述它们。</p>
-<h3 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h3><p>为了描述B-Tree，首先定义一条数据记录为一个二元组[key, data]，key为记录的键值，对于不同数据记录，key是互不相同的；data为数据记录除key外的数据。那么B-Tree是满足下列条件的数据结构：</p>
-<p>d为大于1的一个正整数，称为B-Tree的度。</p>
-<p>h为一个正整数，称为B-Tree的高度。</p>
-<p>每个非叶子节点由n-1个key和n个指针组成，其中d&lt;=n&lt;=2d。</p>
-<p>每个叶子节点最少包含一个key和两个指针，最多包含2d-1个key和2d个指针，叶节点的指针均为null 。</p>
-<p>所有叶节点具有相同的深度，等于树高h。</p>
-<p>key和指针互相间隔，节点两端是指针。</p>
-<p>一个节点中的key从左到右非递减排列。</p>
-<p>所有节点组成树结构。</p>
-<p>每个指针要么为null，要么指向另外一个节点。</p>
-<p>如果某个指针在节点node最左边且不为null，则其指向节点的所有key小于。</p>
-<p>图2是一个d=2的B-Tree示意图。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMi5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>由于B-Tree的特性，在B-Tree中按key检索数据的算法非常直观：首先从根节点进行二分查找，如果找到则返回对应节点的data，否则对相应区间的指针指向的节点递归进行查找，直到找到节点或找到null指针，前者查找成功，后者查找失败。B-Tree上查找算法的伪代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  BTree_Search(node, key)  &#123;</span><br><span class="line"><span class="number">2.</span>   <span class="keyword">if</span>(node ==  <span class="keyword">null</span>)  <span class="keyword">return</span>  <span class="keyword">null</span>;</span><br><span class="line"><span class="number">3.</span>   foreach(node.key)</span><br><span class="line"><span class="number">4.</span>   &#123;</span><br><span class="line"><span class="number">5.</span>   <span class="keyword">if</span>(node.key[i]  == key)  <span class="keyword">return</span> node.data[i];</span><br><span class="line"><span class="number">6.</span>   <span class="keyword">if</span>(node.key[i]  &gt; key)  <span class="keyword">return</span>  BTree_Search(point[i]-&gt;node);</span><br><span class="line"><span class="number">7.</span>   &#125;</span><br><span class="line"><span class="number">8.</span>   <span class="keyword">return</span>  BTree_Search(point[i+<span class="number">1</span>]-&gt;node);</span><br><span class="line"><span class="number">9.</span>  &#125;</span><br><span class="line"><span class="number">10.</span>  data =  BTree_Search(root, my_key);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>关于B-Tree有一系列有趣的性质，例如一个度为d的B-Tree，设其索引N个key，从这点可以看出，B-Tree是一个非常有效率的索引数据结构。</p>
-<p>另外，由于插入删除新的数据记录会破坏B-Tree的性质，因此在插入删除时，需要对树进行一个分裂、合并、转移等操作以保持B-Tree性质，本文不打算完整讨论B-Tree这些内容，因为已经有许多资料详细说明了B-Tree的数学性质及插入删除算法，有兴趣的朋友可以在本文末的参考文献一栏找到相应的资料进行阅读。</p>
-<h3 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a>B+Tree</h3><p>B-Tree有许多变种，其中最常见的是B+Tree，例如MySQL就普遍使用B+Tree实现其索引结构。</p>
-<p>与B-Tree相比，B+Tree有以下不同点：</p>
-<p>每个节点的指针上限为2d而不是2d+1。</p>
-<p>内节点不存储data，只存储key；叶子节点不存储指针。</p>
-<p>图3是一个简单的B+Tree示意。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMy5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图3</p>
-<p>由于并不是所有节点都具有相同的域，因此B+Tree中叶节点和内节点一般大小不同。这点与B-Tree不同，虽然B-Tree中不同节点存放的key和指针可能数量不一致，但是每个节点的域和上限是一致的，所以在实现中B-Tree往往对每个节点申请同等大小的空间。</p>
-<p>一般来说，B+Tree比B-Tree更适合实现外存储索引结构，具体原因与外存储器原理及计算机存取原理有关，将在下面讨论。</p>
-<h3 id="带有顺序访问指针的B-Tree"><a href="#带有顺序访问指针的B-Tree" class="headerlink" title="带有顺序访问指针的B+Tree"></a>带有顺序访问指针的B+Tree</h3><p>一般在数据库系统或文件系统中使用的B+Tree结构都在经典B+Tree的基础上进行了优化，增加了顺序访问指针。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvNC5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图4</p>
-<p>如图4所示，在B+Tree的每个叶子节点增加一个指向相邻叶子节点的指针，就形成了带有顺序访问指针的B+Tree。做这个优化的目的是为了提高区间访问的性能，例如图4中如果要查询key为从18到49的所有数据记录，当找到18后，只需顺着节点和指针顺序遍历就可以一次性访问到所有数据节点，极大提到了区间查询效率。</p>
-<p>这一节对B-Tree和B+Tree进行了一个简单的介绍，下一节结合存储器存取原理介绍为什么目前B+Tree是数据库系统实现索引的首选数据结构。</p>
-<h2 id="为什么使用B-Tree（B-Tree）"><a href="#为什么使用B-Tree（B-Tree）" class="headerlink" title="为什么使用B-Tree（B+Tree）"></a>为什么使用B-Tree（B+Tree）</h2><p>上文说过，红黑树等数据结构也可以用来实现索引，但是文件系统及数据库系统普遍采用B-/+Tree作为索引结构，这一节将结合计算机组成原理相关知识讨论B-/+Tree作为索引的理论基础。</p>
-<p>一般来说，索引本身也很大，不可能全部存储在内存中，因此索引往往以索引文件的形式存储的磁盘上。这样的话，索引查找过程中就要产生磁盘I/O消耗，相对于内存存取，I/O存取的消耗要高几个数量级，所以评价一个数据结构作为索引的优劣最重要的指标就是在查找过程中磁盘I/O操作次数的渐进复杂度。换句话说，索引的结构组织要尽量减少查找过程中磁盘I/O的存取次数。下面先介绍内存和磁盘存取原理，然后再结合这些原理分析B-/+Tree作为索引的效率。</p>
-<h3 id="主存存取原理"><a href="#主存存取原理" class="headerlink" title="主存存取原理"></a>主存存取原理</h3><p>目前计算机使用的主存基本都是随机读写存储器（RAM），现代RAM的结构和存取原理比较复杂，这里本文抛却具体差别，抽象出一个十分简单的存取模型来说明RAM的工作原理。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvNS5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图5</p>
-<p>从抽象角度看，主存是一系列的存储单元组成的矩阵，每个存储单元存储固定大小的数据。每个存储单元有唯一的地址，现代主存的编址规则比较复杂，这里将其简化成一个二维地址：通过一个行地址和一个列地址可以唯一定位到一个存储单元。图5展示了一个4 x 4的主存模型。</p>
-<p>主存的存取过程如下：</p>
-<p>当系统需要读取主存时，则将地址信号放到地址总线上传给主存，主存读到地址信号后，解析信号并定位到指定存储单元，然后将此存储单元数据放到数据总线上，供其它部件读取。</p>
-<p>写主存的过程类似，系统将要写入单元地址和数据分别放在地址总线和数据总线上，主存读取两个总线的内容，做相应的写操作。</p>
-<p>这里可以看出，主存存取的时间仅与存取次数呈线性关系，因为不存在机械操作，两次存取的数据的“距离”不会对时间有任何影响，例如，先取A0再取A1和先取A0再取D3的时间消耗是一样的。</p>
-<h3 id="磁盘存取原理"><a href="#磁盘存取原理" class="headerlink" title="磁盘存取原理"></a>磁盘存取原理</h3><p>上文说过，索引一般以文件形式存储在磁盘上，索引检索需要磁盘I/O操作。与主存不同，磁盘I/O存在机械运动耗费，因此磁盘I/O的时间消耗是巨大的。</p>
-<p>图6是磁盘的整体结构示意图。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvNi5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图6</p>
-<p>一个磁盘由大小相同且同轴的圆形盘片组成，磁盘可以转动（各个磁盘必须同步转动）。在磁盘的一侧有磁头支架，磁头支架固定了一组磁头，每个磁头负责存取一个磁盘的内容。磁头不能转动，但是可以沿磁盘半径方向运动（实际是斜切向运动），每个磁头同一时刻也必须是同轴的，即从正上方向下看，所有磁头任何时候都是重叠的（不过目前已经有多磁头独立技术，可不受此限制）。</p>
-<p>图7是磁盘结构的示意图。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvNy5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图7</p>
-<p>盘片被划分成一系列同心环，圆心是盘片中心，每个同心环叫做一个磁道，所有半径相同的磁道组成一个柱面。磁道被沿半径线划分成一个个小的段，每个段叫做一个扇区，每个扇区是磁盘的最小存储单元。为了简单起见，我们下面假设磁盘只有一个盘片和一个磁头。</p>
-<p>当需要从磁盘读取数据时，系统会将数据逻辑地址传给磁盘，磁盘的控制电路按照寻址逻辑将逻辑地址翻译成物理地址，即确定要读的数据在哪个磁道，哪个扇区。为了读取这个扇区的数据，需要将磁头放到这个扇区上方，为了实现这一点，磁头需要移动对准相应磁道，这个过程叫做寻道，所耗费时间叫做寻道时间，然后磁盘旋转将目标扇区旋转到磁头下，这个过程耗费的时间叫做旋转时间。</p>
-<h3 id="局部性原理与磁盘预读"><a href="#局部性原理与磁盘预读" class="headerlink" title="局部性原理与磁盘预读"></a>局部性原理与磁盘预读</h3><p>由于存储介质的特性，磁盘本身存取就比主存慢很多，再加上机械运动耗费，磁盘的存取速度往往是主存的几百分分之一，因此为了提高效率，要尽量减少磁盘I/O。为了达到这个目的，磁盘往往不是严格按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置开始，顺序向后读取一定长度的数据放入内存。这样做的理论依据是计算机科学中著名的局部性原理：</p>
-<p>当一个数据被用到时，其附近的数据也通常会马上被使用。</p>
-<p>程序运行期间所需要的数据通常比较集中。</p>
-<p>由于磁盘顺序读取的效率很高（不需要寻道时间，只需很少的旋转时间），因此对于具有局部性的程序来说，预读可以提高I/O效率。</p>
-<p>预读的长度一般为页（page）的整倍数。页是计算机管理存储器的逻辑块，硬件及操作系统往往将主存和磁盘存储区分割为连续的大小相等的块，每个存储块称为一页（在许多操作系统中，页得大小通常为4k），主存和磁盘以页为单位交换数据。当程序要读取的数据不在主存中时，会触发一个缺页异常，此时系统会向磁盘发出读盘信号，磁盘会找到数据的起始位置并向后连续读取一页或几页载入内存中，然后异常返回，程序继续运行。</p>
-<h3 id="B-Tree索引的性能分析"><a href="#B-Tree索引的性能分析" class="headerlink" title="B-/+Tree索引的性能分析"></a>B-/+Tree索引的性能分析</h3><p>到这里终于可以分析B-/+Tree索引的性能了。</p>
-<p>上文说过一般使用磁盘I/O次数评价索引结构的优劣。先从B-Tree分析，根据B-Tree的定义，可知检索一次最多需要访问h个节点。数据库系统的设计者巧妙利用了磁盘预读原理，将一个节点的大小设为等于一个页，这样每个节点只需要一次I/O就可以完全载入。为了达到这个目的，在实际实现B-Tree还需要使用如下技巧：</p>
-<p>每次新建节点时，直接申请一个页的空间，这样就保证一个节点物理上也存储在一个页里，加之计算机存储分配都是按页对齐的，就实现了一个node只需一次I/O。</p>
-<p>综上所述，用B-Tree作为索引结构效率是非常高的。</p>
-<p>而红黑树这种结构，h明显要深的多。由于逻辑上很近的节点（父子）物理上可能很远，无法利用局部性，所以红黑树的I/O渐进复杂度也为O(h)，效率明显比B-Tree差很多。</p>
-<p>floor表示向下取整。由于B+Tree内节点去掉了data域，因此可以拥有更大的出度，拥有更好的性能。</p>
-<p>这一章从理论角度讨论了与索引相关的数据结构与算法问题，下一章将讨论B+Tree是如何具体实现为MySQL中索引，同时将结合MyISAM和InnDB存储引擎介绍非聚集索引和聚集索引两种不同的索引实现形式。</p>
-<h2 id="MySQL索引实现"><a href="#MySQL索引实现" class="headerlink" title="MySQL索引实现"></a>MySQL索引实现</h2><p>在MySQL中，索引属于存储引擎级别的概念，不同存储引擎对索引的实现方式是不同的，本文主要讨论MyISAM和InnoDB两个存储引擎的索引实现方式。</p>
-<h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。下图是MyISAM索引的原理图：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvOC5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图8</p>
-<p>这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvOS5wbmc?x-oss-process=image/format,png" alt="img"></p>
-<p>图9</p>
-<p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p>
-<p>MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为了与InnoDB的聚集索引区分。</p>
-<h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p>
-<p>第一个重大区别是InnoDB的数据文件本身就是索引文件。从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMTAucG5n?x-oss-process=image/format,png" alt="img"></p>
-<p>图10</p>
-<p>图10是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p>
-<p>第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。例如，图11为定义在Col3上的一个辅助索引：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMTEucG5n?x-oss-process=image/format,png" alt="img"></p>
-<p>图11</p>
-<p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p>
-<p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p>
-<p>下一章将具体讨论这些与索引有关的优化策略。</p>
-<h3 id="索引使用策略及优化"><a href="#索引使用策略及优化" class="headerlink" title="索引使用策略及优化"></a>索引使用策略及优化</h3><p>MySQL的优化主要分为结构优化（Scheme optimization）和查询优化（Query optimization）。</p>
-<p>本章讨论的高性能索引策略主要属于结构优化范畴。本章的内容完全基于上文的理论基础，实际上一旦理解了索引背后的机制，那么选择高性能的策略就变成了纯粹的推理，并且可以理解这些策略背后的逻辑。</p>
-<h3 id="示例数据库"><a href="#示例数据库" class="headerlink" title="示例数据库"></a>示例数据库</h3><p>为了讨论索引策略，需要一个数据量不算小的数据库作为示例。本文选用MySQL官方文档中提供的示例数据库之一：employees。这个数据库关系复杂度适中，且数据量较大。下图是这个数据库的E-R关系图（引用自MySQL官方手册）：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMTIucG5n?x-oss-process=image/format,png" alt="img"></p>
-<p>图12</p>
-<p>MySQL官方文档中关于此数据库的页面为<a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/employee/en/employee.html%E3%80%82%E9%87%8C%E9%9D%A2%E8%AF%A6%E7%BB%86%E4%BB%8B%E7%BB%8D%E4%BA%86%E6%AD%A4%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%8C%E5%B9%B6%E6%8F%90%E4%BE%9B%E4%BA%86%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80%E5%92%8C%E5%AF%BC%E5%85%A5%E6%96%B9%E6%B3%95%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%9C%89%E5%85%B4%E8%B6%A3%E5%AF%BC%E5%85%A5%E6%AD%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%B0%E8%87%AA%E5%B7%B1%E7%9A%84MySQL%E5%8F%AF%E4%BB%A5%E5%8F%82%E8%80%83%E6%96%87%E4%B8%AD%E5%86%85%E5%AE%B9%E3%80%82">http://dev.mysql.com/doc/employee/en/employee.html。里面详细介绍了此数据库，并提供了下载地址和导入方法，如果有兴趣导入此数据库到自己的MySQL可以参考文中内容。</a></p>
-<h3 id="最左前缀原理与相关优化"><a href="#最左前缀原理与相关优化" class="headerlink" title="最左前缀原理与相关优化"></a>最左前缀原理与相关优化</h3><p>高效使用索引的首要条件是知道什么样的查询会使用到索引，这个问题和B+Tree中的“最左前缀原理”有关，下面通过例子说明最左前缀原理。</p>
-<p>这里先说一下联合索引的概念。在上文中，我们都是假设索引只引用了单个的列，实际上，MySQL中的索引可以以一定顺序引用多个列，这种索引叫做联合索引，一般的，一个联合索引是一个有序元组，其中各个元素均为数据表的一列，实际上要严格定义索引需要用到关系代数，但是这里我不想讨论太多关系代数的话题，因为那样会显得很枯燥，所以这里就不再做严格定义。另外，单列索引可以看成联合索引元素数为1的特例。</p>
-<p>以employees.titles表为例，下面先查看其上都有哪些索引：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SHOW</span> INDEX <span class="keyword">FROM</span> employees.titles;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">--------+------------+----------+--------------+-------------+-----------+-------------+------+------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  <span class="keyword">Table</span>  <span class="operator">|</span>  Non_unique  <span class="operator">|</span>  Key_name  <span class="operator">|</span>  Seq_in_index  <span class="operator">|</span>  Column_name  <span class="operator">|</span>  <span class="keyword">Collation</span>  <span class="operator">|</span>  <span class="keyword">Cardinality</span>  <span class="operator">|</span>  <span class="keyword">Null</span>  <span class="operator">|</span>  Index_type  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">--------+------------+----------+--------------+-------------+-----------+-------------+------+------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span> titles <span class="operator">|</span>  <span class="number">0</span>  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> emp_no <span class="operator">|</span> A <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="operator">|</span> BTREE <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span> titles <span class="operator">|</span>  <span class="number">0</span>  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">2</span>  <span class="operator">|</span> title <span class="operator">|</span> A <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="operator">|</span> BTREE <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">|</span> titles <span class="operator">|</span>  <span class="number">0</span>  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">3</span>  <span class="operator">|</span> from_date <span class="operator">|</span> A <span class="operator">|</span>  <span class="number">443308</span>  <span class="operator">|</span>  <span class="operator">|</span> BTREE <span class="operator">|</span></span><br><span class="line"><span class="number">8.</span>  <span class="operator">|</span> titles <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> emp_no <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> emp_no <span class="operator">|</span> A <span class="operator">|</span>  <span class="number">443308</span>  <span class="operator">|</span>  <span class="operator">|</span> BTREE <span class="operator">|</span></span><br><span class="line"><span class="number">9.</span>  <span class="operator">+</span><span class="comment">--------+------------+----------+--------------+-------------+-----------+-------------+------+------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>从结果中可以到titles表的主索引为&lt;emp_no, title, from_date&gt;，还有一个辅助索引<emp_no>。为了避免多个索引使事情变复杂（MySQL的SQL优化器在多索引时行为比较复杂），这里我们将辅助索引drop掉：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">ALTER</span> <span class="keyword">TABLE</span> employees.titles <span class="keyword">DROP</span> INDEX emp_no;</span><br></pre></td></tr></table></figure>
-
-<p>这样就可以专心分析索引PRIMARY的行为了。</p>
-<h3 id="情况一：全列匹配。"><a href="#情况一：全列匹配。" class="headerlink" title="情况一：全列匹配。"></a>情况一：全列匹配。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> title<span class="operator">=</span><span class="string">&#x27;Senior Engineer&#x27;</span> <span class="keyword">AND</span> from_date<span class="operator">=</span><span class="string">&#x27;1986-06-26&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+-------------------+------+-------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+-------------------+------+-------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span>  const  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">59</span>  <span class="operator">|</span>  const,const,const  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+-------------------+------+-------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>很明显，当按照索引中所有列进行精确匹配（这里精确匹配指“=”或“IN”匹配）时，索引可以被用到。这里有一点需要注意，理论上索引对顺序是敏感的，但是由于MySQL的查询优化器会自动调整where子句的条件顺序以使用适合的索引，例如我们将where中的条件顺序颠倒：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> from_date<span class="operator">=</span><span class="string">&#x27;1986-06-26&#x27;</span> <span class="keyword">AND</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> title<span class="operator">=</span><span class="string">&#x27;Senior Engineer&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+-------------------+------+-------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+-------------------+------+-------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span>  const  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">59</span>  <span class="operator">|</span>  const,const,const  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+-------------------+------+-------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>效果是一样的。</p>
-<h3 id="情况二：最左前缀匹配。"><a href="#情况二：最左前缀匹配。" class="headerlink" title="情况二：最左前缀匹配。"></a>情况二：最左前缀匹配。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">4</span>  <span class="operator">|</span>  const  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>当查询条件精确匹配索引的左边连续一个或几个列时，如<emp_no>或&lt;emp_no, title&gt;，所以可以被用到，但是只能用到一部分，即条件所组成的最左前缀。上面的查询从分析结果看用到了PRIMARY索引，但是key_len为4，说明只用到了索引的第一列前缀。</p>
-<h3 id="情况三：查询条件用到了索引中列的精确匹配，但是中间某个条件未提供。"><a href="#情况三：查询条件用到了索引中列的精确匹配，但是中间某个条件未提供。" class="headerlink" title="情况三：查询条件用到了索引中列的精确匹配，但是中间某个条件未提供。"></a>情况三：查询条件用到了索引中列的精确匹配，但是中间某个条件未提供。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> from_date<span class="operator">=</span><span class="string">&#x27;1986-06-26&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">4</span>  <span class="operator">|</span>  const  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>此时索引使用情况和情况二相同，因为title未提供，所以查询只用到了索引的第一列，而后面的from_date虽然也在索引中，但是由于title不存在而无法和左前缀连接，因此需要对结果进行扫描过滤from_date（这里由于emp_no唯一，所以不存在扫描）。如果想让from_date也使用索引而不是where过滤，可以增加一个辅助索引&lt;emp_no, from_date&gt;，此时上面的查询会使用这个索引。除此之外，还可以使用一种称之为“隔离列”的优化方法，将emp_no与from_date之间的“坑”填上。</p>
-<p>首先我们看下title一共有几种不同的值：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span>(title) <span class="keyword">FROM</span> employees.titles;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> title <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  Senior  Engineer  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span>  Staff  <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">|</span>  Engineer  <span class="operator">|</span></span><br><span class="line"><span class="number">8.</span>  <span class="operator">|</span>  Senior  Staff  <span class="operator">|</span></span><br><span class="line"><span class="number">9.</span>  <span class="operator">|</span>  Assistant  Engineer  <span class="operator">|</span></span><br><span class="line"><span class="number">10.</span>  <span class="operator">|</span>  Technique  Leader  <span class="operator">|</span></span><br><span class="line"><span class="number">11.</span>  <span class="operator">|</span>  Manager  <span class="operator">|</span></span><br><span class="line"><span class="number">12.</span>  <span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>只有7种。在这种成为“坑”的列值比较少的情况下，可以考虑用“IN”来填补这个“坑”从而形成最左前缀：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles</span><br><span class="line"><span class="number">2.</span>  <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span></span><br><span class="line"><span class="number">3.</span>  <span class="keyword">AND</span> title <span class="keyword">IN</span> (<span class="string">&#x27;Senior Engineer&#x27;</span>,  <span class="string">&#x27;Staff&#x27;</span>,  <span class="string">&#x27;Engineer&#x27;</span>,  <span class="string">&#x27;Senior Staff&#x27;</span>,  <span class="string">&#x27;Assistant Engineer&#x27;</span>,  <span class="string">&#x27;Technique Leader&#x27;</span>,  <span class="string">&#x27;Manager&#x27;</span>)</span><br><span class="line"><span class="number">4.</span>  <span class="keyword">AND</span> from_date<span class="operator">=</span><span class="string">&#x27;1986-06-26&#x27;</span>;</span><br><span class="line"><span class="number">5.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">8.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">range</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">59</span>  <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">7</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">9.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这次key_len为59，说明索引被用全了，但是从type和rows看出IN实际上执行了一个range查询，这里检查了7个key。看下两种查询的性能比较：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SHOW</span> PROFILES;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----------+------------+-------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  Query_ID  <span class="operator">|</span>  Duration  <span class="operator">|</span>  Query  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----------+------------+-------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">10</span>  <span class="operator">|</span>  <span class="number">0.00058000</span>  <span class="operator">|</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> from_date<span class="operator">=</span><span class="string">&#x27;1986-06-26&#x27;</span><span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span>  <span class="number">11</span>  <span class="operator">|</span>  <span class="number">0.00052500</span>  <span class="operator">|</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> title <span class="keyword">IN</span> ...  <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">+</span><span class="comment">----------+------------+-------------------------------------------------------------------------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>“填坑”后性能提升了一点。如果经过emp_no筛选后余下很多数据，则后者性能优势会更加明显。当然，如果title的值很多，用填坑就不合适了，必须建立辅助索引。</p>
-<h3 id="情况四：查询条件没有指定索引第一列。"><a href="#情况四：查询条件没有指定索引第一列。" class="headerlink" title="情况四：查询条件没有指定索引第一列。"></a>情况四：查询条件没有指定索引第一列。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> from_date<span class="operator">=</span><span class="string">&#x27;1986-06-26&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">ALL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">443308</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+------+---------+------+--------+-------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>由于不是最左前缀，索引这样的查询显然用不到索引。</p>
-<h3 id="情况五：匹配某列的前缀字符串。"><a href="#情况五：匹配某列的前缀字符串。" class="headerlink" title="情况五：匹配某列的前缀字符串。"></a>情况五：匹配某列的前缀字符串。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> title <span class="keyword">LIKE</span> <span class="string">&#x27;Senior%&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">range</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">56</span>  <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>此时可以用到索引，但是如果通配符不是只出现在末尾，则无法使用索引。（原文表述有误，如果通配符%不出现在开头，则可以用到索引，但根据具体情况不同可能只会用其中一个前缀）</p>
-<h3 id="情况六：范围查询。"><a href="#情况六：范围查询。" class="headerlink" title="情况六：范围查询。"></a>情况六：范围查询。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no <span class="operator">&lt;</span>  <span class="string">&#x27;10010&#x27;</span>  <span class="keyword">and</span> title<span class="operator">=</span><span class="string">&#x27;Senior Engineer&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">range</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">4</span>  <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">16</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>范围列可以用到索引（必须是最左前缀），但是范围列后面的列无法用到索引。同时，索引最多用于一个范围列，因此如果查询条件中有两个范围列则无法全用到索引。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles</span><br><span class="line"><span class="number">2.</span>  <span class="keyword">WHERE</span> emp_no <span class="operator">&lt;</span>  <span class="string">&#x27;10010&#x27;</span></span><br><span class="line"><span class="number">3.</span>  <span class="keyword">AND</span> title<span class="operator">=</span><span class="string">&#x27;Senior Engineer&#x27;</span></span><br><span class="line"><span class="number">4.</span>  <span class="keyword">AND</span> from_date <span class="keyword">BETWEEN</span> <span class="string">&#x27;1986-01-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;1986-12-31&#x27;</span>;</span><br><span class="line"><span class="number">5.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">8.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">range</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">4</span>  <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">16</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">9.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>可以看到索引对第二个范围索引无能为力。这里特别要说明MySQL一个有意思的地方，那就是仅用explain可能无法区分范围索引和多值匹配，因为在type中这两者都显示为range。同时，用了“between”并不意味着就是范围查询，例如下面的查询：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles</span><br><span class="line"><span class="number">2.</span>  <span class="keyword">WHERE</span> emp_no <span class="keyword">BETWEEN</span> <span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;10010&#x27;</span></span><br><span class="line"><span class="number">3.</span>  <span class="keyword">AND</span> title<span class="operator">=</span><span class="string">&#x27;Senior Engineer&#x27;</span></span><br><span class="line"><span class="number">4.</span>  <span class="keyword">AND</span> from_date <span class="keyword">BETWEEN</span> <span class="string">&#x27;1986-01-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;1986-12-31&#x27;</span>;</span><br><span class="line"><span class="number">5.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br><span class="line"><span class="number">8.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">range</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">59</span>  <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">16</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">9.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+-------+---------------+---------+---------+------+------+-------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>看起来是用了两个范围查询，但作用于emp_no上的“BETWEEN”实际上相当于“IN”，也就是说emp_no实际是多值精确匹配。可以看到这个查询用到了索引全部三个列。因此在MySQL中要谨慎地区分多值匹配和范围匹配，否则会对MySQL的行为产生困惑。</p>
-<h3 id="情况七：查询条件中含有函数或表达式。"><a href="#情况七：查询条件中含有函数或表达式。" class="headerlink" title="情况七：查询条件中含有函数或表达式。"></a>情况七：查询条件中含有函数或表达式。</h3><p>很不幸，如果查询条件中含有函数或表达式，则MySQL不会为这列使用索引（虽然某些在数学意义上可以使用）。例如：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no<span class="operator">=</span><span class="string">&#x27;10001&#x27;</span> <span class="keyword">AND</span> <span class="keyword">left</span>(title,  <span class="number">6</span>)<span class="operator">=</span><span class="string">&#x27;Senior&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span> <span class="keyword">PRIMARY</span> <span class="operator">|</span>  <span class="number">4</span>  <span class="operator">|</span>  const  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+---------+---------+-------+------+-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>虽然这个查询和情况五中功能相同，但是由于使用了函数left，则无法为title列应用索引，而情况五中用LIKE则可以。再如：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.titles <span class="keyword">WHERE</span> emp_no <span class="operator">-</span>  <span class="number">1</span><span class="operator">=</span><span class="string">&#x27;10000&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> titles <span class="operator">|</span> <span class="keyword">ALL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">443308</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+--------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>显然这个查询等价于查询emp_no为10001的函数，但是由于查询条件是一个表达式，MySQL无法为其使用索引。看来MySQL还没有智能到自动优化常量表达式的程度，因此在写查询语句时尽量避免表达式出现在查询中，而是先手工私下代数运算，转换为无表达式的查询语句。</p>
-<h2 id="索引选择性与前缀索引"><a href="#索引选择性与前缀索引" class="headerlink" title="索引选择性与前缀索引"></a>索引选择性与前缀索引</h2><p>既然索引可以加快查询速度，那么是不是只要是查询语句需要，就建上索引？答案是否定的。因为索引虽然加快了查询速度，但索引也是有代价的：索引文件本身要消耗存储空间，同时索引会加重插入、删除和修改记录时的负担，另外，MySQL在运行时也要消耗资源维护索引，因此索引并不是越多越好。一般两种情况下不建议建索引。</p>
-<p>第一种情况是表记录比较少，例如一两千条甚至只有几百条记录的表，没必要建索引，让查询做全表扫描就好了。至于多少条记录才算多，这个个人有个人的看法，我个人的经验是以2000作为分界线，记录数不超过 2000可以考虑不建索引，超过2000条可以酌情考虑索引。</p>
-<p>另一种不建议建索引的情况是索引的选择性较低。所谓索引的选择性（Selectivity），是指不重复的索引值（也叫基数，Cardinality）与表记录数（#T）的比值：</p>
-<p>Index Selectivity = Cardinality / #T</p>
-<p>显然选择性的取值范围为(0, 1]，选择性越高的索引价值越大，这是由B+Tree的性质决定的。例如，上文用到的employees.titles表，如果title字段经常被单独查询，是否需要建索引，我们看一下它的选择性：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span>(title))<span class="operator">/</span><span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">AS</span> Selectivity <span class="keyword">FROM</span> employees.titles;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  Selectivity  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">0.0000</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>title的选择性不足0.0001（精确值为0.00001579），所以实在没有什么必要为其单独建索引。</p>
-<p>有一种与索引选择性有关的索引优化策略叫做前缀索引，就是用列的前缀代替整个列作为索引key，当前缀长度合适时，可以做到既使得前缀索引的选择性接近全列索引，同时因为索引key变短而减少了索引文件的大小和维护开销。下面以employees.employees表为例介绍前缀索引的选择和使用。</p>
-<p>从图12可以看到employees表只有一个索引<emp_no>，那么如果我们想按名字搜索一个人，就只能全表扫描了：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.employees <span class="keyword">WHERE</span> first_name<span class="operator">=</span><span class="string">&#x27;Eric&#x27;</span> <span class="keyword">AND</span> last_name<span class="operator">=</span><span class="string">&#x27;Anido&#x27;</span>;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----+-------------+-----------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key <span class="operator">|</span> key_len <span class="operator">|</span>  <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span>  Extra  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----+-------------+-----------+------+---------------+------+---------+------+--------+-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">1</span>  <span class="operator">|</span> SIMPLE <span class="operator">|</span> employees <span class="operator">|</span> <span class="keyword">ALL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>  <span class="number">300024</span>  <span class="operator">|</span>  <span class="keyword">Using</span>  <span class="keyword">where</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">----+-------------+-----------+------+---------------+------+---------+------+--------+-------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>如果频繁按名字搜索员工，这样显然效率很低，因此我们可以考虑建索引。有两种选择，建<first_name>或&lt;first_name, last_name&gt;，看下两个索引的选择性：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span>(first_name))<span class="operator">/</span><span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">AS</span> Selectivity <span class="keyword">FROM</span> employees.employees;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  Selectivity  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">0.0042</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">7.</span>  <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span>(concat(first_name, last_name)))<span class="operator">/</span><span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">AS</span> Selectivity <span class="keyword">FROM</span> employees.employees;</span><br><span class="line"><span class="number">8.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">9.</span>  <span class="operator">|</span>  Selectivity  <span class="operator">|</span></span><br><span class="line"><span class="number">10.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">11.</span>  <span class="operator">|</span>  <span class="number">0.9313</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">12.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><first_name>显然选择性太低，&lt;first_name, last_name&gt;选择性很好，但是first_name和last_name加起来长度为30，有没有兼顾长度和选择性的办法？可以考虑用first_name和last_name的前几个字符建立索引，例如&lt;first_name, left(last_name, 3)&gt;，看看其选择性：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span>(concat(first_name, <span class="keyword">left</span>(last_name,  <span class="number">3</span>))))<span class="operator">/</span><span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">AS</span> Selectivity <span class="keyword">FROM</span> employees.employees;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  Selectivity  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">0.7879</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>选择性还不错，但离0.9313还是有点距离，那么把last_name前缀加到4：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span>(concat(first_name, <span class="keyword">left</span>(last_name,  <span class="number">4</span>))))<span class="operator">/</span><span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">AS</span> Selectivity <span class="keyword">FROM</span> employees.employees;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  Selectivity  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">0.9007</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">+</span><span class="comment">-------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>这时选择性已经很理想了，而这个索引的长度只有18，比&lt;first_name, last_name&gt;短了接近一半，我们把这个前缀索引 建上：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">ALTER</span> <span class="keyword">TABLE</span> employees.employees</span><br><span class="line"><span class="number">2.</span>  <span class="keyword">ADD</span> INDEX `first_name_last_name4`  (first_name, last_name(<span class="number">4</span>));</span><br></pre></td></tr></table></figure>
-
-<p>此时再执行一遍按名字查询，比较分析一下与建索引前的结果：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>  <span class="keyword">SHOW</span> PROFILES;</span><br><span class="line"><span class="number">2.</span>  <span class="operator">+</span><span class="comment">----------+------------+---------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">3.</span>  <span class="operator">|</span>  Query_ID  <span class="operator">|</span>  Duration  <span class="operator">|</span>  Query  <span class="operator">|</span></span><br><span class="line"><span class="number">4.</span>  <span class="operator">+</span><span class="comment">----------+------------+---------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">5.</span>  <span class="operator">|</span>  <span class="number">87</span>  <span class="operator">|</span>  <span class="number">0.11941700</span>  <span class="operator">|</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.employees <span class="keyword">WHERE</span> first_name<span class="operator">=</span><span class="string">&#x27;Eric&#x27;</span> <span class="keyword">AND</span> last_name<span class="operator">=</span><span class="string">&#x27;Anido&#x27;</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">6.</span>  <span class="operator">|</span>  <span class="number">90</span>  <span class="operator">|</span>  <span class="number">0.00092400</span>  <span class="operator">|</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees.employees <span class="keyword">WHERE</span> first_name<span class="operator">=</span><span class="string">&#x27;Eric&#x27;</span> <span class="keyword">AND</span> last_name<span class="operator">=</span><span class="string">&#x27;Anido&#x27;</span>  <span class="operator">|</span></span><br><span class="line"><span class="number">7.</span>  <span class="operator">+</span><span class="comment">----------+------------+---------------------------------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
-
-<p>性能的提升是显著的，查询速度提高了120多倍。</p>
-<p>前缀索引兼顾索引大小和查询速度，但是其缺点是不能用于ORDER BY和GROUP BY操作，也不能用于Covering index（即当索引本身包含查询所需全部数据时，不再访问数据文件本身）。</p>
-<h2 id="InnoDB的主键选择与插入优化"><a href="#InnoDB的主键选择与插入优化" class="headerlink" title="InnoDB的主键选择与插入优化"></a>InnoDB的主键选择与插入优化</h2><p>在使用InnoDB存储引擎时，如果没有特别的需要，请永远使用一个与业务无关的自增字段作为主键。</p>
-<p>经常看到有帖子或博客讨论主键选择问题，有人建议使用业务无关的自增主键，有人觉得没有必要，完全可以使用如学号或身份证号这种唯一字段作为主键。不论支持哪种论点，大多数论据都是业务层面的。如果从数据库索引优化角度看，使用InnoDB引擎而不使用自增主键绝对是一个糟糕的主意。</p>
-<p>上文讨论过InnoDB的索引实现，InnoDB使用聚集索引，数据记录本身被存于主索引（一颗B+Tree）的叶子节点上。这就要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放，因此每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）。</p>
-<p>如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页。如下图所示：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMTMucG5n?x-oss-process=image/format,png" alt="img"></p>
-<p>图13</p>
-<p>这样就会形成一个紧凑的索引结构，近似顺序填满。由于每次插入时也不需要移动已有数据，因此效率很高，也不会增加很多开销在维护索引上。</p>
-<p>如果使用非自增主键（如果身份证号或学号等），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到现有索引页得中间某个位置：</p>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2Jsb2cuY29kaW5nbGFicy5vcmcvdXBsb2Fkcy9waWN0dXJlcy90aGVvcnktb2YtbXlzcWwtaW5kZXgvMTQucG5n?x-oss-process=image/format,png" alt="img"></p>
-<p>图14</p>
-<p>此时MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。</p>
-<p>因此，只要可以，请尽量在InnoDB上采用自增字段做主键。</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108412509">文章出处</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/22/Mysql%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%92%8C%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AE%97%E6%B3%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
     </nav>
   
 
@@ -1964,11 +1892,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1980,11 +1908,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2016,11 +1944,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2072,11 +2000,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数组</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2092,15 +2020,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
               </li>
              
               <li class="article-tag-list-item">

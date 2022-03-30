@@ -6,23 +6,26 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>微服务 | yueyan</title>
+  <title>AOP &amp; RPC &amp; 微服务 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="微服务微服务（Microservice）是什么？微服务（Microservice）虽然是当下刚兴起的比较流行的新名词，但本质上来说，微服务并非什么新的概念。">
+  <meta name="description" content="AOP和RPC1 SOA 简介 SOA(Service-Oriented Architecture)面向服务架构。 SOA 属于分布式架构的一种，它具备分布式架构的优点。 2 普通的分布式架构 明显问题： 调用关系比较复杂。网状结构。 每个项目之前耦合度比较高。违反高内聚低耦合原则  3 SOA架构 解决上面的混乱的调用关系。 在原有架构中添加叫做消息总线（服务总线 Service Bus） 消息">
 <meta property="og:type" content="article">
-<meta property="og:title" content="微服务">
+<meta property="og:title" content="AOP &amp; RPC &amp; 微服务">
 <meta property="og:url" content="http://example.com/2022/01/26/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="微服务微服务（Microservice）是什么？微服务（Microservice）虽然是当下刚兴起的比较流行的新名词，但本质上来说，微服务并非什么新的概念。">
+<meta property="og:description" content="AOP和RPC1 SOA 简介 SOA(Service-Oriented Architecture)面向服务架构。 SOA 属于分布式架构的一种，它具备分布式架构的优点。 2 普通的分布式架构 明显问题： 调用关系比较复杂。网状结构。 每个项目之前耦合度比较高。违反高内聚低耦合原则  3 SOA架构 解决上面的混乱的调用关系。 在原有架构中添加叫做消息总线（服务总线 Service Bus） 消息">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/726a19d283884537b6c5c1ca01997a13.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0c205eef659743288a5a43587ca2fea6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/712e62b5efe14b80ba9634e0b013c079.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/62b820a71eb844fc74b610e107a5f507.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/b04b8246036885530de8aa3ec3ab5fdd.png">
 <meta property="article:published_time" content="2022-01-26T02:51:49.000Z">
-<meta property="article:modified_time" content="2022-03-08T01:58:34.573Z">
+<meta property="article:modified_time" content="2022-03-22T03:09:55.654Z">
 <meta property="article:author" content="yueyan">
-<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="架构">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/62b820a71eb844fc74b610e107a5f507.png">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/726a19d283884537b6c5c1ca01997a13.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16">
   
     <link rel="alternative" href="/atom.xml" title="yueyan" type="application/atom+xml">
   
@@ -274,7 +277,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      微服务
+      AOP &amp; RPC &amp; 微服务
     </h1>
   
 
@@ -300,7 +303,43 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h1><h2 id="微服务（Microservice）是什么？"><a href="#微服务（Microservice）是什么？" class="headerlink" title="微服务（Microservice）是什么？"></a>微服务（Microservice）是什么？</h2><p>微服务（Microservice）虽然是当下刚兴起的比较流行的新名词，但本质上来说，微服务并非什么新的概念。</p>
+        <h1 id="AOP和RPC"><a href="#AOP和RPC" class="headerlink" title="AOP和RPC"></a>AOP和RPC</h1><p><strong>1</strong> <strong>SOA</strong> <strong>简介</strong></p>
+<p>SOA(Service-Oriented Architecture)面向服务架构。</p>
+<p>SOA 属于分布式架构的一种，它具备分布式架构的优点。</p>
+<p><strong>2 普通的分布式架构</strong></p>
+<p>明显问题：</p>
+<p>调用关系比较复杂。网状结构。</p>
+<p>每个项目之前耦合度比较高。违反高内聚低耦合原则</p>
+<p><img src="https://img-blog.csdnimg.cn/726a19d283884537b6c5c1ca01997a13.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><strong>3 SOA架构</strong></p>
+<p>解决上面的混乱的调用关系。</p>
+<p>在原有架构中添加叫做消息总线（服务总线 Service Bus）</p>
+<p>消息总线：接收所有的请求，负责把请求的 URL 转发给特定的应用或服务。在消息总线中进行配置特定 URL 格式和系统之间的关系。/xxxx/yyyyy 中需要定义各种 xxxx 和系统的关系。其中消息总线属于最中心的服务。</p>
+<p>例如：</p>
+<p>/order/insert 需要请求的订单系统</p>
+<p>/ems/insert 需要请求短信系统</p>
+<p>EJB：企业消息总线。以前项目都使用它，它比较“笨重”，已经过时了。</p>
+<p><img src="https://img-blog.csdnimg.cn/0c205eef659743288a5a43587ca2fea6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>随着互联网发展，SOA 架构也一直在进化。已经舍弃了其中的消息总线。目前使用 SOA 架构时可以结合很多技术实现。</p>
+<p>Web Service： SOAP，智能门锁。在最后剩下 Web Service 属于 SOA 架构的实现。</p>
+<p>Dubbo：目前最主流的实现技术。可以对 SOA 架构进行实现。随着微服务火了以后， 现在都 把 Dubbo/Spring Cloud 归属到微服务的实现技术中。而不属于 SOA 架构了。</p>
+<p><strong>4</strong> <strong>基于</strong> <strong>Dubbo</strong> <strong>进行实现</strong> <strong>SOA</strong> <strong>架构</strong> </p>
+<p>把项目分为表现层和服务层。 </p>
+<p>表现层：Dubbo 中的 Consumer。 </p>
+<p>服务层：Dubbo 中的 Provider。 </p>
+<p>互联网发展，除了叫做 SOA 架构，又可以称为 RPC 软件模型。RPC 软件模型和 SOA 架 </p>
+<p>构是两个概念。发展到目前 SOA 架构和 RPC 软件模型都属于服务综合治理，在其中都包含： </p>
+<p>负载均衡、服务容灾、缓存等。</p>
+<p><strong>4.1</strong>为什么说下面架构更符合 <strong>RPC</strong> **软件模型（RPC **架构）？</p>
+<p>因为整个项目分为表现层和服务层，由表现层调用服务层。 </p>
+<p><strong>4.2</strong>为什么不在强调属于标准的 <strong>SOA</strong> <strong>架构？</strong> </p>
+<p>因为在目前项目中已经没有消息总线，</p>
+<p>SOA 架构最重要的核心就是消息总线。目前项目 </p>
+<p>尽量减少项目和项目之间的调用（降低耦合），如果实在非要进行调用，在一个项目的表现 </p>
+<p>层通过 Http 协议解决方案（HttpClient/RestTemplate）调用另外一个项目的表现层。也可以 </p>
+<p>在页面中直接通过 Ajax 跨域访问另外一个项目的控制器。</p>
+<p><img src="https://img-blog.csdnimg.cn/712e62b5efe14b80ba9634e0b013c079.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<h1 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h1><h2 id="微服务（Microservice）是什么？"><a href="#微服务（Microservice）是什么？" class="headerlink" title="微服务（Microservice）是什么？"></a>微服务（Microservice）是什么？</h2><p>微服务（Microservice）虽然是当下刚兴起的比较流行的新名词，但本质上来说，微服务并非什么新的概念。</p>
 <span id="more"></span>
 
 <p>实际上，很多 SOA（面向服务的架构Service Oriented Architecture）实施成熟度比较好的企业，已经在使用和实施微服务了。只不过，它们只是在闷声发大财，并不介意是否有一个比较时髦的名词来明确表述 SOA 的这个发展演化趋势罢了。</p>
@@ -411,7 +450,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">分布式</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
         		</li>
       		
 		</ul>
@@ -519,7 +558,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">微服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%EF%BC%88Microservice%EF%BC%89%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">微服务（Microservice）是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%98%AF%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">微服务是怎么来的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%88%E4%BC%98%E7%82%B9%EF%BC%89%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">微服务的好处（优点）有哪些？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8B%AC%E7%AB%8B%EF%BC%8C%E7%8B%AC%E7%AB%8B%EF%BC%8C%E8%BF%98%E6%98%AF%E7%8B%AC%E7%AB%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">独立，独立，还是独立</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%94%9F%E6%80%81"><span class="toc-number">1.3.2.</span> <span class="toc-text">多语言生态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%BC%9A%E5%B8%A6%E6%9D%A5%E5%93%AA%E4%BA%9B%E6%8C%91%E6%88%98%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">实现微服务会带来哪些挑战？</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AOP%E5%92%8CRPC"><span class="toc-number">1.</span> <span class="toc-text">AOP和RPC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.</span> <span class="toc-text">微服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%EF%BC%88Microservice%EF%BC%89%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">微服务（Microservice）是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%98%AF%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">微服务是怎么来的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%88%E4%BC%98%E7%82%B9%EF%BC%89%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-number">2.3.</span> <span class="toc-text">微服务的好处（优点）有哪些？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8B%AC%E7%AB%8B%EF%BC%8C%E7%8B%AC%E7%AB%8B%EF%BC%8C%E8%BF%98%E6%98%AF%E7%8B%AC%E7%AB%8B"><span class="toc-number">2.3.1.</span> <span class="toc-text">独立，独立，还是独立</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%94%9F%E6%80%81"><span class="toc-number">2.3.2.</span> <span class="toc-text">多语言生态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%BC%9A%E5%B8%A6%E6%9D%A5%E5%93%AA%E4%BA%9B%E6%8C%91%E6%88%98%EF%BC%9F"><span class="toc-number">2.4.</span> <span class="toc-text">实现微服务会带来哪些挑战？</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -651,11 +690,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -667,11 +706,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -703,11 +742,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -759,11 +798,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数组</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -779,15 +818,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
               </li>
              
               <li class="article-tag-list-item">
