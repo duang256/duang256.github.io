@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>AOP &amp; RPC &amp; 微服务 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AOP和RPC1 SOA 简介 SOA(Service-Oriented Architecture)面向服务架构。 SOA 属于分布式架构的一种，它具备分布式架构的优点。 2 普通的分布式架构 明显问题： 调用关系比较复杂。网状结构。 每个项目之前耦合度比较高。违反高内聚低耦合原则  3 SOA架构 解决上面的混乱的调用关系。 在原有架构中添加叫做消息总线（服务总线 Service Bus） 消息">
+  <meta name="description" content="AOP和RPC">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AOP &amp; RPC &amp; 微服务">
 <meta property="og:url" content="http://example.com/2022/01/26/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="AOP和RPC1 SOA 简介 SOA(Service-Oriented Architecture)面向服务架构。 SOA 属于分布式架构的一种，它具备分布式架构的优点。 2 普通的分布式架构 明显问题： 调用关系比较复杂。网状结构。 每个项目之前耦合度比较高。违反高内聚低耦合原则  3 SOA架构 解决上面的混乱的调用关系。 在原有架构中添加叫做消息总线（服务总线 Service Bus） 消息">
+<meta property="og:description" content="AOP和RPC">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/726a19d283884537b6c5c1ca01997a13.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/0c205eef659743288a5a43587ca2fea6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_18,color_FFFFFF,t_70,g_se,x_16">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/62b820a71eb844fc74b610e107a5f507.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/b04b8246036885530de8aa3ec3ab5fdd.png">
 <meta property="article:published_time" content="2022-01-26T02:51:49.000Z">
-<meta property="article:modified_time" content="2022-03-22T03:09:55.654Z">
+<meta property="article:modified_time" content="2022-04-03T04:27:01.509Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="架构">
 <meta name="twitter:card" content="summary">
@@ -303,7 +303,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="AOP和RPC"><a href="#AOP和RPC" class="headerlink" title="AOP和RPC"></a>AOP和RPC</h1><p><strong>1</strong> <strong>SOA</strong> <strong>简介</strong></p>
+        <h1 id="AOP和RPC"><a href="#AOP和RPC" class="headerlink" title="AOP和RPC"></a>AOP和RPC</h1><span id="more"></span>
+
+<p><strong>1</strong> <strong>SOA</strong> <strong>简介</strong></p>
 <p>SOA(Service-Oriented Architecture)面向服务架构。</p>
 <p>SOA 属于分布式架构的一种，它具备分布式架构的优点。</p>
 <p><strong>2 普通的分布式架构</strong></p>
@@ -340,7 +342,7 @@
 <p>在页面中直接通过 Ajax 跨域访问另外一个项目的控制器。</p>
 <p><img src="https://img-blog.csdnimg.cn/712e62b5efe14b80ba9634e0b013c079.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
 <h1 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h1><h2 id="微服务（Microservice）是什么？"><a href="#微服务（Microservice）是什么？" class="headerlink" title="微服务（Microservice）是什么？"></a>微服务（Microservice）是什么？</h2><p>微服务（Microservice）虽然是当下刚兴起的比较流行的新名词，但本质上来说，微服务并非什么新的概念。</p>
-<span id="more"></span>
+<!--more-->
 
 <p>实际上，很多 SOA（面向服务的架构Service Oriented Architecture）实施成熟度比较好的企业，已经在使用和实施微服务了。只不过，它们只是在闷声发大财，并不介意是否有一个比较时髦的名词来明确表述 SOA 的这个发展演化趋势罢了。</p>
 <p>微服务其实就是服务化思路的一种最佳实践方向，遵循 SOA 的思路，各个企业在服务化治理的道路上走的时间长了，踩的坑多了，整个软件交付链路上各个环节的基础设施逐渐成熟了，微服务自然而然就诞生了。</p>
@@ -706,11 +708,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -730,11 +732,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -802,11 +804,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -815,10 +817,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">逻辑符</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -831,6 +829,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">

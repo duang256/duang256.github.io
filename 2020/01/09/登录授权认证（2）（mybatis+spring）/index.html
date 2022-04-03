@@ -8,16 +8,16 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>登录授权认证（2）（mybatis+spring） | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="mybatis+spring环境搭建web.xml12345678910&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;&lt;web-app xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot; xmlns&#x3D;&quot;http:&#x2F;&#x2F;jav">
+  <meta name="description" content="mybatis+spring环境搭建">
 <meta property="og:type" content="article">
 <meta property="og:title" content="登录授权认证（2）（mybatis+spring）">
 <meta property="og:url" content="http://example.com/2020/01/09/%E7%99%BB%E5%BD%95%E6%8E%88%E6%9D%83%E8%AE%A4%E8%AF%81%EF%BC%882%EF%BC%89%EF%BC%88mybatis+spring%EF%BC%89/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="mybatis+spring环境搭建web.xml12345678910&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;&lt;web-app xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot; xmlns&#x3D;&quot;http:&#x2F;&#x2F;jav">
+<meta property="og:description" content="mybatis+spring环境搭建">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20210306122415960.png">
 <meta property="article:published_time" content="2020-01-09T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-03-02T08:38:41.162Z">
+<meta property="article:modified_time" content="2022-04-03T04:28:45.830Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="Mybatis">
 <meta name="twitter:card" content="summary">
@@ -299,9 +299,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <span id="more"></span>
+        <h2 id="mybatis-spring环境搭建"><a href="#mybatis-spring环境搭建" class="headerlink" title="mybatis+spring环境搭建"></a>mybatis+spring环境搭建</h2><span id="more"></span>
 
-<h2 id="mybatis-spring环境搭建"><a href="#mybatis-spring环境搭建" class="headerlink" title="mybatis+spring环境搭建"></a>mybatis+spring环境搭建</h2><h3 id="web-xml"><a href="#web-xml" class="headerlink" title="web.xml"></a>web.xml</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath:applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="web-xml"><a href="#web-xml" class="headerlink" title="web.xml"></a>web.xml</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath:applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="applicationContext-xml"><a href="#applicationContext-xml" class="headerlink" title="applicationContext.xml"></a>applicationContext.xml</h3><p>里边添加了事务管理器，如果事务出错，则进行回滚等操作（这种方式是spring集成的，mybatis中可以使用过滤器进行事务的管理，后边springmvc中还有拦截器也是类似的功能）</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;beans xmlns=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span><br><span class="line">    xmlns:xsi=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span><br><span class="line">    xmlns:aop=<span class="string">&quot;http://www.springframework.org/schema/aop&quot;</span></span><br><span class="line">     xmlns:context=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span></span><br><span class="line">     xmlns:tx=<span class="string">&quot;http://www.springframework.org/schema/tx&quot;</span></span><br><span class="line">    xsi:schemaLocation=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/aop</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/aop/spring-aop.xsd</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/context</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/context/spring-context.xsd</span></span><br><span class="line"><span class="string">         http://www.springframework.org/schema/tx</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/tx/spring-tx.xsd&quot;</span> <span class="keyword">default</span>-autowire=<span class="string">&quot;byName&quot;</span>&gt;</span><br><span class="line">		       </span><br><span class="line">		       </span><br><span class="line">		 &lt;!--Impl包注解扫描  --&gt;      </span><br><span class="line">        &lt;context:component-scan base-<span class="keyword">package</span>=<span class="string">&quot;cn.wit.serviceImpl&quot;</span>&gt;&lt;/context:component-scan&gt;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">       &lt;bean id=<span class="string">&quot;dataSource&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;</span>&gt;</span><br><span class="line">       		&lt;property name=<span class="string">&quot;driverClassName&quot;</span> value=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">       		&lt;property name=<span class="string">&quot;url&quot;</span> value=<span class="string">&quot;jdbc:mysql://localhost:3306/wit&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">       		&lt;property name=<span class="string">&quot;username&quot;</span> value=<span class="string">&quot;root&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">       		&lt;property name=<span class="string">&quot;password&quot;</span> value=<span class="string">&quot;wityy&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">       &lt;/bean&gt;</span><br><span class="line">       </span><br><span class="line">       &lt;bean id=<span class="string">&quot;factory&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;</span>&gt;</span><br><span class="line">       	&lt;property name=<span class="string">&quot;dataSource&quot;</span> ref=<span class="string">&quot;dataSource&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">       	&lt;!--设置简写  --&gt;</span><br><span class="line">       	&lt;property name=<span class="string">&quot;typeAliasesPackage&quot;</span> value=<span class="string">&quot;cn.wit.pojo&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">       &lt;/bean&gt;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        &lt;bean <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;</span>&gt;</span><br><span class="line">        &lt;!--扫描mapper包  --&gt;</span><br><span class="line">        	&lt;property name=<span class="string">&quot;basePackage&quot;</span> value=<span class="string">&quot;cn.wit.mapper&quot;</span> &gt;&lt;/property&gt;</span><br><span class="line">        	&lt;property name=<span class="string">&quot;sqlSessionFactoryBeanName&quot;</span> value=<span class="string">&quot;factory&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">        &lt;/bean&gt;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        &lt;!--事务管理器  --&gt;</span><br><span class="line">        &lt;bean id=<span class="string">&quot;txManager&quot;</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;</span>&gt;</span><br><span class="line">        	&lt;property name=<span class="string">&quot;dataSource&quot;</span> ref=<span class="string">&quot;dataSource&quot;</span>&gt;&lt;/property&gt;</span><br><span class="line">        &lt;/bean&gt;</span><br><span class="line">        &lt;tx:advice id=<span class="string">&quot;txAdvice&quot;</span> transaction-manager=<span class="string">&quot;txManager&quot;</span>&gt;</span><br><span class="line">        	&lt;tx:attributes&gt;</span><br><span class="line">        		&lt;tx:method name=<span class="string">&quot;ins*&quot;</span>/&gt;</span><br><span class="line">        		&lt;tx:method name=<span class="string">&quot;del*&quot;</span>/&gt;</span><br><span class="line">        		&lt;tx:method name=<span class="string">&quot;sel*&quot;</span>/&gt;</span><br><span class="line">        		&lt;tx:method name=<span class="string">&quot;upd*&quot;</span>/&gt;</span><br><span class="line">        	&lt;/tx:attributes&gt;</span><br><span class="line">        &lt;/tx:advice&gt;</span><br><span class="line">        </span><br><span class="line">        &lt;aop:config&gt;</span><br><span class="line">        	&lt;aop:pointcut expression=<span class="string">&quot;execution(* cn.wit.serviceImpl.*.*(..))&quot;</span> id=<span class="string">&quot;mypoint&quot;</span>/&gt;</span><br><span class="line">        	&lt;aop:advisor advice-ref=<span class="string">&quot;txAdvice&quot;</span> pointcut-ref=<span class="string">&quot;mypoint&quot;</span>/&gt;</span><br><span class="line">        &lt;/aop:config&gt;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        &lt;aop:aspectj-autoproxy  proxy-target-<span class="class"><span class="keyword">class</span></span>=<span class="string">&quot;true&quot;</span>/&gt;</span><br><span class="line">        </span><br><span class="line">&lt;/beans&gt;  </span><br></pre></td></tr></table></figure>
@@ -440,8 +440,8 @@
     </a>
   
   
-    <a href="/2020/01/09/%E7%99%BB%E5%BD%95%E6%8E%88%E6%9D%83%E8%AE%A4%E8%AF%81%EF%BC%881%EF%BC%89%EF%BC%88mybatis%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">登录授权认证（1）（mybatis）</div>
+    <a href="/2020/01/09/%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83%EF%BC%883%EF%BC%89%EF%BC%88mybatis+spring+springmvc%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">登录认证授权（3）（mybatis+spring+springmvc）</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -616,11 +616,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -640,11 +640,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -712,11 +712,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -725,10 +725,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">逻辑符</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -741,6 +737,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">

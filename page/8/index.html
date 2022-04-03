@@ -261,6 +261,104 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-shiro-自定义realm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/01/04/shiro-%E8%87%AA%E5%AE%9A%E4%B9%89realm/">shiro-自定义realm</a>
+    </h1>
+  
+
+        
+        <a href="/2022/01/04/shiro-%E8%87%AA%E5%AE%9A%E4%B9%89realm/" class="archive-article-date">
+  	<time datetime="2022-01-04T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-04</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="ini"><a href="#ini" class="headerlink" title="ini"></a>ini</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">userRealm=cn.wit.realm.UserRealm</span><br><span class="line">securityManager.realm=$userRealm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>根据taken拿到username，然后用username查询数据库，返回User<br>对象信息，赋值username和password，<font color=blue>SimpleAuthenticationInfo对象</font> 传入username、password、realm名称（父类提供了getName方法，重写这个方法），然后返回这个info对象。表示将数据库的用户信息给shiro，shiro会去比较登录的信息（taken里边的），如果一致就登录成功</p>
+<p>注意这里是根据用户名去查询密码，然后查询到的用户名密码和输入的用户名密码进行比对（比<strong>对由shiro做的</strong>）</p>
+<h2 id="UserRealm-extends-AuthorizingRealm"><a href="#UserRealm-extends-AuthorizingRealm" class="headerlink" title="UserRealm  extends AuthorizingRealm"></a>UserRealm  extends AuthorizingRealm</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.realm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.beans.PropertyVetoException;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.AuthenticationToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.SimpleAuthenticationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authz.AuthorizationInfo;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.realm.AuthorizingRealm;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.PrincipalCollection;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.wit.users.Users;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.mchange.v2.c3p0.ComboPooledDataSource;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserRealm</span> <span class="keyword">extends</span> <span class="title">AuthorizingRealm</span></span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;uesrRealm&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthorizationInfo <span class="title">doGetAuthorizationInfo</span><span class="params">(PrincipalCollection arg0)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> AuthenticationInfo <span class="title">doGetAuthenticationInfo</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">			AuthenticationToken taken)</span> <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">			String username=(String) taken.getPrincipal();</span><br><span class="line">			String pwd=<span class="string">&quot;&quot;</span>;</span><br><span class="line">		</span><br><span class="line">			Connection conn=<span class="keyword">null</span>;</span><br><span class="line">	        PreparedStatement ps=<span class="keyword">null</span>;</span><br><span class="line">	        ResultSet rs=<span class="keyword">null</span>;</span><br><span class="line">	        ComboPooledDataSource cpds=<span class="keyword">null</span>;</span><br><span class="line">	        <span class="keyword">try</span> &#123;</span><br><span class="line">	          <span class="comment">//c3p0获取数据库连接conn</span></span><br><span class="line">	    		cpds= <span class="keyword">new</span> ComboPooledDataSource();</span><br><span class="line">	    		cpds.setDriverClass(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">	    		cpds.setJdbcUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/login&quot;</span>);</span><br><span class="line">	    		cpds.setUser(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">	    		cpds.setPassword(<span class="string">&quot;wityy&quot;</span>);</span><br><span class="line">	    		conn = cpds.getConnection();</span><br><span class="line">	            </span><br><span class="line">	            String sql=<span class="string">&quot;select *from users where username=?&quot;</span>;</span><br><span class="line">	            ps= conn.prepareStatement(sql);</span><br><span class="line">	            ps.setObject(<span class="number">1</span>,username);</span><br><span class="line">	            rs=ps.executeQuery();</span><br><span class="line">	            <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">	            	Users users=<span class="keyword">new</span> Users();</span><br><span class="line">	            	users.setId(rs.getInt(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">	            	users.setUsername(rs.getString(<span class="string">&quot;username&quot;</span>));</span><br><span class="line">	            	users.setPassword(rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">	            	pwd=users.getPassword();</span><br><span class="line">	            	username=users.getUsername();</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	            e.printStackTrace();</span><br><span class="line">	        &#125; <span class="keyword">catch</span> (PropertyVetoException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		rs.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(ps!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		ps.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	            <span class="keyword">try</span> &#123;</span><br><span class="line">	            	<span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</span><br><span class="line">	            		conn.close();</span><br><span class="line">	            	&#125;</span><br><span class="line">	            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">	                e.printStackTrace();</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">		</span><br><span class="line">		SimpleAuthenticationInfo info=<span class="keyword">new</span> SimpleAuthenticationInfo(username,pwd,getName());</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="main"><a href="#main" class="headerlink" title="main"></a>main</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.wit.shiro;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.SecurityUtils;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.IncorrectCredentialsException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UnknownAccountException;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.authc.UsernamePasswordToken;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.config.IniSecurityManagerFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.subject.Subject;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.Factory;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.mgt.SecurityManager;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 完成用户认证功能</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Authentication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//拿到SecurityManager并将它放到环境当中</span></span><br><span class="line">		Factory&lt;SecurityManager&gt;factory=<span class="keyword">new</span> IniSecurityManagerFactory(<span class="string">&quot;classpath:shiro.ini&quot;</span>);</span><br><span class="line">		SecurityManager securityManager = factory.getInstance();</span><br><span class="line">		SecurityUtils.setSecurityManager(securityManager);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//拿到subject接口</span></span><br><span class="line">		Subject subject = SecurityUtils.getSubject();</span><br><span class="line">		UsernamePasswordToken taken=<span class="keyword">new</span> UsernamePasswordToken(<span class="string">&quot;zhangsan&quot;</span>,<span class="string">&quot;123&quot;</span>);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>(taken!=<span class="keyword">null</span>)&#123;</span><br><span class="line">				subject.login(taken);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span>(subject.isAuthenticated())&#123;</span><br><span class="line">				System.out.println(<span class="string">&quot;登录成功&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (UnknownAccountException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (IncorrectCredentialsException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			System.out.println(<span class="string">&quot;账号或密码错误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="跟踪源码"><a href="#跟踪源码" class="headerlink" title="跟踪源码"></a>跟踪源码</h2><p>从login进入跟到SecurityManager，到它的实现类defaultSecurityManager，调用authenticator的authenticate方法，进入authenticator，它的实现类ModularRealmAuthenticator<br><img src="https://img-blog.csdnimg.cn/20210202144439771.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/b05dd9e84bc349eebf4e404226413f5e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p>setRealms方法是在RealmSecurityManager中实现的</p>
+<p><img src="https://img-blog.csdnimg.cn/ee707f237aff43168dbc17bbdcef406b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>DefaultWebSecurityManager里边设置Realm或realms<br><img src="https://img-blog.csdnimg.cn/1502ba27f6084e5388c437126ed75816.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/e4f8abd14b37474c89da74a3a4f95ac2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_19,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>然后放到AuthenticatingSecurityManager创建的ModularRealmAuthenticator中<br><img src="https://img-blog.csdnimg.cn/aae8682d4e674b6aab8dc7b8af25f67a.png" alt="在这里插入图片描述"></p>
+<p>Realm类层次如下，里面已经实现了多种realm了，比如之前的jdbcRealm就是这里边已经定义好的，如果要自定义realm，需要继承AuthorizingRealm，并且自定义授权同样是继承的这个类<br><img src="https://img-blog.csdnimg.cn/20210202144850335.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dBX01D,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>AuthorizingRealm（abstract）是AuthenticatingRealm的子类<br>AuthenticatingRealm（abstract）中有doGetAuthenticationInfo方法，可以自定义认证<br>AuthorizingRealm中有doGetAuthorizationInfo方法，可以自定义授权</p>
+<p>自定义类继承AuthenticatingRealm，所以继承类就必须重写这两个方法<br><img src="https://img-blog.csdnimg.cn/20210202145504147.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2021020214561895.png" alt="在这里插入图片描述"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">shiro</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/01/04/shiro-%E8%87%AA%E5%AE%9A%E4%B9%89realm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-《Java 并发编程实战》阅读笔记 Java 线程：安全性" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1366,19 +1464,19 @@
 
 
   
-    <article id="post-LeetCode-12-整数转罗马数字--贪心" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-LeetCode-1143-最长公共子序列--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">LeetCode-12 整数转罗马数字--贪心</a>
+      <a class="article-title" href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/">LeetCode-1143 最长公共子序列--DP</a>
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" class="archive-article-date">
+        <a href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/" class="archive-article-date">
   	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
 </a>
 		
@@ -1395,7 +1493,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-to-roman/">LeetCode-12 整数转罗马数字–贪心</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-common-subsequence/">LeetCode-1143 最长公共子序列–DP</a></p>
         
       
 
@@ -1409,7 +1507,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
         		</li>
       		
 		</ul>
@@ -1419,7 +1517,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/">展开全文 >></a>
+          <a class="article-more-a" href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/">展开全文 >></a>
         </p>
       
 
@@ -1505,91 +1603,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-LeetCode-1143-最长公共子序列--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/">LeetCode-1143 最长公共子序列--DP</a>
-    </h1>
-  
-
-        
-        <a href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-common-subsequence/">LeetCode-1143 最长公共子序列–DP</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/">展开全文 >></a>
         </p>
       
 
@@ -1751,11 +1764,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1775,11 +1788,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1847,11 +1860,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1860,10 +1873,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">逻辑符</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1876,6 +1885,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">

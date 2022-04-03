@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Mysql存储引擎与数据存储原理 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Mysql存储引擎与数据存储原理数据库的定义很多开发者在最开始时其实都对数据库有一个比较模糊的认识，觉得数据库就是一堆数据的集合，但是实际却比这复杂的多，数据库领域中有两个词非常容易混淆，也就是_数据库_和_实例_：  数据库：物理操作文件系统或其他形式文件类型的集合； 实例：MySQL 数据库由后台线程以及一个共享内存区组成；   对于数据库和实例的定义都来自于 MySQL 技术内幕：Inn">
+  <meta name="description" content="Mysql存储引擎与数据存储原理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mysql存储引擎与数据存储原理">
 <meta property="og:url" content="http://example.com/2022/01/21/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="Mysql存储引擎与数据存储原理数据库的定义很多开发者在最开始时其实都对数据库有一个比较模糊的认识，觉得数据库就是一堆数据的集合，但是实际却比这复杂的多，数据库领域中有两个词非常容易混淆，也就是_数据库_和_实例_：  数据库：物理操作文件系统或其他形式文件类型的集合； 实例：MySQL 数据库由后台线程以及一个共享内存区组成；   对于数据库和实例的定义都来自于 MySQL 技术内幕：Inn">
+<meta property="og:description" content="Mysql存储引擎与数据存储原理">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0RyYXZlbmVzcy9BbmFseXplL21hc3Rlci9jb250ZW50cy9EYXRhYmFzZS9pbWFnZXMvbXlzcWwvRGF0YWJhc2UlMjAtJTIwSW5zdGFuY2UuanBn?x-oss-process=image/format,png">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0RyYXZlbmVzcy9BbmFseXplL21hc3Rlci9jb250ZW50cy9EYXRhYmFzZS9pbWFnZXMvbXlzcWwvTG9naWNhbC1WaWV3LW9mLU15U1FMLUFyY2hpdGVjdHVyZS5qcGc?x-oss-process=image/format,png">
@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0RyYXZlbmVzcy9BbmFseXplL21hc3Rlci9jb250ZW50cy9EYXRhYmFzZS9pbWFnZXMvbXlzcWwvUmVwZWF0YWJsZS1SZWFkLVBoYW50b20tUmVhZC5qcGc?x-oss-process=image/format,png">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0RyYXZlbmVzcy9BbmFseXplL21hc3Rlci9jb250ZW50cy9EYXRhYmFzZS9pbWFnZXMvbXlzcWwvUmVwZWF0YWJsZS13aXRoLU5leHQtS2V5LUxvY2suanBn?x-oss-process=image/format,png">
 <meta property="article:published_time" content="2022-01-21T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-03-03T08:56:58.041Z">
+<meta property="article:modified_time" content="2022-04-03T04:31:11.831Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="他人好文">
@@ -324,9 +324,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <span id="more"></span>
+        <h1 id="Mysql存储引擎与数据存储原理"><a href="#Mysql存储引擎与数据存储原理" class="headerlink" title="Mysql存储引擎与数据存储原理"></a>Mysql存储引擎与数据存储原理</h1><span id="more"></span>
 
-<h1 id="Mysql存储引擎与数据存储原理"><a href="#Mysql存储引擎与数据存储原理" class="headerlink" title="Mysql存储引擎与数据存储原理"></a>Mysql存储引擎与数据存储原理</h1><h2 id="数据库的定义"><a href="#数据库的定义" class="headerlink" title="数据库的定义"></a>数据库的定义</h2><p>很多开发者在最开始时其实都对数据库有一个比较模糊的认识，觉得数据库就是一堆数据的集合，但是实际却比这复杂的多，数据库领域中有两个词非常容易混淆，也就是_数据库_和_实例_：</p>
+<h2 id="数据库的定义"><a href="#数据库的定义" class="headerlink" title="数据库的定义"></a>数据库的定义</h2><p>很多开发者在最开始时其实都对数据库有一个比较模糊的认识，觉得数据库就是一堆数据的集合，但是实际却比这复杂的多，数据库领域中有两个词非常容易混淆，也就是_数据库_和_实例_：</p>
 <ul>
 <li>数据库：物理操作文件系统或其他形式文件类型的集合；</li>
 <li>实例：MySQL 数据库由后台线程以及一个共享内存区组成；</li>
@@ -611,18 +611,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/01/21/RabbitMQ/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/01/21/FastDFS/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          RabbitMQ
+          FastDFS
         
       </div>
     </a>
   
   
-    <a href="/2022/01/21/Swagger/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Swagger</div>
+    <a href="/2022/01/21/RabbitMQ/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RabbitMQ</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -797,11 +797,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -821,11 +821,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -893,11 +893,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -906,10 +906,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">逻辑符</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -922,6 +918,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
