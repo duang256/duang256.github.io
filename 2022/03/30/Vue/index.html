@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Vue | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Vue安装node.js 安装cnpm镜像  npm install -g cnpm –registry&#x3D;https:&#x2F;&#x2F;registry.npm.taobao.org webpack构建工具 安装vuecli工具cnpm install -g @vue&#x2F;cli  (cnpm比npm速度更快) vue create my-project 创建项目 创建项目后项目创建到了cmd窗口所在路径下，将此项">
+  <meta name="description" content="以做的一个微服务项目的vue前端部署步骤为例">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vue">
 <meta property="og:url" content="http://example.com/2022/03/30/Vue/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="Vue安装node.js 安装cnpm镜像  npm install -g cnpm –registry&#x3D;https:&#x2F;&#x2F;registry.npm.taobao.org webpack构建工具 安装vuecli工具cnpm install -g @vue&#x2F;cli  (cnpm比npm速度更快) vue create my-project 创建项目 创建项目后项目创建到了cmd窗口所在路径下，将此项">
+<meta property="og:description" content="以做的一个微服务项目的vue前端部署步骤为例">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-03-30T09:44:18.000Z">
-<meta property="article:modified_time" content="2022-03-11T01:42:50.498Z">
+<meta property="article:modified_time" content="2022-04-12T15:25:00.957Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="前端">
 <meta name="twitter:card" content="summary">
@@ -297,16 +297,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Vue"><a href="#Vue" class="headerlink" title="Vue"></a>Vue</h1><p>安装node.js</p>
-<p>安装cnpm镜像  npm install -g cnpm –registry=<a target="_blank" rel="noopener" href="https://registry.npm.taobao.org/">https://registry.npm.taobao.org</a></p>
-<p>webpack构建工具</p>
-<p>安装vuecli工具cnpm install -g @vue/cli  (cnpm比npm速度更快)</p>
-<p>vue create my-project 创建项目</p>
-<p>创建项目后项目创建到了cmd窗口所在路径下，将此项目用HBuilder打开进行开发</p>
-<p>运行项目npm run serve</p>
-<p>只写了vue的安装和项目部署运行，后面项目用到vue再来进行补充吧</p>
-<p>轮播图swiper插件  cnmp install swiper vue-awesome-swiper –save</p>
-<p>elementUI组件 element.eleme.cn     安装 vue add element</p>
+        <p>以做的一个微服务项目的vue前端部署步骤为例</p>
+<span id="more"></span>
+
+<h1 id="Vue"><a href="#Vue" class="headerlink" title="Vue"></a>Vue</h1><p>1.安装node环境</p>
+<p>  node -v</p>
+<p>  npm -v</p>
+<p>2.安装taobao的npm镜像</p>
+<p>  npm install -g cnpm –registry=<a target="_blank" rel="noopener" href="https://registry.npm.taobao.org/">https://registry.npm.taobao.org</a></p>
+<p>3.Vue项目</p>
+<p>  后台系统：Vue+VueRouter+axios+element-ui</p>
+<p>  前台项目：Vue+VueRouter+axios+swiper</p>
+<p>4.前台开发工具</p>
+<p>  vscode：</p>
+<p>​    点击扩展，安装vue的插件：vetur</p>
+<p>5.安装依赖：</p>
+<p>  cnpm install</p>
+<p>  cnpm install -g concurrently   修改路径：不需要重启(自主热更新):src/api/base.js</p>
+<p>  npm run dev</p>
+<p>6.修改路径和地址</p>
+<p>  修改ip和端口：重启前台系统:vue.config.js</p>
 
       
 
@@ -574,6 +584,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
@@ -586,11 +600,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -610,7 +624,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,10 +636,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
@@ -634,7 +644,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -642,11 +652,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -662,15 +672,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">spring</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">项目管理</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -702,11 +712,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -718,7 +728,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -726,15 +736,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
