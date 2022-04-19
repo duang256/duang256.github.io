@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/50200aece3d77a21c24856fbbd6c4ad4.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/21f4f4b8d9afc7ce968c68b6e89504e4.png">
 <meta property="article:published_time" content="2020-12-22T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-04-03T04:51:29.530Z">
+<meta property="article:modified_time" content="2022-04-19T09:07:58.956Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="高并发">
@@ -387,14 +387,13 @@
 
 <p>通过以上分析，<strong>submit执行的任务，可以通过Future对象的get方法接收抛出的异常，再进行处理。</strong><br>我们再通过一个demo，看一下Future对象的get方法处理异常的姿势，如下图：</p>
 <p><img src="https://img-blog.csdnimg.cn/img_convert/31181c949172195eae086822874ac810.png" alt="img"></p>
-<h3 id="其他两种处理线程池异常方案"><a href="#其他两种处理线程池异常方案" class="headerlink" title="其他两种处理线程池异常方案"></a>其他两种处理线程池异常方案</h3><p>除了以上<strong>1.在任务代码try/catch捕获异常，2.通过Future对象的get方法接收抛出的异常，再处理</strong>两种方案外，还有以上两种方案：3.为工作者线程设置UncaughtExceptionHandler，在uncaughtException方法中处理异常</p>
+<h3 id="其他两种处理线程池异常方案"><a href="#其他两种处理线程池异常方案" class="headerlink" title="其他两种处理线程池异常方案"></a>其他两种处理线程池异常方案</h3><p>除了以上<strong>1.在任务代码try/catch捕获异常，2.通过Future对象的get方法接收抛出的异常，再处理</strong>两种方案外，还有以下两种方案：3.为工作者线程设置UncaughtExceptionHandler，在uncaughtException方法中处理异常，这两种方案都只在使用execute的情况下有效</p>
 <p>我们直接看这样实现的正确姿势：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">1</span>, r -&gt; &#123;</span><br><span class="line">            Thread t = <span class="keyword">new</span> Thread(r);</span><br><span class="line">            t.setUncaughtExceptionHandler(</span><br><span class="line">                    (t1, e) -&gt; &#123;</span><br><span class="line">                        System.out.println(t1.getName() + <span class="string">&quot;线程抛出的异常&quot;</span>+e);</span><br><span class="line">                    &#125;);</span><br><span class="line">            <span class="keyword">return</span> t;</span><br><span class="line">           &#125;);</span><br><span class="line">        threadPool.execute(()-&gt;&#123;</span><br><span class="line">            Object object = <span class="keyword">null</span>;</span><br><span class="line">            System.out.print(<span class="string">&quot;result## &quot;</span> + object.toString());</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>运行结果：</p>
 <p><img src="https://img-blog.csdnimg.cn/img_convert/782427b7052a6f2d4963c18c5108c19c.png" alt="img"></p>
-<h4 id="4-重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用"><a href="#4-重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用" class="headerlink" title="4.重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用"></a>4.重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用</h4><p>这是jdk文档的一个demo：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExtendedExecutor</span> <span class="keyword">extends</span> <span class="title">ThreadPoolExecutor</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 这可是jdk文档里面给的例子。。</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">afterExecute</span><span class="params">(Runnable r, Throwable t)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.afterExecute(r, t);</span><br><span class="line">        <span class="keyword">if</span> (t == <span class="keyword">null</span> &amp;&amp; r <span class="keyword">instanceof</span> Future&lt;?&gt;) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Object result = ((Future&lt;?&gt;) r).get();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (CancellationException ce) &#123;</span><br><span class="line">                t = ce;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ExecutionException ee) &#123;</span><br><span class="line">                t = ee.getCause();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException ie) &#123;</span><br><span class="line">                Thread.currentThread().interrupt(); <span class="comment">// ignore/reset</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (t != <span class="keyword">null</span>)</span><br><span class="line">            System.out.println(t);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="4-重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用"><a href="#4-重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用" class="headerlink" title="4.重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用"></a>4.重写ThreadPoolExecutor的afterExecute方法，处理传递的异常引用</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorsTest</span> <span class="keyword">extends</span> <span class="title">ThreadPoolExecutor</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ExecutorsTest</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, TimeUnit unit,</span></span></span><br><span class="line"><span class="params"><span class="function">			BlockingQueue&lt;Runnable&gt; workQueue)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ThreadPoolExecutor service = <span class="keyword">new</span> ExecutorsTest(<span class="number">2</span>,<span class="number">5</span>,<span class="number">1000</span>,TimeUnit.MILLISECONDS, <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;());</span><br><span class="line">		service.execute(() -&gt; &#123;</span><br><span class="line">			<span class="keyword">int</span> i = <span class="number">10</span> / <span class="number">0</span>;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">afterExecute</span><span class="params">(Runnable r, Throwable t)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>.afterExecute(r, t);</span><br><span class="line">		System.out.println(t.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="因此，被问到线程池异常处理，如何回答？"><a href="#因此，被问到线程池异常处理，如何回答？" class="headerlink" title="因此，被问到线程池异常处理，如何回答？"></a>因此，被问到线程池异常处理，如何回答？</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/d46a43cf0c34548f93d0f60e174d4500.png" alt="img"></p>
 <h2 id="线程池的工作队列"><a href="#线程池的工作队列" class="headerlink" title="线程池的工作队列"></a>线程池的工作队列</h2><p><strong>线程池都有哪几种工作队列？</strong></p>
@@ -815,15 +814,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -839,15 +838,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -855,7 +850,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -864,6 +859,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -915,11 +914,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -951,19 +950,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">

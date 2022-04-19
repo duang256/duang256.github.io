@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/d122201a08c69b5c98faf89d3848c3af.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/2cf6c9fd1233609b36991a9827321415.png">
 <meta property="article:published_time" content="2020-12-21T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-04-03T04:51:09.000Z">
+<meta property="article:modified_time" content="2022-04-19T09:06:11.080Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="高并发">
@@ -324,7 +324,7 @@
 <ul>
 <li>可见性问题</li>
 </ul>
-<p>Java内存模型，如果线程A对变量obj的更改还未完成，线程B就获取到obj的值了，这样导致的数据不一致问题就属于可见性问题。要想符合可见性，则当一个线程修改了obj的值，新值对于其他线程来说是必须是可以立即可见的。可见性问题可以使用volatile关键字来解决。当一个变量被volatile修饰时，就不会从本地工作内存中获取了该变量的值了。volatile实际上是通过强制使用主内存中的值来解决可见性问题的。</p>
+<p>Java内存模型，线程A对变量obj的更改，线程B未感知到，这样导致的数据不一致问题就属于可见性问题。要想符合可见性，则当一个线程修改了obj的值，新值对于其他线程来说是必须是可以立即可见的。可见性问题可以使用volatile关键字来解决。当一个变量被volatile修饰时，就不会从本地工作内存中获取了该变量的值了。volatile实际上是通过强制使用主内存中的值来解决可见性问题的。</p>
 <ul>
 <li>原子性问题</li>
 </ul>
@@ -463,9 +463,8 @@
 <li>Future及其衍生的工具类FutureTask/CompletableFuture等，可以完成异步编程；<br>CountDownLatch/CyclicBarrier可以实现特定场景的协作；<br>Semaphore提供了经典的PV同步原语，还可以作为限流器使用；<br>ReentrantLock与Condtion,对管程同步的扩展；</li>
 </ul>
 </li>
-</ul>
+<li><p>互斥</p>
 <ul>
-<li>互斥<ul>
 <li>多线程访问相同的共享变量，就需要做互斥处理。分工与协作强调的是性能，互斥问题强调的是正确，即线程安全问题。Java解决互斥问题提供了很多思路与工具。避免共享，没有共享，没有竞态，就没有伤害，如ThreadLocal；没有改变，如果大家都不做改变，都是只读的，一起也没有错；Copy-on-write，你变你的，我变我的，每变一次都生成新的副本，只要不冲突就可以并行；CAS，写入前要看一看，有没有物逝人非（变量和自己读取时一样），没有再写入，否则再做一变；Lock，最终手段，但也不想做得太绝，够用就行，ReadWriteLock/StampedLock，够用就行</li>
 </ul>
 </li>
@@ -494,9 +493,6 @@
 <li>时延，指单次处理的平均耗时;</li>
 <li>并发，同一时刻可以接入的请求数</li>
 </ul>
-<p>SpringBoot中使用HikariPool线程池，号称最快的，在我们关闭程序时，会打印log:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sconnected from the target VM, address: &#x27;127.0.0.1:57835&#x27;, transport: &#x27;socket&#x27;</span><br><span class="line">2020-05-18 21:28:54.525  INFO 15232 --- [extShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService &#x27;applicationTaskExecutor&#x27;</span><br><span class="line">2020-05-18 21:28:54.526  INFO 15232 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...</span><br><span class="line">2020-05-18 21:28:55.925  INFO 15232 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.</span><br><span class="line">05-18 21:28:54.526  INFO 15232 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...</span><br><span class="line">2020-05-18 21:28:55.925  INFO 15232 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 
       
 
@@ -776,15 +772,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -800,15 +796,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -816,7 +808,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -825,6 +817,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -876,11 +872,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -912,19 +908,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
