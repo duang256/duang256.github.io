@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/cb24d5008cee984891a5143e96b5ed35.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/16f9ecb8adf075a158e024fa6a2f266a.png">
 <meta property="article:published_time" content="2020-12-24T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-04-19T09:12:59.624Z">
+<meta property="article:modified_time" content="2022-04-21T05:23:54.740Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="高并发">
@@ -424,10 +424,10 @@
 <p>比如以下程序代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> pi  = <span class="number">3.14</span>;    <span class="comment">//A</span></span><br><span class="line"><span class="keyword">double</span> r   = <span class="number">1.0</span>;     <span class="comment">//B</span></span><br><span class="line"><span class="keyword">double</span> area = pi * r * r; <span class="comment">//C</span></span><br></pre></td></tr></table></figure>
 
-<p>步骤C依赖于步骤A和B，因为指令重排的存在，程序执行顺讯可能是A-&gt;B-&gt;C,也可能是B-&gt;A-&gt;C,但是C不能在A或者B前面执行，这将违反as-if-serial语义。</p>
+<p>步骤C依赖于步骤A和B，因为指令重排的存在，程序执行顺序可能是A-&gt;B-&gt;C,也可能是B-&gt;A-&gt;C,但是C不能在A或者B前面执行，这将违反as-if-serial语义。</p>
 <p><img src="https://img-blog.csdnimg.cn/img_convert/0edb99ff653bcd180040822700cd66d4.png" alt="img"></p>
 <p>看段代码吧，假设程序先执行read方法，再执行add方法，结果一定是输出sum=2嘛？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">bool flag = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   b = <span class="number">1</span>;              <span class="comment">//1</span></span><br><span class="line">   flag = <span class="keyword">true</span>;        <span class="comment">//2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (flag) &#123;         <span class="comment">//3</span></span><br><span class="line">       <span class="keyword">int</span> sum =b+b;   <span class="comment">//4</span></span><br><span class="line">       System.out.println(<span class="string">&quot;bb sum is&quot;</span>+sum); </span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">bool flag = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   b = <span class="number">1</span>;              <span class="comment">//1</span></span><br><span class="line">   flag = <span class="keyword">true</span>;        <span class="comment">//2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (flag) &#123;         <span class="comment">//3</span></span><br><span class="line">       <span class="keyword">int</span> sum =b+b;   <span class="comment">//4</span></span><br><span class="line">       System.out.println(<span class="string">&quot;bb sum is&quot;</span>+sum); </span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>如果是单线程，结果应该没问题，如果是多线程，线程t1对步骤1和2进行了<strong>指令重排序</strong>呢？结果sum就不是2了，而是0，如下图所示：</p>
 <p><img src="https://img-blog.csdnimg.cn/img_convert/c84301b341b6a86aa87a95e0383c6ccc.png" alt="img"></p>
@@ -436,8 +436,8 @@
 <p>实际上，可以给flag加上volatile关键字，来保证有序性。当然，也可以通过synchronized和Lock来保证有序性。synchronized和Lock保证某一时刻是只有一个线程执行同步代码，相当于是让线程顺序执行程序代码了，自然就保证了有序性。</p>
 <p>实际上Java内存模型的有序性并不是仅靠volatile、synchronized和Lock来保证有序性的。这是因为Java语言中，有一个先行发生原则（happens-before）：</p>
 <ul>
-<li><strong>程序次序规则</strong>：在一个线程内，按照控制流顺序，书写在前面的操作先行发生于书写在后面的操作。</li>
-<li><strong>管程锁定规则</strong>：一个unLock操作先行发生于后面对同一个锁额lock操作</li>
+<li><strong>程序次序规则</strong>：<strong>在一个线程内</strong>，按照控制流顺序，书写在前面的操作先行发生于书写在后面的操作。</li>
+<li><strong>管程锁定规则</strong>：一个unLock操作先行发生于后面对同一个锁的lock操作</li>
 <li><strong>volatile变量规则</strong>：对一个变量的写操作先行发生于后面对这个变量的读操作</li>
 <li><strong>线程启动规则</strong>：Thread对象的start()方法先行发生于此线程的每个一个动作</li>
 <li><strong>线程终止规则</strong>：线程中所有的操作都先行发生于线程的终止检测，我们可以通过Thread.join()方法结束、Thread.isAlive()的返回值手段检测到线程已经终止执行</li>
@@ -445,7 +445,7 @@
 <li><strong>对象终结规则</strong>：一个对象的初始化完成先行发生于他的finalize()方法的开始</li>
 <li><strong>传递性</strong>：如果操作A先行发生于操作B，而操作B又先行发生于操作C，则可以得出操作A先行发生于操作C</li>
 </ul>
-<p>根据happens-before的八大规则，我们回到刚的例子，一起分析一下。给flag加上volatile关键字，look look它是如何保证有序性的，</p>
+<p>根据happens-before的八大规则，我们回到刚才的例子，一起分析一下。给flag加上volatile关键字，look look它是如何保证有序性的，</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> bool flag = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   b = <span class="number">1</span>;              <span class="comment">//1</span></span><br><span class="line">   flag = <span class="keyword">true</span>;        <span class="comment">//2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (flag) &#123;         <span class="comment">//3</span></span><br><span class="line">       <span class="keyword">int</span> sum =b+b;   <span class="comment">//4</span></span><br><span class="line">       System.out.println(<span class="string">&quot;bb sum is&quot;</span>+sum); </span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <ul>
@@ -855,19 +855,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -883,15 +883,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">高并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -899,15 +895,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">高并发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -999,15 +999,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
