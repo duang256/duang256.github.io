@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://img-blog.csdn.net/20150809115652652">
 <meta property="og:image" content="https://img-blog.csdn.net/20150809115737527">
 <meta property="article:published_time" content="2022-01-25T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-04-03T04:31:02.007Z">
+<meta property="article:modified_time" content="2022-04-21T14:19:15.385Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="数据库">
@@ -320,94 +320,11 @@
 <p>读锁是：当某一进程对某张表进行读操作时（select），其他线程也可以读，但是不能写。简单的理解就是，我读的时候你不能写。</p>
 <p>写锁是：当某一进程对某种表某张表的写时（insert，update，，delete），其他线程不能写也不能读。可以理解为，我写的时候，你不能读，也不能写。</p>
 <p>因此MyISAM的读操作和写操作，以及写操作之间是串行的！MyISAM在执行读写操作的时候会自动给表加相应的锁（也就是说不用显示的使用lock table命令），MyISAM总是一次获得SQL语句所需要的全部锁，这也是MyISAM不会出现死锁的原因。</p>
-<p>下面分别举关于写锁和读锁的例子：</p>
-<p>写锁：</p>
-<table>
-<thead>
-<tr>
-<th><strong>事务1</strong></th>
-<th><strong>事务2</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>取得first_test表的写锁：mysql&gt; lock table first_test write;Query OK, 0 rows affected (0.00 sec)</td>
-<td></td>
-</tr>
-<tr>
-<td>当前事务对查询、更新和插入操作都可以执行mysql&gt; select * from first_test ;±—±—–+</td>
-<td>id</td>
-</tr>
-<tr>
-<td>mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
-<td>等待</td>
-</tr>
-<tr>
-<td></td>
-<td>mysql&gt; select * from first_test;±—±—–+</td>
-</tr>
-</tbody></table>
-<p>读锁例子如下：</p>
-<table>
-<thead>
-<tr>
-<th><strong>事务1</strong></th>
-<th><strong>事务2</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>获得表first_read的锁定mysql&gt; lock table first_test read;Query OK, 0 rows affected (0.00 sec)</td>
-<td></td>
-</tr>
-<tr>
-<td>当前事务可以查询该表记录：mysql&gt; select * from first_test;±—±—–+</td>
-<td>id</td>
-</tr>
-<tr>
-<td>但是当前事务不能查询没有锁定的表：mysql&gt; select * from goods;ERROR 1100 (HY000): Table ‘goods’ was not locked with LOCK TABLES</td>
-<td>其他事务可以查询或更新未锁定的表：mysql&gt; select * from goods;±—±———–±—–+</td>
-</tr>
-<tr>
-<td>而且插入更新锁定的表都会报错：mysql&gt; insert into first_test(age) values(15);ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updatedmysql&gt; update first_test set age=100 where id =1;ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updated</td>
-<td>当更新被锁定的表时会等待：mysql&gt; update first_test set age=100 where id =1;等待…</td>
-</tr>
-<tr>
-<td>mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
-<td>mysql&gt; update first_test set age=100 where id =1;Query OK, 1 row affected (38.82 sec)Rows matched: 1 Changed: 1 Warnings: 0</td>
-</tr>
-</tbody></table>
 <h3 id="并发插入"><a href="#并发插入" class="headerlink" title="并发插入"></a>并发插入</h3><p>刚说到Mysql在插入和修改的时候都是串行的，但是MyISAM也支持查询和插入的并发操作。</p>
 <p>MyISAM中有一个系统变量concurrent_insert（默认为1），用以控制并发插入（用户在表尾插入数据）行为。</p>
 <p>当concurrent_insert为0时，不允许并发插入。</p>
 <p>当concurrent_insert为1时，如果表中没有空洞（中间没有被删除的行），MyISAM允许一个进程在读表的同时，另一个进程从表尾插入记录。</p>
 <p>当concurrent_insert为2时，无论MyISAM表中有没有空洞，都可以在末尾插入记录</p>
-<table>
-<thead>
-<tr>
-<th><strong>事务1</strong></th>
-<th><strong>事务2</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>mysql&gt; lock table first_test read local;Query OK, 0 rows affected (0.00 sec)–加入local选项是说明，在表满足并发插入的前提下，允许在末尾插入数据</td>
-<td></td>
-</tr>
-<tr>
-<td>当前进程不能进行插入和更新操作mysql&gt; insert into first_test(age) values(15);ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updatedmysql&gt; update first_test set age=200 where id =1;ERROR 1099 (HY000): Table ‘first_test’ was locked with a READ lock and can’t be updated</td>
-<td>其他进程可以进行插入，但是更新会等待：mysql&gt; insert into first_test(age) values(15);Query OK, 1 row affected (0.00 sec)mysql&gt; update first_test set age=200 where id =2;等待…</td>
-</tr>
-<tr>
-<td>当前进程不能不能访问其他进程插入的数据mysql&gt; select * from first_test;±—±—–+</td>
-<td>id</td>
-</tr>
-<tr>
-<td>释放锁以后皆大欢喜mysql&gt; unlock table;Query OK, 0 rows affected (0.00 sec)</td>
-<td>等待</td>
-</tr>
-<tr>
-<td>插入的和更新的都出来的：mysql&gt; select * from first_test;±—±—–+</td>
-<td>id</td>
-</tr>
-</tbody></table>
 <p>需要注意的：</p>
 <p>并发插入是解决对同一表中的查询和插入的锁争用。</p>
 <p>如果对有空洞的表进行并发插入会产生碎片，所以在空闲时可以利用optimize table命令回收因删除记录产生的空洞。</p>
@@ -422,7 +339,7 @@
 <p>我们知道mysql在以前，存储引擎默认是MyISAM，但是随着对事务和并发的要求越来越高，便引入了InnoDB引擎，它具有支持事务安全等一系列特性。</p>
 <h3 id="InnoDB锁模式"><a href="#InnoDB锁模式" class="headerlink" title="InnoDB锁模式"></a>InnoDB锁模式</h3><p>InnoDB实现了两种类型的行锁。</p>
 <p>共享锁（S）：允许一个事务去读一行，阻止其他事务获得相同的数据集的排他锁。</p>
-<p>排他锁（X）：允许获得排他锁的事务更新数据，但是组织其他事务获得相同数据集的共享锁和排他锁。</p>
+<p>排他锁（X）：允许获得排他锁的事务更新数据，但是阻止其他事务获得相同数据集的共享锁和排他锁。</p>
 <p>可以这么理解：</p>
 <p>共享锁就是我读的时候，你可以读，但是不能写。排他锁就是我写的时候，你不能读也不能写。其实就是MyISAM的读锁和写锁，但是针对的对象不同了而已。</p>
 <p>除此之外InnoDB还有两个表锁：</p>
@@ -763,19 +680,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -791,19 +708,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">高并发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -831,11 +748,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hash</a>
+                <a href="javascript:void(0)" class="js-tag color3">排序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">排序</a>
+                <a href="javascript:void(0)" class="js-tag color5">hash</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -903,10 +820,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
@@ -916,6 +829,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
