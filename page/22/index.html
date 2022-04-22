@@ -261,20 +261,20 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-JUnit" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JVM内存与垃圾回收系列：运行时数据区概述及线程(3)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/21/JUnit/">JUnit</a>
+      <a class="article-title" href="/2021/07/03/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B(3)/">JVM内存与垃圾回收系列：运行时数据区概述及线程(3)</a>
     </h1>
   
 
         
-        <a href="/2021/01/21/JUnit/" class="archive-article-date">
-  	<time datetime="2021-01-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-21</time>
+        <a href="/2021/07/03/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B(3)/" class="archive-article-date">
+  	<time datetime="2021-07-03T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-03</time>
 </a>
 		
 		
@@ -290,99 +290,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><strong>1 Junit简介</strong> </p>
-<p>Junit 是 Java 编程语言的单元测试框架，用于编写和运行可重复的自动化测试。 </p>
-<p>单元测试（Unit Testing），是指对软件中的最小可测试单元进行检查和验证。对于单元 </p>
-<p>测试中单元的含义，一般来说，要根据实际情况去判定其具体含义，如 C 语言中单元指一个 </p>
-<p>函数，</p>
-<p>Java 里单元指一个类，图形化的软件中可以指一个窗口或一个菜单等。总的来说，单 </p>
-<p>元就是人为规定的最小的被测功能模块。单元测试是在软件开发过程中要进行的最低级别的 </p>
-<p>测试活动，软件的独立单元将在与程序的其他部分相隔离的情况下进行测试。</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">测试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/21/JUnit/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
-    <article id="post-Java并发-ThreadLocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/25/Java%E5%B9%B6%E5%8F%91-ThreadLocal/">ThreadLocal源码解析</a>
-    </h1>
-  
-
-        
-        <a href="/2020/12/25/Java%E5%B9%B6%E5%8F%91-ThreadLocal/" class="archive-article-date">
-  	<time datetime="2020-12-25T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-25</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3>
+        <p>JVM（3）</p>
         
       
 
@@ -400,7 +308,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
@@ -410,7 +318,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/25/Java%E5%B9%B6%E5%8F%91-ThreadLocal/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/07/03/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B(3)/">展开全文 >></a>
         </p>
       
 
@@ -442,20 +350,20 @@
 
 
   
-    <article id="post-ThreadLocal源码解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JVM内存与垃圾回收系列：类加载子系统(2)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/25/ThreadLocal%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">Java并发-ThreadLocal</a>
+      <a class="article-title" href="/2021/07/02/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F(2)/">JVM内存与垃圾回收系列：类加载子系统(2)</a>
     </h1>
   
 
         
-        <a href="/2020/12/25/ThreadLocal%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2020-12-25T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-25</time>
+        <a href="/2021/07/02/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F(2)/" class="archive-article-date">
+  	<time datetime="2021-07-02T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-02</time>
 </a>
 		
 		
@@ -471,7 +379,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3>
+        <p>JVM（2）</p>
         
       
 
@@ -489,7 +397,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
@@ -499,7 +407,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/25/ThreadLocal%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/07/02/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F(2)/">展开全文 >></a>
         </p>
       
 
@@ -531,20 +439,20 @@
 
 
   
-    <article id="post-Java并发-Volatile" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JVM内存与垃圾回收系列：JVM与Java体系结构(1)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/24/Java%E5%B9%B6%E5%8F%91-Volatile/">Java并发-Volatile</a>
+      <a class="article-title" href="/2021/07/01/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9AJVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84(1)/">JVM内存与垃圾回收系列：JVM与Java体系结构(1)</a>
     </h1>
   
 
         
-        <a href="/2020/12/24/Java%E5%B9%B6%E5%8F%91-Volatile/" class="archive-article-date">
-  	<time datetime="2020-12-24T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-24</time>
+        <a href="/2021/07/01/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9AJVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84(1)/" class="archive-article-date">
+  	<time datetime="2021-07-01T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-01</time>
 </a>
 		
 		
@@ -560,7 +468,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="1-volatile的用法"><a href="#1-volatile的用法" class="headerlink" title="1.volatile的用法"></a>1.volatile的用法</h3>
+        <p>JVM（1）</p>
         
       
 
@@ -578,7 +486,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
@@ -588,7 +496,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/24/Java%E5%B9%B6%E5%8F%91-Volatile/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/07/01/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9AJVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84(1)/">展开全文 >></a>
         </p>
       
 
@@ -620,20 +528,20 @@
 
 
   
-    <article id="post-Java-线程：锁" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Servlet" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/23/Java-%E7%BA%BF%E7%A8%8B%EF%BC%9A%E9%94%81/">Java 线程：锁</a>
+      <a class="article-title" href="/2021/06/09/Servlet/">Servlet</a>
     </h1>
   
 
         
-        <a href="/2020/12/23/Java-%E7%BA%BF%E7%A8%8B%EF%BC%9A%E9%94%81/" class="archive-article-date">
-  	<time datetime="2020-12-23T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-23</time>
+        <a href="/2021/06/09/Servlet/" class="archive-article-date">
+  	<time datetime="2021-06-09T02:45:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-09</time>
 </a>
 		
 		
@@ -649,7 +557,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Java-锁事"><a href="#Java-锁事" class="headerlink" title="Java 锁事"></a>Java 锁事</h1>
+        <h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="Servlet开发入门"><a href="#Servlet开发入门" class="headerlink" title="Servlet开发入门"></a>Servlet开发入门</h2><h3 id="Servlet由来"><a href="#Servlet由来" class="headerlink" title="Servlet由来"></a>Servlet由来</h3><p>目前我们已经可以让浏览器沟通服务器，访问服务器资源，但是之前都静态的html，服务器中的东西不能都是静态的。</p>
         
       
 
@@ -663,11 +571,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Javaweb</a>
         		</li>
       		
 		</ul>
@@ -677,7 +581,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/23/Java-%E7%BA%BF%E7%A8%8B%EF%BC%9A%E9%94%81/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/06/09/Servlet/">展开全文 >></a>
         </p>
       
 
@@ -709,20 +613,20 @@
 
 
   
-    <article id="post-Nginx一站式讲解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-数据结构与算法一站式详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/23/Nginx%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AE%B2%E8%A7%A3/">Nginx一站式讲解</a>
+      <a class="article-title" href="/2021/06/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">数据结构与算法一站式详解</a>
     </h1>
   
 
         
-        <a href="/2020/12/23/Nginx%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AE%B2%E8%A7%A3/" class="archive-article-date">
-  	<time datetime="2020-12-23T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-23</time>
+        <a href="/2021/06/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2021-06-09T02:45:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-09</time>
 </a>
 		
 		
@@ -738,7 +642,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="正向代理和反向代理"><a href="#正向代理和反向代理" class="headerlink" title="正向代理和反向代理"></a>正向代理和反向代理</h1>
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="数据结构与算法关系"><a href="#数据结构与算法关系" class="headerlink" title="数据结构与算法关系"></a>数据结构与算法关系</h2><p><strong>程序=数据结构+算法</strong><br>有些实际问题通过<strong>数据结构</strong>就能够搞定，有些较困难的问题需要<strong>数据结构+算法</strong>才能搞定，要想学好算法，数据结构必须要扎实。</p>
         
       
 
@@ -752,7 +656,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Nginx</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">数据结构与算法</a>
         		</li>
       		
 		</ul>
@@ -762,7 +666,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/23/Nginx%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AE%B2%E8%A7%A3/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/06/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">展开全文 >></a>
         </p>
       
 
@@ -794,20 +698,20 @@
 
 
   
-    <article id="post-Java并发-线程池" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JQuery案例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/22/Java%E5%B9%B6%E5%8F%91-%E7%BA%BF%E7%A8%8B%E6%B1%A0/">Java并发-线程池</a>
+      <a class="article-title" href="/2021/06/07/JQuery%E6%A1%88%E4%BE%8B/">JQuery案例</a>
     </h1>
   
 
         
-        <a href="/2020/12/22/Java%E5%B9%B6%E5%8F%91-%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="archive-article-date">
-  	<time datetime="2020-12-22T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-22</time>
+        <a href="/2021/06/07/JQuery%E6%A1%88%E4%BE%8B/" class="archive-article-date">
+  	<time datetime="2021-06-07T14:45:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-07</time>
 </a>
 		
 		
@@ -823,7 +727,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2>
+        <h1 id="表格案例"><a href="#表格案例" class="headerlink" title="表格案例"></a>表格案例</h1>
         
       
 
@@ -837,11 +741,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
         		</li>
       		
 		</ul>
@@ -851,7 +751,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/22/Java%E5%B9%B6%E5%8F%91-%E7%BA%BF%E7%A8%8B%E6%B1%A0/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/06/07/JQuery%E6%A1%88%E4%BE%8B/">展开全文 >></a>
         </p>
       
 
@@ -883,20 +783,20 @@
 
 
   
-    <article id="post-Java并发基础(2)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JQuery一站式详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/21/Java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80(2)/">Java并发基础(2)</a>
+      <a class="article-title" href="/2021/06/06/JQuery%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">JQuery一站式详解</a>
     </h1>
   
 
         
-        <a href="/2020/12/21/Java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80(2)/" class="archive-article-date">
-  	<time datetime="2020-12-21T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-21</time>
+        <a href="/2021/06/06/JQuery%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2021-06-06T04:01:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-06</time>
 </a>
 		
 		
@@ -912,17 +812,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
-<li>Java为什么有并发问题</li>
-<li>什么是CAS</li>
-<li>Unsafe类解读</li>
-<li>JUC原子类<ul>
-<li>JUC原子类介绍</li>
-<li>基础类型AtomicInteger</li>
-</ul>
-</li>
-<li>线程池</li>
-</ul>
+        <p><strong>为什么使用JQuery？</strong></p>
+<p>使用原生的js获取标签时，一度非常麻烦，还要考虑空白文档的问题，获取标签方法十分单一，总需要通过父节点、子节点来获取目的标签，js动画效果弱；而JQuery是对js的封装，能像css一样通过各种各样的选择器来获取标签，很多动画效果都已经封装好，只用调用就行。</p>
         
       
 
@@ -936,11 +827,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
         		</li>
       		
 		</ul>
@@ -950,7 +837,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/21/Java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80(2)/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/06/06/JQuery%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">展开全文 >></a>
         </p>
       
 
@@ -982,20 +869,20 @@
 
 
   
-    <article id="post-Java并发基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-dom编程案例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/20/Java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/">Java并发基础</a>
+      <a class="article-title" href="/2021/05/31/dom%E7%BC%96%E7%A8%8B%E6%A1%88%E4%BE%8B/">dom编程案例</a>
     </h1>
   
 
         
-        <a href="/2020/12/20/Java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/" class="archive-article-date">
-  	<time datetime="2020-12-20T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-20</time>
+        <a href="/2021/05/31/dom%E7%BC%96%E7%A8%8B%E6%A1%88%E4%BE%8B/" class="archive-article-date">
+  	<time datetime="2021-05-31T15:10:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-31</time>
 </a>
 		
 		
@@ -1011,7 +898,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1>
+        <h1 id="案例1"><a href="#案例1" class="headerlink" title="案例1"></a>案例1</h1><h2 id="实现效果"><a href="#实现效果" class="headerlink" title="实现效果"></a>实现效果</h2>
         
       
 
@@ -1025,11 +912,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">高并发</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
         		</li>
       		
 		</ul>
@@ -1039,7 +922,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/20/Java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/05/31/dom%E7%BC%96%E7%A8%8B%E6%A1%88%E4%BE%8B/">展开全文 >></a>
         </p>
       
 
@@ -1071,20 +954,20 @@
 
 
   
-    <article id="post-品读《Java编程思想》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JavaScript一站式详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/09/%E5%93%81%E8%AF%BB%E3%80%8AJava%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E3%80%8B/">品读《Java编程思想》</a>
+      <a class="article-title" href="/2021/05/31/JavaScript%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">JavaScript一站式详解</a>
     </h1>
   
 
         
-        <a href="/2020/12/09/%E5%93%81%E8%AF%BB%E3%80%8AJava%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E3%80%8B/" class="archive-article-date">
-  	<time datetime="2020-12-09T02:45:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-09</time>
+        <a href="/2021/05/31/JavaScript%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2021-05-31T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-31</time>
 </a>
 		
 		
@@ -1100,7 +983,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><font color = brown><strong>本人浅读《Java编程思想》，省略了第22章图形化界面内容，本来尝试将书中提到的设计模式详细讲解，但是书中讲解并不系统全面，不好提炼，所以有时间会基于《设计模式》黑皮书将设计模式另写一篇文章，另外书中或多或少涉及一些JVM虚拟机的知识，但又似说非说，无法让人彻底理解，关于JVM虚拟机，本来准备自己写一篇文章的，但是偶然发现一个博主写的很不错，所以后面我应该会转载他的文章来作为补充。品读经典，大有裨益，与君分享。本人才疏学浅，且经验不足，许多知识仅仅停留在理论阶段，欢迎指正和补充，不胜感激。</strong></font></p>
+        <h1 id="js介绍"><a href="#js介绍" class="headerlink" title="js介绍"></a>js介绍</h1><p><strong>js作用？</strong></p>
+<ul>
+<li>HTML+CSS只能实现静态页面，但是没有交互（点击等操作）</li>
+<li><strong>JS可以完成表单数据的校验</strong></li>
+<li>Tab菜单的切换</li>
+<li>背景图片的切换</li>
+<li>js小游戏的开发
         
       
 
@@ -1114,7 +1003,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
         		</li>
       		
 		</ul>
@@ -1124,7 +1013,92 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/09/%E5%93%81%E8%AF%BB%E3%80%8AJava%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E3%80%8B/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/05/31/JavaScript%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
+    <article id="post-CSS一站式详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/27/CSS%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">CSS一站式详解</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/27/CSS%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2021-05-26T16:20:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-27</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><strong>为什么学习CSS？</strong><br>对页面进行静态修饰，html有些功能虽然有，比如字体大小等，但是还不够好，没法做出漂亮的页面，css是在html基础上专门做修饰的，还有一点就是重复的代码管理麻烦，使用css的选择器集中处理修改方便。</p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/27/CSS%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/">展开全文 >></a>
         </p>
       
 
@@ -1158,7 +1132,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/21/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/23/">下一页</a>
+      <a class="extend prev" rel="prev" href="/page/21/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/23/">下一页</a>
     </nav>
   
 
@@ -1262,11 +1236,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1275,6 +1249,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1307,10 +1285,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1374,11 +1348,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
+                <a href="javascript:void(0)" class="js-tag color5">Math</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Math</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1406,11 +1380,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+                <a href="javascript:void(0)" class="js-tag color4">密码学</a>
               </li>
              
               <li class="article-tag-list-item">
