@@ -176,7 +176,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/deb3dce030624da5b8915f2b0eec0234.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/3c5eab250b4549c6ace15b9bc8a5d484.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_8,color_FFFFFF,t_70,g_se,x_16">
 <meta property="article:published_time" content="2021-12-30T09:44:18.000Z">
-<meta property="article:modified_time" content="2022-04-21T17:07:48.898Z">
+<meta property="article:modified_time" content="2022-04-27T10:02:03.979Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
@@ -576,14 +576,22 @@
 </blockquote>
 <p>SQL语言有一下几个部分（前两部分是本章讨论内容，我们实践为主，不将其特意分开）：</p>
 <ul>
-<li>数据定义语言（Data-Definition Language，DDL）：提供定义关系模式、删除关系以及修改关系模式的命令。</li>
-<li>数据操纵语言（Data-Manipulation Language，DML）：提供从数据库中查询信息，以及在数据库中插入元组删除元组、修改元组的能力。</li>
-<li>完整性（integrity）：SQL DDL包括定义完整性约束的命令，保存在数据库中的数据必须猫族所定义的完整性约束。破坏完整性约束的更新是不允许的。</li>
-<li>视图定义（view definition）：SQL DDL包括定义视图的命令</li>
-<li>事务控制（transaction control）：SQL包括定义事务的开始和结束的命令</li>
-<li>嵌入式SQL和动态SQL：定义SQL语句如何嵌入到通用编程语言中</li>
-<li>授权（authorization）：SQL DDL包括定义对关系和视图的访问权限的命令<h2 id="mysql安装与卸载"><a href="#mysql安装与卸载" class="headerlink" title="mysql安装与卸载"></a>mysql安装与卸载</h2>mysql5.7下载安装包<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1VKyhkilLoqmELCBm6jp62w">https://pan.baidu.com/s/1VKyhkilLoqmELCBm6jp62w</a>  提取码：qqhn</li>
+<li><p>数据定义语言（Data-Definition Language，DDL）：提供定义关系模式、删除关系以及修改关系模式的命令。</p>
+</li>
+<li><p>数据操纵语言（Data-Manipulation Language，DML）：提供从数据库中查询信息，以及在数据库中插入元组删除元组、修改元组的能力。</p>
+</li>
+<li><p>完整性（integrity）：SQL DDL包括定义完整性约束的命令，保存在数据库中的数据必须猫族所定义的完整性约束。破坏完整性约束的更新是不允许的。</p>
+</li>
+<li><p>视图定义（view definition）：SQL DDL包括定义视图的命令</p>
+</li>
+<li><p>事务控制（transaction control）：SQL包括定义事务的开始和结束的命令</p>
+</li>
+<li><p>嵌入式SQL和动态SQL：定义SQL语句如何嵌入到通用编程语言中</p>
+</li>
+<li><p>授权（authorization）：SQL DDL包括定义对关系和视图的访问权限的命令</p>
+</li>
 </ul>
+<h2 id="mysql安装与卸载"><a href="#mysql安装与卸载" class="headerlink" title="mysql安装与卸载"></a>mysql安装与卸载</h2><p>mysql5.7下载安装包<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1VKyhkilLoqmELCBm6jp62w">https://pan.baidu.com/s/1VKyhkilLoqmELCBm6jp62w</a>  提取码：qqhn</p>
 <p>mysql安装下载环境配置<a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/106657652">https://blog.csdn.net/WA_MC/article/details/106657652</a>  </p>
 <p>navicatFormysql下载压缩包<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1PX-YbGDIAZ560hspLcdgfw">https://pan.baidu.com/s/1PX-YbGDIAZ560hspLcdgfw</a> 提取码：12j5</p>
 <p>mysql卸载</p>
@@ -592,7 +600,7 @@
 <ul>
 <li>InnoDB是一个可靠的事务处理引擎，mysql5.6开始支持全文本搜索</li>
 <li>MEMORY在功能等同MyISAM，但由于数据存储在内存中，速度很快</li>
-<li>MySIAM是一个性能极高的引擎，它支持全文本搜索，但不支持事务处理</li>
+<li>MyISAM是一个性能极高的引擎，它支持全文本搜索，但不支持事务处理</li>
 </ul>
 <p><strong>外键不能跨引擎。</strong></p>
 <h2 id="连接、建库、等命令"><a href="#连接、建库、等命令" class="headerlink" title="连接、建库、等命令"></a>连接、建库、等命令</h2><p><strong>控制台连接本机mySQL</strong></p>
@@ -814,7 +822,7 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//replaceAll方法</span></span><br><span class="line">Pattern p=Pattern.compile(<span class="string">&quot;[a-z]&quot;</span>);</span><br><span class="line">Matcher m=p.matcher(<span class="string">&quot;fdasfsd87987&amp;&amp;fsdfa432&amp;&amp;df8789&quot;</span>);</span><br><span class="line">String str=m.replaceAll(<span class="string">&quot;*&quot;</span>);</span><br><span class="line">System.out.println(str);</span><br><span class="line"><span class="comment">//*******87987&amp;&amp;*****432&amp;&amp;**8789</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//split与正则</span></span><br><span class="line">String str=<span class="string">&quot;a,b,c&quot;</span>;</span><br><span class="line">String []arrs=str.split(<span class="string">&quot;\\d+&quot;</span>);</span><br><span class="line">System.out.println(Arrays.toString(arrs));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//split与正则</span></span><br><span class="line">String str=<span class="string">&quot;a,b,c&quot;</span>;</span><br><span class="line">String []arrs=str.split(<span class="string">&quot;\\d+&quot;</span>);</span><br><span class="line">System.out.println(Arrays.toString(arrs));</span><br></pre></td></tr></table></figure>
 
 <p>爬取网页URL</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">		 List&lt;String&gt; list;</span><br><span class="line">	     list = getMather(<span class="string">&quot;https://www.163.com&quot;</span>,<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">	     <span class="keyword">for</span> (String str:list) &#123;</span><br><span class="line">	          System.out.println(str);</span><br><span class="line">	     &#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">getMather</span><span class="params">(String url,String charSet)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	     List&lt;String&gt;list=<span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">	     String  destStr= String.valueOf(getURLContent(url,charSet));</span><br><span class="line">	     Pattern p=Pattern.compile(<span class="string">&quot;href=\&quot;(http.+?)\&quot;&quot;</span>);<span class="comment">//.+表示任意个数的任意字符 ？表示0次或一次匹配  即非贪婪模式！</span></span><br><span class="line">	     Matcher m=p.matcher(destStr);</span><br><span class="line">	     <span class="keyword">while</span>(m.find())&#123;</span><br><span class="line">	         list.add(m.group(<span class="number">1</span>));</span><br><span class="line">	     &#125;</span><br><span class="line">	     <span class="keyword">return</span> list;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获得URL对应网页源码内容</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> StringBuilder <span class="title">getURLContent</span><span class="params">(String urlStr,String charSet)</span><span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">        StringBuilder sb=<span class="keyword">new</span> StringBuilder();</span><br><span class="line">        URL url=<span class="keyword">new</span> URL(urlStr);</span><br><span class="line">        BufferedReader reader=<span class="keyword">new</span> BufferedReader(</span><br><span class="line">                <span class="keyword">new</span> InputStreamReader(url.openStream(),charSet));</span><br><span class="line">        String temp=<span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">while</span>((temp=reader.readLine())!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            sb.append(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//	    https://static.ws.126.net/163/f2e/www/index20170701/css/head~65fdc48dac14c.css</span></span><br><span class="line"><span class="comment">//	    https://static.ws.126.net/163/f2e/commonnav2019/css/commonnav_headcss-89aa49bc1b.css</span></span><br><span class="line"><span class="comment">//	     https://www.163.com/</span></span><br><span class="line"><span class="comment">//	     https://www.163.com/#f=topnav</span></span><br><span class="line"><span class="comment">//	     https://m.163.com/newsapp/#f=topnav</span></span><br><span class="line"><span class="comment">//	     https://open.163.com/#f=topnav</span></span><br><span class="line"><span class="comment">//	     https://hongcai.163.com/?from=pcsy-button</span></span><br><span class="line"><span class="comment">//	     https://u.163.com/aosoutbdbd8</span></span><br><span class="line"><span class="comment">//	     https://mail.163.com/client/dl.html?from=mail46</span></span><br></pre></td></tr></table></figure>
@@ -988,7 +996,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> TRANSACTION</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;jack&#x27;</span>;</span><br><span class="line">update  student <span class="keyword">set</span> name<span class="operator">=</span><span class="string">&#x27;jimmy&#x27;</span> <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;jim&#x27;</span>; </span><br><span class="line"><span class="keyword">rollback</span></span><br></pre></td></tr></table></figure>
 <p>rollback success! rollback或commit之后，事务会自动结束</p>
 <p>for example4:</p>
-<p>如果事务中sql有错误，到错误处就停止执行了，直接执行以下语句，在第三行停并回滚前面操作，不执行commit，如果单独执行commit，依然会提交，第二行被提交，且无法rollback。<strong>这个地方我想过既然有自动回滚为什么在做JDBC的时候为什么还需要在catch中rollback，因为不手动回滚事务不会结束，这样可能会导致锁表之类的问题</strong></p>
+<p>如果事务中sql有错误，到错误处就停止执行了，直接执行以下语句，在第三行停并回滚前面操作，不执行commit，如果单独执行commit，依然会提交，第二行被提交，且无法rollback。<strong>这个地方我想过既然有自动回滚为什么在做JDBC的时候为什么还需要在catch中rollback，因为通过产生错误进行的rollback可能存在锁表问题</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> TRANSACTION;</span><br><span class="line"><span class="keyword">delete</span>  <span class="keyword">from</span>  student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;cindy&#x27;</span> ;</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> student <span class="keyword">where</span> name<span class="string">&#x27;charlie&#x27;</span>;</span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
 <p>for example5：<br><img src="https://img-blog.csdnimg.cn/2a6f4202adb74c36886f885180f80705.png" alt="在这里插入图片描述"></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> TRANSACTION;</span><br><span class="line"><span class="keyword">savepoint</span> delete1;</span><br><span class="line"><span class="keyword">delete</span>  <span class="keyword">from</span>  student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;cindy&#x27;</span> ;</span><br><span class="line"><span class="keyword">savepoint</span> delete2;</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> student <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;charlie&#x27;</span>;</span><br></pre></td></tr></table></figure>
@@ -1145,7 +1153,7 @@
 <p><strong>Dao层放接口（包括数据库层和业务层的方法）</strong><br><img src="https://img-blog.csdnimg.cn/20200711100550969.png" alt="在这里插入图片描述"><br><strong>程序入口</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> serviceImpl.EmpServiceImpl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        EmpServiceImpl es=<span class="keyword">new</span> EmpServiceImpl();</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;*******************欢迎访问员工管理系统：请选择服务**************************&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;*********************************************&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;1.查询所有员工信息&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;2.根据编号查询员工信息&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;3.新增员工信息&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;4.修改员工姓名&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;5.删除员工信息&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;6.退出系统&quot;</span>);</span><br><span class="line">            Scanner sc=<span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">            <span class="keyword">int</span> ch=sc.nextInt();</span><br><span class="line">            <span class="keyword">switch</span> (ch)&#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">1</span>:es.searchAllEmp();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">2</span>:es.searchEmp();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">3</span>:es.insEmp();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">4</span>:es.upEmp();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">5</span>:es.delEmp();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">                    System.out.println(<span class="string">&quot;谢谢使用&quot;</span>);<span class="keyword">return</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    System.out.println(<span class="string">&quot;输入有误&quot;</span>);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">while</span> (<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h3 id="数据库分页"><a href="#数据库分页" class="headerlink" title="数据库分页"></a>数据库分页</h3><p>我的另外一篇博客，分页demo  <a target="_blank" rel="noopener" href="https://blog.csdn.net/WA_MC/article/details/112406700">https://blog.csdn.net/WA_MC/article/details/112406700</a></p>
+<h3 id="数据库分页"><a href="#数据库分页" class="headerlink" title="数据库分页"></a>数据库分页</h3><p>数据库专栏有分页内容</p>
 <h2 id="特殊数据类型"><a href="#特殊数据类型" class="headerlink" title="特殊数据类型"></a>特殊数据类型</h2><h3 id="时间系列"><a href="#时间系列" class="headerlink" title="时间系列"></a>时间系列</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_37539378/article/details/78889992?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164083491916780357237691%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=164083491916780357237691&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~baidu_landing_v2~default-2-78889992.pc_search_insert_es_download&utm_term=java%E6%97%B6%E9%97%B4&spm=1018.2226.3001.4187">java时间日期总结</a><br>这篇链接文章比较详细分类了java中常用的日期时间类及其使用场景，除了以下三个sql相关日期时间的类没有涉及到，该文章中也提到了这三个都是java.util.Date的子类，进行了限制或扩充</p>
 <p>java.sql.Date 年月日<br>java.sql.Time 时分秒<br>java.sql.Timestamp 年月日时分秒</p>
 <p>数据库中设计时间日期的类型有以下5种：</p>
@@ -1290,7 +1298,6 @@
 <p>执行结果：</p> 
 <p><img alt="" class="has" height="56" src="https://img-blog.csdnimg.cn/20190415154657484.png" width="184"></p> 
 <p><span style="color:#f33b45;">总结说明</span>：</p> 
-
 
 <p>1、这里的DELIMITER $$<br>为了避免与存储过程中的SQL语句结束符号冲突,需要使用DELIMITER改变存储过程的结束符,并以’END $$’结束存储过程。存储过程定义完毕再以’DELIMITER ;’恢复默认结束符号。亦可以指定其它符号为结束符，但是不能用反斜杠’&#39;,它是mysql中的转义符。当然,简单的存储过程不更改结束符大多数情况下也是不会出现错误的。</p>
 <p>2、有参数的时候,VARCHAR类型需要指定长度，比如VARCHAR(255)。</p>
@@ -1484,7 +1491,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> if <span class="keyword">exists</span> StatisticStore3;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> StatisticStore3()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">	<span class="keyword">declare</span> _n <span class="type">varchar</span>(<span class="number">20</span>);</span><br><span class="line">	<span class="keyword">declare</span> done <span class="type">int</span> <span class="keyword">default</span> <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">declare</span> cur <span class="keyword">cursor</span> <span class="keyword">for</span> <span class="keyword">select</span> name <span class="keyword">from</span> store <span class="keyword">group</span> <span class="keyword">by</span> name;</span><br><span class="line">	<span class="keyword">declare</span> continue HANDLER <span class="keyword">for</span> <span class="keyword">not</span> found <span class="keyword">set</span> done <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">	<span class="keyword">open</span> cur;</span><br><span class="line">	read_loop:loop</span><br><span class="line">	<span class="keyword">fetch</span> cur <span class="keyword">into</span> _n;</span><br><span class="line">	if done <span class="keyword">then</span></span><br><span class="line">		leave read_loop;</span><br><span class="line">	<span class="keyword">end</span> if;</span><br><span class="line">	<span class="keyword">begin</span></span><br><span class="line">		<span class="keyword">declare</span> c <span class="type">int</span>;</span><br><span class="line">		<span class="keyword">declare</span> n <span class="type">varchar</span>(<span class="number">20</span>);</span><br><span class="line">		<span class="keyword">declare</span> total <span class="type">int</span> <span class="keyword">default</span> <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">declare</span> done <span class="type">int</span> <span class="keyword">default</span> <span class="literal">false</span>;</span><br><span class="line">		<span class="keyword">declare</span> cur <span class="keyword">cursor</span> <span class="keyword">for</span> <span class="keyword">select</span> name,count <span class="keyword">from</span> store <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;iphone&#x27;</span>;</span><br><span class="line">		<span class="keyword">declare</span> continue HANDLER <span class="keyword">for</span> <span class="keyword">not</span> found <span class="keyword">set</span> done <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">		<span class="keyword">set</span> total <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">open</span> cur;</span><br><span class="line">		iphone_loop:loop</span><br><span class="line">		<span class="keyword">fetch</span> cur <span class="keyword">into</span> n,c;</span><br><span class="line">		if done <span class="keyword">then</span></span><br><span class="line">			leave iphone_loop;</span><br><span class="line">		<span class="keyword">end</span> if;</span><br><span class="line">		<span class="keyword">set</span> total <span class="operator">=</span> total <span class="operator">+</span> c;</span><br><span class="line">		<span class="keyword">end</span> loop;</span><br><span class="line">		<span class="keyword">close</span> cur;</span><br><span class="line">		<span class="keyword">select</span> _n,n,total;</span><br><span class="line">	<span class="keyword">end</span>;</span><br><span class="line">	<span class="keyword">begin</span></span><br><span class="line">			<span class="keyword">declare</span> c <span class="type">int</span>;</span><br><span class="line">			<span class="keyword">declare</span> n <span class="type">varchar</span>(<span class="number">20</span>);</span><br><span class="line">			<span class="keyword">declare</span> total <span class="type">int</span> <span class="keyword">default</span> <span class="number">0</span>;</span><br><span class="line">			<span class="keyword">declare</span> done <span class="type">int</span> <span class="keyword">default</span> <span class="literal">false</span>;</span><br><span class="line">			<span class="keyword">declare</span> cur <span class="keyword">cursor</span> <span class="keyword">for</span> <span class="keyword">select</span> name,count <span class="keyword">from</span> store <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;android&#x27;</span>;</span><br><span class="line">			<span class="keyword">declare</span> continue HANDLER <span class="keyword">for</span> <span class="keyword">not</span> found <span class="keyword">set</span> done <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">			<span class="keyword">set</span> total <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">			<span class="keyword">open</span> cur;</span><br><span class="line">			android_loop:loop</span><br><span class="line">			<span class="keyword">fetch</span> cur <span class="keyword">into</span> n,c;</span><br><span class="line">			if done <span class="keyword">then</span></span><br><span class="line">				leave android_loop;</span><br><span class="line">			<span class="keyword">end</span> if;</span><br><span class="line">			<span class="keyword">set</span> total <span class="operator">=</span> total <span class="operator">+</span> c;</span><br><span class="line">			<span class="keyword">end</span> loop;</span><br><span class="line">			<span class="keyword">close</span> cur;</span><br><span class="line">		<span class="keyword">select</span> _n,n,total;</span><br><span class="line">	<span class="keyword">end</span>;</span><br><span class="line">	<span class="keyword">begin</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">end</span>;</span><br><span class="line">	<span class="keyword">end</span> loop;</span><br><span class="line">	<span class="keyword">close</span> cur;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">call</span> StatisticStore3();</span><br></pre></td></tr></table></figure>
 <p>上面就是实现一个嵌套循环，当然这个例子比较牵强。凑合看看就行。。</p>
 <h3><a name="t3"></a>动态SQL</h3> 
-Mysql 支持动态SQL的功能，
+Mysql 支持动态SQL的功能
 
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="variable">@sqlStr</span><span class="operator">=</span><span class="string">&#x27;select * from table where condition1 = ?&#x27;</span>;</span><br><span class="line"><span class="keyword">prepare</span> s1 <span class="keyword">for</span> <span class="variable">@sqlStr</span>;</span><br><span class="line"><span class="comment">--如果有多个参数用逗号分隔</span></span><br><span class="line"><span class="keyword">execute</span> s1 <span class="keyword">using</span> <span class="variable">@condition1</span>;</span><br><span class="line"><span class="comment">--手工释放，或者是 connection 关闭时， server 自动回收</span></span><br><span class="line"><span class="keyword">deallocate</span> <span class="keyword">prepare</span> s1;</span><br></pre></td></tr></table></figure>
 
@@ -1528,9 +1535,11 @@ Mysql 支持动态SQL的功能，
 <h2 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wu631464569/article/details/78242038?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164117708416780274174658%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=164117708416780274174658&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-78242038.pc_search_insert_es_download&utm_term=mysql%E5%A4%87%E4%BB%BD&spm=1018.2226.3001.4187">mysql数据库备份</a></p>
 <h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xuheng8600/article/details/79823875?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164117744116781685399552%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=164117744116781685399552&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~baidu_landing_v2~default-4-79823875.pc_search_insert_es_download&utm_term=mysql%E6%97%A5%E5%BF%97&spm=1018.2226.3001.4187">MySql 的操作日志 历史记录</a></p>
 <h2 id="性能改善"><a href="#性能改善" class="headerlink" title="性能改善"></a>性能改善</h2><p>mysql必知必会一书中提供了一些改善SQL语句性能的小技巧，但不是绝对的。<br><img src="https://img-blog.csdnimg.cn/dc047af6c8ba4d84802d82e8937bac01.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
-<p><img src="https://img-blog.csdnimg.cn/f5c16cfd73a3484a970d522a1c832486.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br><font color = 'red'><strong>关于关系数据理论和数据库设计对应书中的7/8两章，过于晦涩，故参考中国人民大学王珊教授的数据库高级篇课程进行整理，并在其基础上尽量贴近实践，</strong></font></p>
-<h1 id="关系数据理论"><a href="#关系数据理论" class="headerlink" title="关系数据理论"></a>关系数据理论</h1><h2 id="why"><a href="#why" class="headerlink" title="why"></a>why</h2><h3 id="问题引出"><a href="#问题引出" class="headerlink" title="问题引出"></a>问题引出</h3><p>针对一个具体问题，应该如何构造一个适合于它的数据模式，应该构造几个关系，每个关系由哪些属性组成。什么样的设计是一个好的数据库逻辑设计呢？关系数据理论就是解决这个问题的，关系数据理论是在数据库的逻辑设计阶段起作用的。</p>
-<p><img src="https://img-blog.csdnimg.cn/7a734902483448cd8835f02180901649.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_15,color_FFFFFF,t_70,g_se,x_16"><br><img src="https://img-blog.csdnimg.cn/877ad77acbd94324a31770ca4d2c05fd.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/f5c16cfd73a3484a970d522a1c832486.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><font color = 'red'><strong>关于关系数据理论和数据库设计对应书中的7/8两章，过于晦涩，故参考中国人民大学王珊教授的数据库高级篇课程进行整理，并在其基础上尽量贴近实践</strong></font></p>
+<h1 id="关系数据理论"><a href="#关系数据理论" class="headerlink" title="关系数据理论"></a>关系数据理论</h1><h2 id="why"><a href="#why" class="headerlink" title="why"></a>why</h2><h3 id="问题引出"><a href="#问题引出" class="headerlink" title="问题引出"></a>问题引出</h3><p>针对一个具体问题，应该如何构造一个适合于它的数据模式，应该构造几个关系，每个关系由哪些属性组成。什么样的设计是一个好的数据库逻辑设计呢？关系数据理论就是解决这个问题的，关系数据理论是在数据库的逻辑设计阶段起作用的。 </p>
+<p><img src="https://img-blog.csdnimg.cn/7a734902483448cd8835f02180901649.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_15,color_FFFFFF,t_70,g_se,x_16"></p>
+<p><img src="https://img-blog.csdnimg.cn/877ad77acbd94324a31770ca4d2c05fd.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_14,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
 <p>该设计中存在的问题：</p>
 <ul>
 <li>数据冗余度大：相同数据太多。系主任名字重复出现</li>
@@ -1960,8 +1969,7 @@ Mysql 支持动态SQL的功能，
 <p><font color = red><strong>注：这里对于书中索引与散列一章尽量简化了实现细节，我认为了解即可，达到能对别人讲解结技术的结构是什么就行了。</strong></font></p>
 <h3 id="顺序索引"><a href="#顺序索引" class="headerlink" title="顺序索引"></a>顺序索引</h3><p>顺序索引按顺序存储搜索码的值，并将搜索码与记录关联起来。如果包含记录的文件按照某个搜索码指定的顺序排序，那么该搜索码对应的索引称为聚集索引（主索引），否则称为非聚集索引（辅助索引）。索引项由一个搜索码值和指向具有该搜索码值的一条或者多条记录的指针构成。指向记录的指针包括磁盘块号以及块内偏移量。辅助索引可以提高搜索码查询性能同时，增加了修改数据库的开销（因为必须是稠密索引），可以使用散列文件组织上构建辅助索引，这样的索引叫做散列索引。</p>
 <p>关于顺序索引，进一步可以分为稠密索引和稀疏索引（辅助索引都是稠密索引，因为不按顺序存储 稀疏索引就没法工作了），表现为是否每一条记录对应一个索引，这里不展开。</p>
-<h3 id="B-树索引"><a href="#B-树索引" class="headerlink" title="B+树索引"></a>B+树索引</h3><p>B+树查询非常高效。关于B类型树有很多类型，有AVL、红黑树、B+树、B-树、B*树（关于其他这些树在我写的数据结构专栏里面文章有）。B+树索引是在数据插入和删除的情况下仍然能保持其执行效率的几种使用最广泛的索引结构之一。</p>
-<p><strong>mysql使用B+树索引，Oracle使用B树索引，很多人都在说其实没有B树，其实B树这个说法指的是这里本书提到的B树索引，也就是N叉搜索树的结构（消除了B+树值的冗余），但我们还是不能说二叉搜索树就是B树。</strong></p>
+<h3 id="B-树索引"><a href="#B-树索引" class="headerlink" title="B+树索引"></a>B+树索引</h3><p>B+树查询非常高效。关于搜索平衡树有很多类型，有AVL（二叉平衡搜索）、红黑树（二叉平衡搜索）、B+树（多叉平衡搜索，数据仅存在叶子节点）、B 树（多叉平衡搜索，数据存在整个树中）、B*树（B+基础上有兄弟节点指针）。B+树索引是在数据插入和删除的情况下仍然能保持其执行效率的几种使用最广泛的索引结构之一。</p>
 <p>注：关于B+树，在数据结构中也有介绍，其实这种数据结构主要就是应用在数据库存储中的。</p>
 <ul>
 <li>多分平衡树，存取效率高</li>
@@ -1974,7 +1982,7 @@ Mysql 支持动态SQL的功能，
 <p><img src="https://img-blog.csdnimg.cn/9e45b34981474dad8fe685588aa3debc.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
 <p><img src="https://img-blog.csdnimg.cn/10f112b9d3074e0b8b4354cf275b242a.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
 <p>随机查找：</p>
-<p>IO数为4（这个不代表图中的1234编号，图中标号仅表示查找步骤顺序），B树实际上是通过这样一个树结构从磁盘中拿取，存储了很多个这样的块，当需要时从磁盘中拿出，我们需要从磁盘中椅子拿出三个块，然后还需要拿取一次记录，所以一共是4次。如果我们将第1第2层节点保存在缓冲区，那么IO次数就是2（拿到31 37 41这个块 + 拿一次记录）</p>
+<p>IO数为4（这个不代表图中的1234编号，图中标号仅表示查找步骤顺序），B树实际上是通过这样一个树结构从磁盘中拿取，存储了很多个这样的块，当需要时从磁盘中拿出，我们需要从磁盘中依次拿出三个块，然后还需要拿取一次记录，所以一共是4次。如果我们将第1第2层节点保存在缓冲区，那么IO次数就是2（拿到31 37 41这个块 + 拿一次记录）</p>
 <p>范围查找：</p>
 <p>【38，45】范围查找，随机查找码值第一个大于38的然后在叶子结点中进行顺序查找，到比45大的位置停止</p>
 <p><img src="https://img-blog.csdnimg.cn/689ded7bf1604d4eb1a596a0a01880cb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
@@ -2047,7 +2055,7 @@ Mysql 支持动态SQL的功能，
 <p>C4：Sdept = ‘CS’ and Sage &gt; 20  如果两个都是索引，可以使用两个索引指针的交集，然后用该交集去获取结果集。或者先通过Sdept的索引找出指针，然后通过这些指针到student表中检索，对得到的元组检查条件Sage&gt;20是否满足。多个条件的情况下比较复杂，会分别考虑每个条件再合并结果，也可能逐一考虑这些条件，甚至太复杂的情况直接扫描全表。</p>
 <h3 id="连接操作实现"><a href="#连接操作实现" class="headerlink" title="连接操作实现"></a>连接操作实现</h3><ul>
 <li>嵌套循环算法：参与连接的两个表分别作为外循环和内循环，并且检查两个元组在连接属性上是否相等，比如select Sname from Student join SC using(Sno)   Student可以作为外循环，SC作为内循环，循环过程中判断是否Sno是否相等，满足条件，则串接后作为结果输出</li>
-<li>排序合并算法：将要连接的两个表按照连接属性进行排序，取Student表中第一个Sno，依次扫描SCI表中具有相同Sno的元组，扫描到Sno不同的元组后，返回Student表扫描它的第2个元组，再从原来结束位置开始扫描SC。Student和SC表都只用扫描一遍。相比嵌套循环额外的开销是排序（对于大表，排序是值得的）。</li>
+<li>排序合并算法：将要连接的两个表按照连接属性进行排序，取Student表中第一个Sno，依次扫描SC表中具有相同Sno的元组，扫描到Sno不同的元组后，返回Student表扫描它的第2个元组，再从原来结束位置开始扫描SC。Student和SC表都只用扫描一遍。相比嵌套循环额外的开销是排序（对于大表，排序是值得的）。</li>
 <li>索引连接算法：对于Student每一个元组，由Sno值通过SC的索引查找相应的SC元组（SC上有索引即可）。这样只需要扫描Student一次即可。</li>
 <li>hash Join算法：连接属性为hash码，用hash函数把较小的表（Student）元组散列到桶（内存中的桶）中，然后将较大的表按照相同的hash函数在响应的桶中匹配。</li>
 </ul>
@@ -2071,7 +2079,6 @@ Mysql 支持动态SQL的功能，
 <ul>
 <li>选择运算应尽可能先做</li>
 <li>选择运算之后放入中间文件之前进行投影</li>
-<li>连接运算之后放入中间文件之前进行投影</li>
 <li>选择和笛卡尔积结合起来，通常是不会计算笛卡尔积的，因为代价太高了，总是在连接时去选择（即只把符合连接选择条件的放到中间文件中）</li>
 <li>将结果不是很大的子表达式结果放到中间文件中重复使用，比如视图实例化。</li>
 </ul>
@@ -2142,7 +2149,7 @@ Mysql 支持动态SQL的功能，
 <p>（写-写）T1读数据，T2读相同数据，T1修改，T2修改，T1修改丢失。（PS：我觉得也是不可重复读的一种，如果不能重复读不会发生丢失修改）</p>
 </li>
 <li><p>不可重复读</p>
-<p>（读-修改）T1读取数据后，T2执行读相同数据并更新数据，T1此时读取的数据与数据库不一致</p>
+<p>（读-修改）T1读取数据后，T2执行读相同数据并更新数据，T1再次读取的数据与数据库不一致</p>
 </li>
 <li><p>幻读</p>
 <p>（读-删除）T1读取某些数据，T2删除其中部分记录，T1中数据与数据库不一致（读-插入）或者T1读取某些数据记录，T2插入一些记录，T1中数据与数据库不一致。</p>
@@ -2519,7 +2526,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2531,7 +2538,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2543,19 +2550,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2567,11 +2574,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2627,11 +2634,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2667,15 +2674,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
