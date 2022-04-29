@@ -6,20 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>MyIsam与InnoDB引擎的锁实现 | yueyan</title>
+  <title>mysql并发控制实现 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="MyIsam与InnoDB引擎的锁实现">
+  <meta name="description" content="mysql并发控制实现">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MyIsam与InnoDB引擎的锁实现">
+<meta property="og:title" content="mysql并发控制实现">
 <meta property="og:url" content="http://example.com/2022/01/25/MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="MyIsam与InnoDB引擎的锁实现">
+<meta property="og:description" content="mysql并发控制实现">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdn.net/20150809115556064?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 <meta property="article:published_time" content="2022-01-25T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-04-21T16:19:00.093Z">
+<meta property="article:modified_time" content="2022-04-29T02:31:37.069Z">
 <meta property="article:author" content="yueyan">
-<meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdn.net/20150809115556064?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
@@ -274,7 +273,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      MyIsam与InnoDB引擎的锁实现
+      mysql并发控制实现
     </h1>
   
 
@@ -300,21 +299,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="MyIsam与InnoDB引擎的锁实现"><a href="#MyIsam与InnoDB引擎的锁实现" class="headerlink" title="MyIsam与InnoDB引擎的锁实现"></a>MyIsam与InnoDB引擎的锁实现</h1><span id="more"></span>
+        <h1 id="mysql并发控制实现"><a href="#mysql并发控制实现" class="headerlink" title="mysql并发控制实现"></a>mysql并发控制实现</h1><span id="more"></span>
 
-<h2 id="三类常见引擎："><a href="#三类常见引擎：" class="headerlink" title="三类常见引擎："></a>三类常见引擎：</h2><p>MyIsam ：不支持事务，不支持外键，所以访问速度快。锁机制是表锁，支持全文索引</p>
-<p>InnoDB ：支持事务、支持外键，所以对比MyISAM，InnoDB的处理效率差一些，并要占更多的磁盘空间保留数据和索引。锁机制是行锁，不支持全文索引</p>
-<p>Memory：数据是存放在内存中的，默认哈希索引，非常适合存储临时数据，服务器关闭后，数据会丢失掉。</p>
-<h3 id="如何选择存储引擎："><a href="#如何选择存储引擎：" class="headerlink" title="如何选择存储引擎："></a>如何选择存储引擎：</h3><p>MyISAM：应用是以读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不是很高。</p>
-<p>InnoDB：用于事务处理应用程序，支持外键，如果应用对事务的完整性有比较高的要求，在并发条件下要求数据的一致性。更新删除等频繁（InnoDB可以有效的降低由于删除和更新导致的锁定），对于数据准确性要求比较高的，此引擎适合。</p>
-<p>Memory：通常用于更新不太频繁的小表，用以快速得到访问结果。</p>
-<h3 id="Mysql中的锁"><a href="#Mysql中的锁" class="headerlink" title="Mysql中的锁"></a>Mysql中的锁</h3><p>如果熟悉多线程，那么对锁肯定是有概念的，锁是计算机协调多个进程或线程对某一资源并发访问的机制。</p>
+
+
+<h2 id="三类常见引擎："><a href="#三类常见引擎：" class="headerlink" title="三类常见引擎："></a>三类常见引擎：</h2><p>MyIsam ：不支持事务，不支持外键，所以访问速度快。锁机制是表锁，支持全文索引。应用是以读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不是很高。</p>
+<p>InnoDB ：支持事务、支持外键，所以对比MyISAM，InnoDB的处理效率差一些，并要占更多的磁盘空间保留数据和索引。锁机制是行锁，不支持全文索引。用于事务处理应用程序，支持外键，如果应用对事务的完整性有比较高的要求，在并发条件下要求数据的一致性。更新删除等频繁（InnoDB可以有效的降低由于删除和更新导致的锁定），对于数据准确性要求比较高的，此引擎适合。</p>
+<p>Memory：数据是存放在内存中的，默认哈希索引，非常适合存储临时数据，服务器关闭后，数据会丢失掉。通常用于更新不太频繁的小表，用以快速得到访问结果。</p>
+<h2 id="Mysql中的锁"><a href="#Mysql中的锁" class="headerlink" title="Mysql中的锁"></a>Mysql中的锁</h2><p>如果熟悉多线程，那么对锁肯定是有概念的，锁是计算机协调多个进程或线程对某一资源并发访问的机制。</p>
 <p>Mysql中的锁分为表锁和行锁：</p>
 <p>顾名思义，表锁就是锁住一张表，而行锁就是锁住一行。</p>
 <p>表锁的特点：开销小，不会产生死锁，发生锁冲突的概率高，并且并发度低。</p>
 <p>行锁的特点：开销大，会产生死锁，发生锁冲突的概率低，并发度高。</p>
 <p>因此MyISAM和Memory引擎采用的是表锁，而InnoDB存储引擎采用的是行锁。</p>
-<h3 id="MyISAM的锁机制："><a href="#MyISAM的锁机制：" class="headerlink" title="MyISAM的锁机制："></a>MyISAM的锁机制：</h3><p>分为共享读锁和独占写锁。</p>
+<h2 id="MyISAM的锁机制："><a href="#MyISAM的锁机制：" class="headerlink" title="MyISAM的锁机制："></a>MyISAM的锁机制：</h2><p>分为共享读锁和独占写锁。</p>
 <p>读锁是：当某一进程对某张表进行读操作时（select），其他线程也可以读，但是不能写。简单的理解就是，我读的时候你不能写。</p>
 <p>写锁是：当某一进程对某种表某张表的写时（insert，update，，delete），其他线程不能写也不能读。可以理解为，我写的时候，你不能读，也不能写。</p>
 <p>因此MyISAM的读操作和写操作，以及写操作之间是串行的！MyISAM在执行读写操作的时候会自动给表加相应的锁（也就是说不用显示的使用lock table命令），MyISAM总是一次获得SQL语句所需要的全部锁，这也是MyISAM不会出现死锁的原因。</p>
@@ -335,7 +333,15 @@
 <p>4、指定max_write_lock_count设置一个合适的值，当写锁达到这个值后，暂时降低写请求的优先级，让读请求获取锁。</p>
 <p>但是上面的处理办法造成的原因就是当遇到复杂的查询语句时，写请求可能很难获取到锁，这是一个很纠结的问题，所以我们一般避免使用复杂的查询语句，如果如法避免，则可以再数据库空闲阶段（深夜）执行。</p>
 <p>我们知道mysql在以前，存储引擎默认是MyISAM，但是随着对事务和并发的要求越来越高，便引入了InnoDB引擎，它具有支持事务安全等一系列特性。</p>
-<h3 id="InnoDB锁模式"><a href="#InnoDB锁模式" class="headerlink" title="InnoDB锁模式"></a>InnoDB锁模式</h3><p>InnoDB实现了两种类型的行锁。</p>
+<h2 id="InnoDB的锁机制"><a href="#InnoDB的锁机制" class="headerlink" title="InnoDB的锁机制"></a>InnoDB的锁机制</h2><h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>数据库的隔离性和一致性其实是一个需要开发者去权衡的问题，为数据库提供什么样的隔离性层级也就决定了数据库的性能以及可以达到什么样的一致性；在 SQL 标准中定义了四种数据库的事务的隔离级别：READ UNCOMMITED、READ COMMITED、REPEATABLE READ 和 SERIALIZABLE；每个事务的隔离级别其实都比上一级多解决了一个问题：</p>
+<ul>
+<li>RAED UNCOMMITED：使用查询语句不会加锁，可能会读到未提交的行（Dirty Read）；</li>
+<li>READ COMMITED：只对记录加记录锁，而不会在记录之间加间隙锁，所以允许新的记录插入到被锁定记录的附近，所以再多次使用查询语句时，可能得到不同的结果（Non-Repeatable Read）；</li>
+<li>REPEATABLE READ：多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但是可能发生幻读（Phantom Read）；</li>
+<li>SERIALIZABLE：InnoDB 隐式地将全部的查询语句加上共享锁，解决了幻读的问题；</li>
+</ul>
+<p>大部分的数据库中都使用了 READ COMMITED 作为默认的事务隔离级别，但是 MySQL 使用了 REPEATABLE READ 作为默认配置；从 RAED UNCOMMITED 到 SERIALIZABLE，随着事务隔离级别变得越来越严格，数据库对于并发执行事务的性能也逐渐下降。</p>
+<p>InnoDB实现了两种类型的行锁。</p>
 <p>共享锁（S）：允许一个事务去读一行，阻止其他事务获得相同的数据集的排他锁。</p>
 <p>排他锁（X）：允许获得排他锁的事务更新数据，但是阻止其他事务获得相同数据集的共享锁和排他锁。</p>
 <p>可以这么理解：</p>
@@ -363,7 +369,7 @@
 <p>在通过 <code>主键索引</code> 与 <code>唯一索引</code> 对数据行进行 UPDATE 操作时，也会对该行数据加<code>记录锁</code>：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- id 列为主键列或唯一索引列</span></span><br><span class="line">UPDATE <span class="keyword">SET</span> age <span class="operator">=</span> <span class="number">50</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 
-<h4 id="间隙锁（Gap-Locks）"><a href="#间隙锁（Gap-Locks）" class="headerlink" title="间隙锁（Gap Locks）"></a>间隙锁（Gap Locks）</h4><p><strong>间隙锁</strong>基于<code>非唯一索引</code>，它<code>锁定一段范围内的索引记录</code>。<strong>间隙锁</strong>基于下面将会提到的<code>Next-Key Locking</code> 算法，请务必牢记：<strong>使用间隙锁锁住的是一个区间，而不仅仅是这个区间中的每一条数据</strong>。对索引项之间的‘间隙’、即锁定一个范围的记录，不包含记录本身</p>
+<h4 id="间隙锁（Gap-Locks）"><a href="#间隙锁（Gap-Locks）" class="headerlink" title="间隙锁（Gap Locks）"></a>间隙锁（Gap Locks）</h4><p><strong>间隙锁</strong>基于<code>非唯一索引</code>，它<code>锁定一段范围内的索引记录</code>。<strong>使用间隙锁锁住的是一个区间，而不仅仅是这个区间中的每一条数据</strong>。对索引项之间的‘间隙’、即锁定一个范围的记录，不包含记录本身</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> <span class="keyword">table</span> <span class="keyword">WHERE</span> id BETWEN <span class="number">1</span> <span class="keyword">AND</span> <span class="number">10</span> <span class="keyword">FOR</span> UPDATE;</span><br></pre></td></tr></table></figure>
 
 <p>即所有在<code>（1，10）</code>区间内的记录行都会被锁住，所有id 为 2、3、4、5、6、7、8、9 的数据行的插入会被阻塞，但是 1 和 10 两条记录行并不会被锁住。</p>
@@ -441,17 +447,284 @@
 
 <p>那最终我们就可以得知，在根据<code>非唯一索引</code> 对记录行进行 <code>UPDATE \ FOR UPDATE \ LOCK IN SHARE MODE</code> 操作时，InnoDB 会获取该记录行的 <code>临键锁</code> ，并同时获取该记录行下一个区间的<code>间隙锁</code>。</p>
 <p>即<code>事务 A </code>在执行了上述的 SQL 后，最终被锁住的记录区间为 <code>(10, 32)</code>。</p>
-<h3 id="何时在InnoDB中使用表锁："><a href="#何时在InnoDB中使用表锁：" class="headerlink" title="何时在InnoDB中使用表锁："></a>何时在InnoDB中使用表锁：</h3><p>InnoDB在绝大部分情况会使用行级锁，因为事务和行锁往往是我们选择InnoDB的原因，但是有些情况我们也考虑使用表级锁。</p>
+<h3 id="InnoDB中表锁："><a href="#InnoDB中表锁：" class="headerlink" title="InnoDB中表锁："></a>InnoDB中表锁：</h3><p>InnoDB在绝大部分情况会使用行级锁，因为事务和行锁往往是我们选择InnoDB的原因，但是有些情况我们也考虑使用表级锁。</p>
 <p>1、当事务需要更新大部分数据时，表又比较大，如果使用默认的行锁，不仅效率低，而且还容易造成其他事务长时间等待和锁冲突。</p>
 <p>2、事务比较复杂，很可能引起死锁导致回滚。</p>
-<h3 id="死锁："><a href="#死锁：" class="headerlink" title="死锁："></a>死锁：</h3><p>我们说过MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。</p>
-<p>当两个事务都需要获得对方持有的锁才能够继续完成事务，导致双方都在等待，产生死锁。</p>
-<p>发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
-<h3 id="避免死锁："><a href="#避免死锁：" class="headerlink" title="避免死锁："></a>避免死锁：</h3><p>有多种方法可以避免死锁，这里只介绍常见的三种：</p>
-<p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。</p>
-<p>2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率；</p>
-<p>3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43314519/article/details/108415316">文章出处</a></p>
+<h2 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h2><h3 id="InnoDB实现"><a href="#InnoDB实现" class="headerlink" title="InnoDB实现"></a>InnoDB实现</h3><p>MySQL 在InnoDB引擎下有当前读和快照读两种模式。</p>
+<p>a 当前读即加锁读，读取记录的最新版本号，会加锁保证其他并发事物不能修改当前记录，直至释放锁。插入/更新/删除操作默认使用当前读，显示的为select语句加lock in share mode或for update的查询也采用当前读模式。</p>
+<p>b 快照读：不加锁，读取记录的快照版本，而非最新版本，使用MVCC机制，最大的好处是读取不需要加锁，读写不冲突，用于读操作多于写操作的应用，因此在不显示加[lock in share mode]/[for update]的select语句，即普通的一条select语句默认都是使用快照读MVCC实现模式。</p>
+<p>在InnoDB中，会在<strong>每行数据后添加两个额外的隐藏的值来实现MVCC</strong>，这两个值一个记录这行数据何时被创建，另外一个记录这行数据何时被删除。  在实际操作中，<strong>存储的并不是时间，而是事务的版本号</strong>，每开启一个新事务，事务的版本号就会递增。 在<strong>可重读</strong>Repeatable reads事务隔离级别下：</p>
+<ul>
+<li><strong>SELECT时（保证了可重复读）</strong><ul>
+<li>InnoDB只查找早于当前事务版本的数据行，这样可以确保事务读取的行要么是事务开始前已经存在的，要么是事务自身插入或者修改过的。</li>
+<li>行的删除版本要么未定义，要么大于当前事务版本号，这可以确保事务读取到的行在事务开始之前未被删除 </li>
+</ul>
+</li>
+<li><strong>INSERT时，保存当前事务版本号为行的创建版本号</strong></li>
+<li><strong>DELETE时，保存当前事务版本号为行的删除版本号</strong></li>
+<li><strong>UPDATE时，插入一条新纪录，保存当前事务版本号为行创建版本号，同时保存当前事务版本号到原来删除的行</strong></li>
+</ul>
+<h3 id="简单的小例子"><a href="#简单的小例子" class="headerlink" title="简单的小例子"></a>简单的小例子</h3><p>create table yang(  id int primary key auto_increment,  name varchar(20));</p>
+<blockquote>
+<p>假设系统的版本号从1开始.</p>
+</blockquote>
+<p><strong>INSERT</strong></p>
+<p>InnoDB为新插入的每一行保存当前系统版本号作为版本号. 第一个事务ID为1；</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> transaction; </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> yang <span class="keyword">values</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;yang&#x27;</span>)  ; </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> yang <span class="keyword">values</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;long&#x27;</span>); </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> yang <span class="keyword">values</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;fei&#x27;</span>); </span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
+
+<p>对应在数据中的表如下(后面两列是隐藏列,我们通过查询语句并看不到)</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p><strong>SELECT</strong></p>
+<p>InnoDB会根据以下两个条件检查每行记录:  </p>
+<p>a.InnoDB只会查找版本早于当前事务版本的数据行(也就是,行的系统版本号小于或等于事务的系统版本号)，这样可以确保事务读取的行，要么是在事务开始前已经存在的，要么是事务自身插入或者修改过的.  </p>
+<p>b.行的删除版本要么未定义,要么大于当前事务版本号,这可以确保事务读取到的行，在事务开始之前未被删除.  </p>
+<p>只有a,b同时满足的记录，才能返回作为查询结果.</p>
+<p><strong>DELETE</strong></p>
+<p>InnoDB会为删除的每一行保存当前系统的版本号(事务的ID)作为删除标识.  看下面的具体例子分析:  第二个事务,ID为2;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> transaction; </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>(<span class="number">1</span>)<span class="keyword">select</span> <span class="operator">*</span>  <span class="keyword">from</span> yang;  </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>(<span class="number">2</span>) <span class="keyword">select</span> <span class="operator">*</span>  <span class="keyword">from</span> yang;  </span><br><span class="line"> <span class="keyword">commit</span>;  </span><br></pre></td></tr></table></figure>
+
+<p>假设1</p>
+<p>假设在执行这个事务ID为2的过程中,刚执行到(1),这时,有另一个事务ID为3往这个表里插入了一条数据; 第三个事务ID为3;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> transaction; </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> yang <span class="keyword">values</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;tian&#x27;</span>); </span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这时表中的数据如下:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>4</td>
+<td>tian</td>
+<td>3</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p>然后接着执行事务2中的(2),由于id=4的数据的创建时间(事务ID为3),执行当前事务的ID为2,而InnoDB只会查找事务ID小于等于当前事务ID的数据行,所以id=4的数据行并不会在执行事务2中的(2)被检索出来,在事务2中的两条select 语句检索出来的数据都只会下表:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p>上述分析说明了读增的RR级别</p>
+<p>假设2</p>
+<p>假设在执行这个事务ID为2的过程中,刚执行到(1),假设事务执行完事务3后，接着又执行了事务4; 第四个事务:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span>   transaction;  </span><br><span class="line"><span class="keyword">delete</span>  <span class="keyword">from</span> yang <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span>; </span><br><span class="line"><span class="keyword">commit</span>;  </span><br></pre></td></tr></table></figure>
+
+<p>此时数据库中的表如下:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>4</td>
+<td>tian</td>
+<td>3</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p>接着执行事务ID为2的事务(2),根据SELECT 检索条件可以知道,它会检索创建时间(创建事务的ID)小于当前事务ID的行和删除时间(删除事务的ID)大于当前事务的行,而id=4的行上面已经说过,而id=1的行由于删除时间(删除事务的ID)大于当前事务的ID,所以事务2的(2)select * from yang也会把id=1的数据检索出来.所以,事务2中的两条select 语句检索出来的数据都如下:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p>上述分析说明读删的RR级别</p>
+<p>假设3</p>
+<p>假设在执行完事务2的(1)后又执行,其它用户执行了事务3,4,这时，又有一个用户对这张表执行了UPDATE操作: 第5个事务:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span>  transaction; </span><br><span class="line">update yang <span class="keyword">set</span> name<span class="operator">=</span><span class="string">&#x27;Long&#x27;</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">2</span>; </span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
+
+<p>根据update的更新原则:会生成新的一行,并在原来要修改的列的删除时间列上添加本事务ID,得到表如下:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>5</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>4</td>
+<td>tian</td>
+<td>3</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Long</td>
+<td>5</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p>继续执行事务2的(2),根据select 语句的检索条件,得到下表:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>创建时间(事务ID)</th>
+<th>删除时间(事务ID)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>yang</td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>long</td>
+<td>1</td>
+<td>5</td>
+</tr>
+<tr>
+<td>3</td>
+<td>fei</td>
+<td>1</td>
+<td>undefined</td>
+</tr>
+</tbody></table>
+<p>还是和事务2中(1)select 得到相同的结果.</p>
+<p>综上，通过MVCC实现了不可重复读 RR</p>
+<p>通过MVCC，虽然每行记录都需要额外的存储空间，更多的行检查工作以及一些额外的维护工作，但可以减少锁的使用，大多数读操作<strong>都不用加锁</strong>，读数据操作很简单，性能很好，并且也能保证只会读取到符合标准的行，也只锁住必要行。</p>
 
       
 
@@ -490,10 +763,6 @@
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
         		</li>
@@ -603,7 +872,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MyIsam%E4%B8%8EInnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E9%94%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">MyIsam与InnoDB引擎的锁实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%B1%BB%E5%B8%B8%E8%A7%81%E5%BC%95%E6%93%8E%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">三类常见引擎：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%9A"><span class="toc-number">1.1.1.</span> <span class="toc-text">如何选择存储引擎：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mysql%E4%B8%AD%E7%9A%84%E9%94%81"><span class="toc-number">1.1.2.</span> <span class="toc-text">Mysql中的锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MyISAM%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6%EF%BC%9A"><span class="toc-number">1.1.3.</span> <span class="toc-text">MyISAM的锁机制：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%8F%92%E5%85%A5"><span class="toc-number">1.1.4.</span> <span class="toc-text">并发插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E8%B0%83%E5%BA%A6"><span class="toc-number">1.1.5.</span> <span class="toc-text">锁调度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E9%94%81%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.6.</span> <span class="toc-text">InnoDB锁模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="toc-number">1.1.7.</span> <span class="toc-text">锁的实现方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81%EF%BC%88Record-Locks%EF%BC%89"><span class="toc-number">1.1.7.1.</span> <span class="toc-text">记录锁（Record Locks）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%88Gap-Locks%EF%BC%89"><span class="toc-number">1.1.7.2.</span> <span class="toc-text">间隙锁（Gap Locks）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%B4%E9%94%AE%E9%94%81%EF%BC%88Next-Key-Locks%EF%BC%89"><span class="toc-number">1.1.7.3.</span> <span class="toc-text">临键锁（Next-Key Locks）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%95%E6%97%B6%E5%9C%A8InnoDB%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%EF%BC%9A"><span class="toc-number">1.1.8.</span> <span class="toc-text">何时在InnoDB中使用表锁：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%BB%E9%94%81%EF%BC%9A"><span class="toc-number">1.1.9.</span> <span class="toc-text">死锁：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81%EF%BC%9A"><span class="toc-number">1.1.10.</span> <span class="toc-text">避免死锁：</span></a></li></ol></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">mysql并发控制实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%B1%BB%E5%B8%B8%E8%A7%81%E5%BC%95%E6%93%8E%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">三类常见引擎：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mysql%E4%B8%AD%E7%9A%84%E9%94%81"><span class="toc-number">1.2.</span> <span class="toc-text">Mysql中的锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MyISAM%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">MyISAM的锁机制：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%8F%92%E5%85%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text">并发插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E8%B0%83%E5%BA%A6"><span class="toc-number">1.3.2.</span> <span class="toc-text">锁调度</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6"><span class="toc-number">1.4.</span> <span class="toc-text">InnoDB的锁机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">1.4.1.</span> <span class="toc-text">事务隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="toc-number">1.4.2.</span> <span class="toc-text">锁的实现方式：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81%EF%BC%88Record-Locks%EF%BC%89"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">记录锁（Record Locks）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%88Gap-Locks%EF%BC%89"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">间隙锁（Gap Locks）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%B4%E9%94%AE%E9%94%81%EF%BC%88Next-Key-Locks%EF%BC%89"><span class="toc-number">1.4.2.3.</span> <span class="toc-text">临键锁（Next-Key Locks）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E4%B8%AD%E8%A1%A8%E9%94%81%EF%BC%9A"><span class="toc-number">1.4.3.</span> <span class="toc-text">InnoDB中表锁：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVCC"><span class="toc-number">1.5.</span> <span class="toc-text">MVCC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text">InnoDB实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E5%B0%8F%E4%BE%8B%E5%AD%90"><span class="toc-number">1.5.2.</span> <span class="toc-text">简单的小例子</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -735,15 +1004,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -755,15 +1024,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -815,6 +1080,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Nginx</a>
               </li>
              
@@ -855,19 +1124,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">栈</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">数组</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">队列</a>
+                <a href="javascript:void(0)" class="js-tag color2">栈</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">逻辑符</a>
+                <a href="javascript:void(0)" class="js-tag color3">队列</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -879,11 +1144,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+                <a href="javascript:void(0)" class="js-tag color4">逻辑符</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
