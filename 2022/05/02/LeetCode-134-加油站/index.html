@@ -6,22 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>LeetCode-1143 最长公共子序列--DP | yueyan</title>
+  <title>LeetCode-134 加油站 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="LeetCode-1143 最长公共子序列–DP">
+  <meta name="description" content="LeetCode-134 加油站">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LeetCode-1143 最长公共子序列--DP">
-<meta property="og:url" content="http://example.com/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/index.html">
+<meta property="og:title" content="LeetCode-134 加油站">
+<meta property="og:url" content="http://example.com/2022/05/02/LeetCode-134-%E5%8A%A0%E6%B2%B9%E7%AB%99/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="LeetCode-1143 最长公共子序列–DP">
+<meta property="og:description" content="LeetCode-134 加油站">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/5257c770d026451f9125600ed78f28c9.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_17,color_FFFFFF,t_70,g_se,x_16">
-<meta property="article:published_time" content="2022-01-01T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-02-26T07:17:24.617Z">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cf93907734f74b0a8f44f965100c5aae.png">
+<meta property="article:published_time" content="2022-05-02T15:26:27.000Z">
+<meta property="article:modified_time" content="2022-05-02T12:43:03.703Z">
 <meta property="article:author" content="yueyan">
-<meta property="article:tag" content="Dynamic Programming">
+<meta property="article:tag" content="贪心">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/5257c770d026451f9125600ed78f28c9.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_17,color_FFFFFF,t_70,g_se,x_16">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/cf93907734f74b0a8f44f965100c5aae.png">
   
     <link rel="alternative" href="/atom.xml" title="yueyan" type="application/atom+xml">
   
@@ -266,20 +266,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-LeetCode-1143-最长公共子序列--DP" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-LeetCode-134-加油站" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      LeetCode-1143 最长公共子序列--DP
+      LeetCode-134 加油站
     </h1>
   
 
         
-        <a href="/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/" class="archive-article-date">
-  	<time datetime="2022-01-01T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-01</time>
+        <a href="/2022/05/02/LeetCode-134-%E5%8A%A0%E6%B2%B9%E7%AB%99/" class="archive-article-date">
+  	<time datetime="2022-05-02T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-02</time>
 </a>
 		
 		
@@ -299,18 +299,15 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-common-subsequence/">LeetCode-1143 最长公共子序列–DP</a></p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/gas-station/">LeetCode-134 加油站</a></p>
 <span id="more"></span>
 
-
-
-<p><img src="https://img-blog.csdnimg.cn/5257c770d026451f9125600ed78f28c9.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_17,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
-<p>dp[i][j]表示text1到达i-1处和text2到达j-1处时最长公共子序列的长度</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestCommonSubsequence</span><span class="params">(String text1, String text2)</span> </span>&#123;  <span class="comment">//右侧为子序列</span></span><br><span class="line">        <span class="keyword">int</span> m = text1.length(),n = text2.length();</span><br><span class="line">        <span class="keyword">int</span>[][] dp = <span class="keyword">new</span> <span class="keyword">int</span>[m + <span class="number">1</span>][n + <span class="number">1</span>];  <span class="comment">//dp中的i对应text1中的i-1    dp中的j对应text2中的j-1</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt; m + <span class="number">1</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>;j &lt; n + <span class="number">1</span>;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(text1.charAt(i-<span class="number">1</span>) == text2.charAt(j-<span class="number">1</span>)) dp[i][j] = dp[i-<span class="number">1</span>][j-<span class="number">1</span>] + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">else</span> dp[i][j] = Math.max(dp[i][j-<span class="number">1</span>],dp[i-<span class="number">1</span>][j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[m][n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/cf93907734f74b0a8f44f965100c5aae.png" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">canCompleteCircuit</span><span class="params">(<span class="keyword">int</span>[] gas, <span class="keyword">int</span>[] cost)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            贪心</span></span><br><span class="line"><span class="comment">                环路，从其中一个加油站出发</span></span><br><span class="line"><span class="comment">                当curSum为负数时，从下一个加油站出发，如果totalSum &lt; 0一定没法跑完</span></span><br><span class="line"><span class="comment">                </span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;  <span class="comment">//起始位置</span></span><br><span class="line">        <span class="keyword">int</span> curSum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> totalSum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; gas.length;i++)&#123;</span><br><span class="line">            curSum += gas[i] - cost[i];</span><br><span class="line">            totalSum += gas[i] - cost[i];</span><br><span class="line">            <span class="keyword">if</span>(curSum &lt; <span class="number">0</span>)&#123;</span><br><span class="line">                start = i + <span class="number">1</span>;</span><br><span class="line">                curSum = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(totalSum &lt; <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<p><strong>时间复杂度O(n平方) 空间复杂度O(n平方)</strong></p>
+<p>不知道答案很难想到这么贪心</p>
 
       
 
@@ -350,7 +347,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">贪心</a>
         		</li>
       		
 		</ul>
@@ -406,7 +403,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2022/01/01/LeetCode-1143-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97--DP/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2022/05/02/LeetCode-134-%E5%8A%A0%E6%B2%B9%E7%AB%99/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -420,18 +417,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/01/01/LeetCode-1137-%E7%AC%AC-N-%E4%B8%AA%E6%B3%B0%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0--DP/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/05/02/LeetCode-1005-K-%E6%AC%A1%E5%8F%96%E5%8F%8D%E5%90%8E%E6%9C%80%E5%A4%A7%E5%8C%96%E7%9A%84%E6%95%B0%E7%BB%84%E5%92%8C/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          LeetCode-1137 第 N 个泰波那契数--DP
+          LeetCode-1005 K 次取反后最大化的数组和
         
       </div>
     </a>
   
   
-    <a href="/2022/01/01/LeetCode-12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97--%E8%B4%AA%E5%BF%83/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">LeetCode-12 整数转罗马数字--贪心</div>
+    <a href="/2022/05/02/LeetCode-376-%E6%91%86%E5%8A%A8%E5%BA%8F%E5%88%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LeetCode-376 摆动序列</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -582,15 +579,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -599,6 +592,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -618,11 +615,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
+                <a href="javascript:void(0)" class="js-tag color4">高并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">高并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">Mybatis</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -734,11 +731,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
