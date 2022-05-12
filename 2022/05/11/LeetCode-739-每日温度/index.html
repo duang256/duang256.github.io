@@ -6,28 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>JVM内存与垃圾回收系列：对象实例化内存布局与访问定位(10) | yueyan</title>
+  <title>LeetCode-739 每日温度 | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="JVM（10）">
+  <meta name="description" content="LeetCode-739 每日温度">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM内存与垃圾回收系列：对象实例化内存布局与访问定位(10)">
-<meta property="og:url" content="http://example.com/2021/07/10/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D(10)/index.html">
+<meta property="og:title" content="LeetCode-739 每日温度">
+<meta property="og:url" content="http://example.com/2022/05/11/LeetCode-739-%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="JVM（10）">
+<meta property="og:description" content="LeetCode-739 每日温度">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/5a8767b050a9f3358ed157d072a32bb8.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/9ebee2719a3886cc6f01a7e46aba5409.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/1e73fbdb1b8aaa4946a14d663e2ddd6d.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/e99d88c98c5dd5f9be4b77792556ed4c.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/eefa780411ac8fca04d6e254880e6192.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/176c509e5e868389310f2eaaaba64505.png">
-<meta property="article:published_time" content="2021-07-10T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-02-09T04:11:46.855Z">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/11c6c478fcbf4b698c974248a88d4700.png">
+<meta property="article:published_time" content="2022-05-11T15:26:27.000Z">
+<meta property="article:modified_time" content="2022-05-11T13:59:38.829Z">
 <meta property="article:author" content="yueyan">
-<meta property="article:tag" content="他人好文">
-<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="栈、队列、堆">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/5a8767b050a9f3358ed157d072a32bb8.png">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/11c6c478fcbf4b698c974248a88d4700.png">
   
     <link rel="alternative" href="/atom.xml" title="yueyan" type="application/atom+xml">
   
@@ -272,20 +266,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-JVM内存与垃圾回收系列：对象实例化内存布局与访问定位(10)" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-LeetCode-739-每日温度" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      JVM内存与垃圾回收系列：对象实例化内存布局与访问定位(10)
+      LeetCode-739 每日温度
     </h1>
   
 
         
-        <a href="/2021/07/10/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D(10)/" class="archive-article-date">
-  	<time datetime="2021-07-10T07:37:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-10</time>
+        <a href="/2022/05/11/LeetCode-739-%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6/" class="archive-article-date">
+  	<time datetime="2022-05-11T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-11</time>
 </a>
 		
 		
@@ -305,72 +299,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>JVM（10）</p>
+        <p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/daily-temperatures/">LeetCode-739 每日温度</a></p>
 <span id="more"></span>
 
-<h1 id="对象实例化内存布局与访问定位"><a href="#对象实例化内存布局与访问定位" class="headerlink" title="对象实例化内存布局与访问定位"></a>对象实例化内存布局与访问定位</h1><h2 id="对象实例化"><a href="#对象实例化" class="headerlink" title="对象实例化"></a>对象实例化</h2><h3 id=""><a href="#" class="headerlink" title=""></a></h3><p>从对象创建的方式 和 步骤开始说</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/5a8767b050a9f3358ed157d072a32bb8.png" alt="image-20200709095356247"></p>
-<h3 id="对象创建方式"><a href="#对象创建方式" class="headerlink" title="对象创建方式"></a>对象创建方式</h3><ul>
-<li>new：最常见的方式、单例类中调用getInstance的静态类方法，XXXFactory的静态方法</li>
-<li>Class的newInstance方法：在JDK9里面被标记为过时的方法，因为只能调用空参构造器</li>
-<li>Constructor的newInstance(XXX)：反射的方式，可以调用空参的，或者带参的构造器</li>
-<li>使用clone()：不调用任何的构造器，要求当前的类需要实现Cloneable接口中的clone接口</li>
-<li>使用序列化：序列化一般用于Socket的网络传输</li>
-<li>第三方库 Objenesis</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.</span></span><br><span class="line">     Solution solution = <span class="keyword">new</span> Solution();</span><br><span class="line">     <span class="comment">//2.</span></span><br><span class="line">     Solution solution1 = (Solution) Class.forName(<span class="string">&quot;cn.wit.Solution&quot;</span>).newInstance();</span><br><span class="line">     <span class="comment">//3.</span></span><br><span class="line">     Class solu = Class.forName(<span class="string">&quot;cn.wit.Solution&quot;</span>);</span><br><span class="line">     Constructor constructor = solu.getConstructor();</span><br><span class="line">     Solution solution2 = (Solution) constructor.newInstance();</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/11c6c478fcbf4b698c974248a88d4700.png" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] dailyTemperatures(<span class="keyword">int</span>[] temperatures) &#123;</span><br><span class="line">        Deque&lt;Integer&gt; stack = <span class="keyword">new</span> LinkedList();</span><br><span class="line">        stack.push(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">int</span>[] res = <span class="keyword">new</span> <span class="keyword">int</span>[temperatures.length];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt; temperatures.length;i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(temperatures[stack.peek()] &gt;= temperatures[i])&#123;</span><br><span class="line">                stack.push(i);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">while</span>(!stack.isEmpty() &amp;&amp; temperatures[stack.peek()] &lt; temperatures[i])&#123;</span><br><span class="line">                    res[stack.peek()] = i - stack.pop();</span><br><span class="line">                &#125;</span><br><span class="line">                stack.push(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-<h3 id="创建对象的步骤"><a href="#创建对象的步骤" class="headerlink" title="创建对象的步骤"></a>创建对象的步骤</h3><h4 id="判断对象对应的类是否加载、链接、初始化"><a href="#判断对象对应的类是否加载、链接、初始化" class="headerlink" title="判断对象对应的类是否加载、链接、初始化"></a>判断对象对应的类是否加载、链接、初始化</h4><p>虚拟机遇到一条new指令，首先去检查这个指令的参数能否在Metaspace的常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已经被加载，解析和初始化。（即判断类元信息是否存在）。如果没有，那么在双亲委派模式下，使用当前类加载器以ClassLoader + 包名 + 类名为key进行查找对应的 .class文件，如果没有找到文件，则抛出ClassNotFoundException异常，如果找到，则进行类加载，并生成对应的Class对象。</p>
-<h4 id="为对象分配内存"><a href="#为对象分配内存" class="headerlink" title="为对象分配内存"></a>为对象分配内存</h4><p>首先计算对象占用空间的大小，接着在堆中划分一块内存给新对象。如果实例成员变量是引用变量，仅分配引用变量空间即可，即4个字节大小</p>
-<ul>
-<li>如果内存规整：指针碰撞</li>
-<li>如果内存不规整<ul>
-<li>虚拟表需要维护一个列表</li>
-<li>空闲列表分配</li>
-</ul>
-</li>
-</ul>
-<p>如果内存是规整的，那么虚拟机将采用的是指针碰撞法（Bump The Point）来为对象分配内存。</p>
-<p>意思是所有用过的内存在一边，空闲的内存放另外一边，中间放着一个指针作为分界点的指示器，分配内存就仅仅是把指针指向空闲那边挪动一段与对象大小相等的距离罢了。如果垃圾收集器选择的是Serial ，ParNew这种基于压缩算法的，虚拟机采用这种分配方式。一般使用带Compact（整理）过程的收集器时，使用指针碰撞。</p>
-<p>如果内存不是规整的，已使用的内存和未使用的内存相互交错，那么虚拟机将采用的是空闲列表来为对象分配内存。意思是虚拟机维护了一个列表，记录上那些内存块是可用的，再分配的时候从列表中找到一块足够大的空间划分给对象实例，并更新列表上的内容。这种分配方式成为了 “空闲列表（Free List）”</p>
-<p>选择哪种分配方式由Java堆是否规整所决定，而Java堆是否规整又由所采用的垃圾收集器是否带有压缩整理功能决定。</p>
-<h4 id="处理并发问题"><a href="#处理并发问题" class="headerlink" title="处理并发问题"></a>处理并发问题</h4><ul>
-<li>采用CAS配上失败重试保证更新的原子性</li>
-<li>每个线程预先分配TLAB - 通过设置 -XX:+UseTLAB参数来设置（区域加锁机制）<ul>
-<li>在Eden区给每个线程分配一块区域</li>
-</ul>
-</li>
-</ul>
-<h3 id="初始化分配到的内存"><a href="#初始化分配到的内存" class="headerlink" title="初始化分配到的内存"></a>初始化分配到的内存</h3><p>给对象属性赋值的操作</p>
-<ul>
-<li>属性的默认初始化</li>
-<li>显示初始化</li>
-<li>代码块中的初始化</li>
-<li>构造器初始化</li>
-<li>所有属性设置默认值，保证对象实例字段在不赋值可以直接使用</li>
-</ul>
-<h3 id="设置对象的对象头"><a href="#设置对象的对象头" class="headerlink" title="设置对象的对象头"></a>设置对象的对象头</h3><p>将对象的所属类（即类的元数据信息）、对象的HashCode和对象的GC信息、锁信息等数据存储在对象的对象头中。这个过程的具体设置方式取决于JVM实现。</p>
-<h3 id="执行init方法进行初始化"><a href="#执行init方法进行初始化" class="headerlink" title="执行init方法进行初始化"></a>执行init方法进行初始化</h3><p>在Java程序的视角看来，初始化才正式开始。初始化成员变量，执行实例化代码块，调用类的构造方法，并把堆内对象的首地址赋值给引用变量</p>
-<p>因此一般来说（由字节码中跟随invokespecial指令所决定），new指令之后会接着就是执行方法，把对象按照程序员的意愿进行初始化，这样一个真正可用的对象才算完成创建出来。</p>
-<h3 id="对象实例化的过程"><a href="#对象实例化的过程" class="headerlink" title="对象实例化的过程"></a>对象实例化的过程</h3><ul>
-<li>加载类元信息</li>
-<li>为对象分配内存</li>
-<li>处理并发问题</li>
-<li>属性的默认初始化（零值初始化）</li>
-<li>设置对象头信息</li>
-<li>属性的显示初始化、代码块中初始化、构造器中初始化</li>
-</ul>
-<h2 id="对象内存布局"><a href="#对象内存布局" class="headerlink" title="对象内存布局"></a>对象内存布局</h2><p><img src="https://img-blog.csdnimg.cn/img_convert/9ebee2719a3886cc6f01a7e46aba5409.png" alt="image-20200709151033237"></p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/1e73fbdb1b8aaa4946a14d663e2ddd6d.png" alt="image-20200709152801713"></p>
-<h2 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h2><h3 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h3><p>JVM是如何通过栈帧中的对象引用访问到其内部的对象实例呢？</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/e99d88c98c5dd5f9be4b77792556ed4c.png" alt="image-20200709164149920"></p>
-<h3 id="对象访问的两种方式"><a href="#对象访问的两种方式" class="headerlink" title="对象访问的两种方式"></a>对象访问的两种方式</h3><h4 id="句柄访问"><a href="#句柄访问" class="headerlink" title="句柄访问"></a>句柄访问</h4><p><img src="https://img-blog.csdnimg.cn/img_convert/eefa780411ac8fca04d6e254880e6192.png" alt="image-20200709164342002"></p>
-<p>句柄访问就是说栈的局部变量表中，记录的对象的引用，然后在堆空间中开辟了一块空间，也就是句柄池</p>
-<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>reference中存储稳定句柄地址，对象被移动（垃圾收集时移动对象很普遍）时只会改变句柄中实例数据指针即可，reference本身不需要被修改</p>
-<h4 id="直接指针（HotSpot采用）"><a href="#直接指针（HotSpot采用）" class="headerlink" title="直接指针（HotSpot采用）"></a>直接指针（HotSpot采用）</h4><p><img src="https://img-blog.csdnimg.cn/img_convert/176c509e5e868389310f2eaaaba64505.png" alt="image-20200709164350466"></p>
-<p>直接指针是局部变量表中的引用，直接指向堆中的实例，在对象实例中有类型指针，指向的是方法区中的对象类型数据</p>
+<p>单调栈模板可以用来寻找左侧，或者右侧第一个比自己大或小的数字</p>
+<p>时间复杂度O(n) 空间复杂度O(n)</p>
 
       
 
@@ -410,11 +346,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">他人好文</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">栈、队列、堆</a>
         		</li>
       		
 		</ul>
@@ -470,7 +402,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/07/10/JVM%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%B3%BB%E5%88%97%EF%BC%9A%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D(10)/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2022/05/11/LeetCode-739-%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -484,18 +416,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/07/10/Ajax%E4%B8%80%E7%AB%99%E5%BC%8F%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/05/11/LeetCode-503-%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0-II/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Ajax一站式详解
+          LeetCode-503 下一个更大元素 II
         
       </div>
     </a>
   
   
-    <a href="/2021/07/10/Mybatis/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Mybatis</div>
+    <a href="/2022/05/07/LeetCode-1047-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LeetCode-1047 删除字符串中的所有相邻重复项</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -522,7 +454,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.</span> <span class="toc-text">对象实例化内存布局与访问定位</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text">对象实例化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.1.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.2.</span> <span class="toc-text">对象创建方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.1.3.</span> <span class="toc-text">创建对象的步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AF%B9%E8%B1%A1%E5%AF%B9%E5%BA%94%E7%9A%84%E7%B1%BB%E6%98%AF%E5%90%A6%E5%8A%A0%E8%BD%BD%E3%80%81%E9%93%BE%E6%8E%A5%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">判断对象对应的类是否加载、链接、初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E5%AF%B9%E8%B1%A1%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">为对象分配内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">处理并发问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%88%86%E9%85%8D%E5%88%B0%E7%9A%84%E5%86%85%E5%AD%98"><span class="toc-number">1.1.4.</span> <span class="toc-text">初始化分配到的内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4"><span class="toc-number">1.1.5.</span> <span class="toc-text">设置对象的对象头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cinit%E6%96%B9%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.1.6.</span> <span class="toc-text">执行init方法进行初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.7.</span> <span class="toc-text">对象实例化的过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-number">1.2.</span> <span class="toc-text">对象内存布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.2.1.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.3.</span> <span class="toc-text">对象的访问定位</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%A4%BA"><span class="toc-number">1.3.1.</span> <span class="toc-text">图示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E8%AE%BF%E9%97%AE%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text">对象访问的两种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">句柄访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E6%8C%87%E9%92%88%EF%BC%88HotSpot%E9%87%87%E7%94%A8%EF%BC%89"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">直接指针（HotSpot采用）</span></a></li></ol></li></ol></li></ol></li></ol>
+                    目录，不存在的…
                     </div>
                 </span>
             </div>
@@ -674,11 +606,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -790,11 +722,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">

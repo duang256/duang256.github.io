@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/188c196c3651bdbad9e65d22e524b5bd.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/19ca6caa76e59e7262273d9186fc776b.png">
 <meta property="article:published_time" content="2021-07-02T07:37:24.000Z">
-<meta property="article:modified_time" content="2022-05-08T02:32:29.373Z">
+<meta property="article:modified_time" content="2022-05-08T02:57:05.177Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="他人好文">
 <meta property="article:tag" content="JVM">
@@ -372,13 +372,12 @@
 <p>事实上，解析操作往往会伴随着JVM在执行完初始化之后再执行。</p>
 <p>符号引用就是一组符号来描述所引用的目标。符号引用的字面量形式明确定义在《java虚拟机规范》的class文件格式中。直接引用就是直接指向目标的指针、相对偏移量或一个间接定位到目标的句柄。</p>
 <p>解析动作主要针对类或接口、字段、类方法、接口方法、方法类型等。对应常量池中的CONSTANT Class info、CONSTANT Fieldref info、CONSTANT Methodref info等</p>
-<h4 id="初始化阶段"><a href="#初始化阶段" class="headerlink" title="初始化阶段"></a>初始化阶段</h4><p>初始化阶段就是执行类构造器法（）的过程。</p>
+<h4 id="初始化阶段"><a href="#初始化阶段" class="headerlink" title="初始化阶段"></a>初始化阶段</h4><p>初始化阶段就是执行方法clinit的过程。</p>
 <p>此方法不需定义，是javac编译器自动收集类中的所有类变量的赋值动作和静态代码块中的语句合并而来。</p>
 <ul>
 <li>也就是说，当我们代码中包含static变量的时候，就会有clinit方法</li>
 </ul>
-<p>构造器方法中指令按语句在源文件中出现的顺序执行。</p>
-<p>（）不同于类的构造器。（关联：构造器是虚拟机视角下的（））若该类具有父类，JVM会保证子类的（）执行前，父类的（）已经执行完毕。</p>
+<p>clinit方法中指令按语句在源文件中出现的顺序执行。</p>
 <ul>
 <li>任何一个类在声明后，都有生成一个构造器，默认是空参构造器</li>
 </ul>
@@ -802,11 +801,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -918,11 +917,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
