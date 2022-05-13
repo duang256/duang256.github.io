@@ -17,9 +17,10 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/743a1f4e054148a8b67e4f3e8d0fc840.png">
 <meta property="article:published_time" content="2022-04-30T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-04-30T15:14:39.321Z">
+<meta property="article:modified_time" content="2022-05-13T07:56:00.521Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="Dynamic Programming">
+<meta property="article:tag" content="二刷未AC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/743a1f4e054148a8b67e4f3e8d0fc840.png">
   
@@ -303,7 +304,7 @@
 <span id="more"></span>
 
 <p><img src="https://img-blog.csdnimg.cn/743a1f4e054148a8b67e4f3e8d0fc840.png" alt="在这里插入图片描述"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span> k, <span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> days = prices.length;</span><br><span class="line">        <span class="keyword">int</span>[][][] dp = <span class="keyword">new</span> <span class="keyword">int</span>[days + <span class="number">1</span>][k + <span class="number">1</span>][<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">//初始化 ，对第0天进行一个初始化</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k + <span class="number">1</span>; i++)&#123;</span><br><span class="line">            dp[<span class="number">0</span>][i][<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">            dp[<span class="number">0</span>][i][<span class="number">1</span>] = Integer.MIN_VALUE;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; days + <span class="number">1</span>; i++)&#123;  <span class="comment">//从第一天开始</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> nk = <span class="number">1</span>; nk &lt; k + <span class="number">1</span>; nk++)&#123;  <span class="comment">// 交易的次数</span></span><br><span class="line">                dp[i][nk][<span class="number">0</span>] = Math.max(dp[i-<span class="number">1</span>][nk][<span class="number">0</span>],dp[i-<span class="number">1</span>][nk][<span class="number">1</span>] + prices[i-<span class="number">1</span>]);  <span class="comment">//不持有  之前未持有或之前持有现在卖了</span></span><br><span class="line">                dp[i][nk][<span class="number">1</span>] = Math.max(dp[i-<span class="number">1</span>][nk][<span class="number">1</span>],dp[i-<span class="number">1</span>][nk-<span class="number">1</span>][<span class="number">0</span>] - prices[i-<span class="number">1</span>]);  <span class="comment">//持有  之前就持有或之前未持有现在买入</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[days][k][<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span> k, <span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            股票交易问题</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">            dp记录的是第i天，（如果有交易，交易过后）已经交易的次数j，是否持有  的当前利润    </span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">int</span> len = prices.length;</span><br><span class="line">        <span class="keyword">int</span>[][][] dp = <span class="keyword">new</span> <span class="keyword">int</span>[len + <span class="number">1</span>][k + <span class="number">1</span>][<span class="number">2</span>];  </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; k + <span class="number">1</span>;i++)&#123;</span><br><span class="line">            dp[<span class="number">0</span>][i][<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">            dp[<span class="number">0</span>][i][<span class="number">1</span>] = Integer.MIN_VALUE;</span><br><span class="line">        &#125;   </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i &lt; len + <span class="number">1</span>;i++)&#123;  <span class="comment">// 天数</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>;j &lt; k + <span class="number">1</span>;j++)&#123;   <span class="comment">//交易次数</span></span><br><span class="line">                dp[i][j][<span class="number">0</span>] = Math.max(dp[i - <span class="number">1</span>][j][<span class="number">0</span>],dp[i - <span class="number">1</span>][j][<span class="number">1</span>] + prices[i - <span class="number">1</span>]);  <span class="comment">//昨天未持有今天不买 + 昨天持有今天卖掉，相比昨天交易次数都不发生变化</span></span><br><span class="line">                dp[i][j][<span class="number">1</span>] = Math.max(dp[i - <span class="number">1</span>][j][<span class="number">1</span>],dp[i - <span class="number">1</span>][j - <span class="number">1</span>][<span class="number">0</span>] - prices[i - <span class="number">1</span>]); <span class="comment">//昨天持有今天继续 + 昨天没有持有今天买，交易次数需要发生改变，是交易次数-1的时候的值 买 - prices[i - 1] </span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[len][k][<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>股票问题，第一点注意dp的初始化，days + 1，k + 1，方便计算</p>
 <p>时间复杂度O(k n) 空间复杂度O(k n)</p>
@@ -347,6 +348,10 @@
 			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">二刷未AC</a>
         		</li>
       		
 		</ul>
@@ -426,8 +431,8 @@
     </a>
   
   
-    <a href="/2022/04/30/LeetCode-309-%E6%9C%80%E4%BD%B3%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E6%97%B6%E6%9C%BA%E5%90%AB%E5%86%B7%E5%86%BB%E6%9C%9F/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">LeetCode-309 最佳买卖股票时机含冷冻期</div>
+    <a href="/2022/04/30/LeetCode-322-%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LeetCode-322 零钱兑换</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -578,11 +583,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -594,11 +603,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
+                <a href="javascript:void(0)" class="js-tag color1">Flink</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -630,15 +639,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">栈、队列、堆</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">二刷未AC</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -702,11 +715,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -718,7 +731,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -726,7 +739,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
