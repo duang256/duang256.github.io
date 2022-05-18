@@ -17,9 +17,10 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/acd040f0b63f4bcaabcb82957cbfd907.png">
 <meta property="article:published_time" content="2022-04-30T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-04-30T08:01:06.376Z">
+<meta property="article:modified_time" content="2022-05-14T02:27:29.501Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="Dynamic Programming">
+<meta property="article:tag" content="二刷未AC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/acd040f0b63f4bcaabcb82957cbfd907.png">
   
@@ -303,7 +304,7 @@
 <span id="more"></span>
 
 <p><img src="https://img-blog.csdnimg.cn/acd040f0b63f4bcaabcb82957cbfd907.png" alt="在这里插入图片描述"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findTargetSumWays</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            DP四部曲</span></span><br><span class="line"><span class="comment">                题意：</span></span><br><span class="line"><span class="comment">                加之和为X  减法总和 sum - X ，sum为nums的和</span></span><br><span class="line"><span class="comment">                要求</span></span><br><span class="line"><span class="comment">                X - (sum - X) = target</span></span><br><span class="line"><span class="comment">                X = (target + sum)  / 2;  </span></span><br><span class="line"><span class="comment">                先在问题转化为从nums中选出部分数（物品），使得价值和为上述式子（最大容量将背包装满）</span></span><br><span class="line"><span class="comment">                </span></span><br><span class="line"><span class="comment">                特别的，如果(target + sum)为奇数，说明X是无解</span></span><br><span class="line"><span class="comment">                如果target绝对值已经比sum大，那肯定也无解</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                1.dp[j]  前j个数装满的种数</span></span><br><span class="line"><span class="comment">                2.递推公式  dp[j] 的来源有两个，</span></span><br><span class="line"><span class="comment">                 a。之前就达到j的总数 dp[j]</span></span><br><span class="line"><span class="comment">                 b。加上现在的值，达到j的总数 dp[j - nums[i]]</span></span><br><span class="line"><span class="comment">                3.初始化 种数没有负数一说，初始化为0即可</span></span><br><span class="line"><span class="comment">                4.遍历顺序  一维01背包，逆序遍历，物品外nums，容量内X</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">         <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">         <span class="keyword">int</span> n = nums.length;</span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">             sum += nums[i];</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span>(Math.abs(target) &gt; sum) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">         <span class="keyword">int</span> x = (target + sum) / <span class="number">2</span>;</span><br><span class="line">         <span class="keyword">if</span>((target + sum) % <span class="number">2</span> != <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[x + <span class="number">1</span>];</span><br><span class="line">         dp[<span class="number">0</span>] = <span class="number">1</span>;  <span class="comment">//保证递推的进行，没有物品，没有容量，装满种数为1</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123; <span class="comment">//物品</span></span><br><span class="line">             <span class="keyword">for</span>(<span class="keyword">int</span> j = x;j &gt;= nums[i];j--)&#123;  <span class="comment">//容量</span></span><br><span class="line">                 dp[j] += dp[j - nums[i]];</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">return</span> dp[x];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findTargetSumWays</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            DP四部曲</span></span><br><span class="line"><span class="comment">                题意：</span></span><br><span class="line"><span class="comment">                加之和为X  减法总和 sum - X ，sum为nums的和</span></span><br><span class="line"><span class="comment">                要求</span></span><br><span class="line"><span class="comment">                X - (sum - X) = target</span></span><br><span class="line"><span class="comment">                X = (target + sum)  / 2;  </span></span><br><span class="line"><span class="comment">                先在问题转化为从nums中选出部分数（物品），使得价值和为上述式子（最大容量将背包装满）</span></span><br><span class="line"><span class="comment">                </span></span><br><span class="line"><span class="comment">                特别的，如果(target + sum)为奇数，说明X是无解</span></span><br><span class="line"><span class="comment">                如果target绝对值已经比sum大，那肯定也无解</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">                1.dp[j]  前j个数装满的种数</span></span><br><span class="line"><span class="comment">                2.递推公式  dp[j] 的来源有两个，</span></span><br><span class="line"><span class="comment">                 a。之前就达到j的总数 dp[j]</span></span><br><span class="line"><span class="comment">                 b。加上现在的值，达到j的总数 dp[j - nums[i]]</span></span><br><span class="line"><span class="comment">                3.初始化 种数没有负数一说，初始化为0即可</span></span><br><span class="line"><span class="comment">                4.遍历顺序  一维01背包，逆序遍历，物品外nums，容量内X</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">int</span> len = nums.length;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> x = (sum + target) / <span class="number">2</span>;  <span class="comment">//容量</span></span><br><span class="line">        <span class="keyword">if</span>(Math.abs(target) &gt; sum) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>((sum + target) % <span class="number">2</span> != <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[x + <span class="number">1</span>];   <span class="comment">//种数都初始化为0</span></span><br><span class="line">        dp[<span class="number">0</span>] = <span class="number">1</span>;  <span class="comment">//没有物品，没有容量</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; len;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j = x;j &gt;= <span class="number">0</span>;j--)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[i] &gt; j) dp[j] = dp[j];  <span class="comment">//装不下</span></span><br><span class="line">                <span class="keyword">else</span> dp[j] = dp[j] + dp[j - nums[i]];  <span class="comment">//装得下  装或不装</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[x];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>应用转换01背包，此题类问题并不是像标准01求j容量下最大价值，而是求j容量下装满最大种数，所以将max改为之和。</p>
 <p>时间复杂度O(n2) 空间复杂度O(n)</p>
@@ -347,6 +348,10 @@
 			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Dynamic Programming</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">二刷未AC</a>
         		</li>
       		
 		</ul>
@@ -586,10 +591,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
@@ -598,7 +599,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
+                <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -606,7 +611,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
+                <a href="javascript:void(0)" class="js-tag color5">搜索引擎</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -634,11 +639,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -710,11 +715,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -730,11 +735,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
