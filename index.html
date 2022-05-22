@@ -261,6 +261,121 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Flink table Store quick start" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/05/21/Flink%20table%20Store%20quick%20start/">Flink table Store quick start</a>
+    </h1>
+  
+
+        
+        <a href="/2022/05/21/Flink%20table%20Store%20quick%20start/" class="archive-article-date">
+  	<time datetime="2022-05-21T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-21</time>
+</a>
+		
+		
+		  
+	   
+		
+		
+		
+		
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本地模式部署</p>
+<p>based on  <a target="_blank" rel="noopener" href="https://nightlies.apache.org/flink/flink-table-store-docs-master/docs/try-table-store/quick-start/%EF%BC%8CI">https://nightlies.apache.org/flink/flink-table-store-docs-master/docs/try-table-store/quick-start/，I</a> encountered some problems in the process.</p>
+<h3 id="Step-1-Downloading-Flink"><a href="#Step-1-Downloading-Flink" class="headerlink" title="Step 1: Downloading Flink"></a>Step 1: Downloading Flink</h3><p><a target="_blank" rel="noopener" href="https://flink.apache.org/downloads.html">https://flink.apache.org/downloads.html</a></p>
+<h3 id="Step-2-Copy-Table-Store-Bundle-Jar"><a href="#Step-2-Copy-Table-Store-Bundle-Jar" class="headerlink" title="Step 2: Copy Table Store Bundle Jar"></a>Step 2: Copy Table Store Bundle Jar</h3><p>do this on window git</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/apache/flink-table-store.git</span><br></pre></td></tr></table></figure>
+
+<p>do this on windows cmd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install -DskipTests</span><br></pre></td></tr></table></figure>
+
+<h3 id="Errors-amp-Solution"><a href="#Errors-amp-Solution" class="headerlink" title="Errors &amp; Solution"></a>Errors &amp; Solution</h3><p>Errors Like this</p>
+<p>javac-shaded/9+181-r4173-1/javac-shaded-9+181-r4173-1.pom 403 Forbidden</p>
+<p>Here‘s the solution</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yagebu1983/article/details/124144594">https://blog.csdn.net/yagebu1983/article/details/124144594</a></p>
+<p>But new error appeared</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR] Failed to execute goal com.diffplug.spotless:spotless-maven-plugin:2.4.2:check (spotless-check) on project flink-table-store-common: The following files had format violations:</span><br></pre></td></tr></table></figure>
+
+<p>we need spotless</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn spotless:apply</span><br></pre></td></tr></table></figure>
+
+<p>then try clean install again,Success</p>
+<p>copy ./flink-table-store-dist/target/flink-table-store-dist-*.jar to  FLINK_HOME/lib/  (I do this on windows)</p>
+<h3 id="Step-3-Copy-Hadoop-Bundle-Jar"><a href="#Step-3-Copy-Hadoop-Bundle-Jar" class="headerlink" title="Step 3: Copy Hadoop Bundle Jar"></a>Step 3: Copy Hadoop Bundle Jar</h3><p><a target="_blank" rel="noopener" href="https://flink.apache.org/downloads.html#additional-components">https://flink.apache.org/downloads.html#additional-components</a></p>
+<p>copy flink-shaded-hadoop-2-uber-*.jar  to  FLINK_HOME/lib/</p>
+<h3 id="Step-4-Start-Flink-Local-Cluster"><a href="#Step-4-Start-Flink-Local-Cluster" class="headerlink" title="Step 4: Start Flink Local Cluster"></a>Step 4: Start Flink Local Cluster</h3><p>I do this on windows using notepad++</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi ./conf/flink-conf.yaml</span><br><span class="line"></span><br><span class="line">taskmanager.numberOfTaskSlots: 2</span><br></pre></td></tr></table></figure>
+
+<p>in order to visit ip:8081 on your browser , set all bind:0.0.0.0</p>
+<p>then copy flink to  Linux（with JDK8+）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/sql-client.sh embedded</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-5-Create-Dynamic-Table"><a href="#Step-5-Create-Dynamic-Table" class="headerlink" title="Step 5: Create Dynamic Table"></a>Step 5: Create Dynamic Table</h3><p>参照官方文档继续</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Flink</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2022/05/21/Flink%20table%20Store%20quick%20start/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+  
     <article id="post-LeetCode-221 最大正方形--DP" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1030,94 +1145,9 @@
 
 
   
-    <article id="post-LeetCode-1047-删除字符串中的所有相邻重复项" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/05/07/LeetCode-1047-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9/">LeetCode-1047 删除字符串中的所有相邻重复项</a>
-    </h1>
-  
-
-        
-        <a href="/2022/05/07/LeetCode-1047-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9/" class="archive-article-date">
-  	<time datetime="2022-05-07T15:26:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-07</time>
-</a>
-		
-		
-		  
-	   
-		
-		
-		
-		
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/remove-all-adjacent-duplicates-in-string/">LeetCode-1047 删除字符串中的所有相邻重复项</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">栈、队列、堆</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/05/07/LeetCode-1047-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/42/">42</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/43/">43</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
     </nav>
   
 
@@ -1217,10 +1247,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Tree</a>
               </li>
              
@@ -1237,6 +1263,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Javaweb</a>
               </li>
              
@@ -1249,15 +1279,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">测试</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1269,19 +1299,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">查找</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1305,11 +1335,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
+                <a href="javascript:void(0)" class="js-tag color4">双指针</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">双指针</a>
+                <a href="javascript:void(0)" class="js-tag color4">字符串</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1353,11 +1383,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1369,11 +1399,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1381,7 +1411,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
