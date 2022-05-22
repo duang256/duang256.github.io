@@ -94,7 +94,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/39b8d7571bba4133b5435829791f96b2.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/4d74f72183d0412bb59447d894e73928.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_11,color_FFFFFF,t_70,g_se,x_16">
 <meta property="article:published_time" content="2021-06-09T02:45:34.000Z">
-<meta property="article:modified_time" content="2022-05-21T14:19:26.423Z">
+<meta property="article:modified_time" content="2022-05-22T09:23:45.493Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="数据结构与算法">
 <meta name="twitter:card" content="summary">
@@ -994,7 +994,7 @@
 </ul>
 <h3 id="组合问题"><a href="#组合问题" class="headerlink" title="组合问题"></a>组合问题</h3><ul>
 <li>子集，互不相同的元素，为避免重复，因此下一层从i+1开始</li>
-<li>子集II，数组包含相同元素，结果无重复的数，sort之后进行前一节点判断continue。</li>
+<li>子集II，数组包含相同元素，同层不能重复，结果可以有重复数，sort之后，前节点相等 &amp;&amp; flag【i-1】=false</li>
 <li>组合，1-n互不相同的元素，下一层从i+1开始，k个数限定了层数</li>
 <li>组合总和II，数组中找组合，使其和为target，不能重复数字，兄弟节点判重continue</li>
 <li>组合总和，数组无重复元素，可以重复选，start = i即可</li>
@@ -1008,14 +1008,14 @@
 <li>全排列II，很好的去重问题，数组中有重复数字，结果也可以有重复数字（整体不能重复），当去重问题进一步复杂时，需要引入一个flags数组来表示nums数组元素在path中的使用情况，当本处已经被用过，剪枝，当与前一个兄弟节点，如果前一个兄弟节点没有被用过，为false，剪枝。（因为为true的情况，已经在前一个节点的时候考虑过了）</li>
 <li>单词拆分，139用DP和回溯都可，140只能DP，词典全排列问题，无去重问题。</li>
 <li>括号生成，左括号右括号组成的数组进行全排列的问题，当right &gt; left 剪枝，属于兄弟节点不能同层，但是纵向可以重复的去重类型。判前节点 &amp;&amp; 前节点 flag = false</li>
-<li>解数独，已经有的剪枝，每次准备进行递归时判断isValid，同行，同列，3×3是否符合条件，不符合剪枝，3×3很有技巧。</li>
 </ul>
 <h3 id="矩阵问题"><a href="#矩阵问题" class="headerlink" title="矩阵问题"></a>矩阵问题</h3><p>矩阵问题大部分都是二维数组展开进行全排列。</p>
 <ul>
 <li>矩阵中的路径，边界问题在下一层递归中进行判断可以简化代码，使用path.contains判重</li>
-<li>机器人的运动范围，可以上下左右移动，不过会重复，我们递归每个格子的右面和下面（不证明），flag数组判断重复。</li>
-<li>N皇后问题，全排列问题，同行同列同对角线不能由其他皇后，isValid函数判断对角线的问题，递归的顺序已经保证了不可能同行，使用一个flag数组保存上一层的情况。</li>
+<li>机器人的运动范围，和矩阵中路径不同，要注意到机器人可以不止走一次，所以每次走的时候向右下走就行，将不同的dfs种数加起来即可。</li>
+<li>N皇后问题，全排列问题，同行同列同对角线不能有其他皇后，isValid函数判断对角线的问题，递归的顺序已经保证了不可能同行，使用一个flag数组保存上一层的情况。</li>
 <li>单词搜索，同矩阵路径</li>
+<li>解数独，1-9数字的二维多次全排列。已经有的剪枝，每次准备进行递归时判断isValid，同行，同列，3×3是否符合条件，不符合剪枝，3×3很有技巧。</li>
 </ul>
 <h2 id="字符串匹配"><a href="#字符串匹配" class="headerlink" title="字符串匹配"></a>字符串匹配</h2><p>有一个字符串str1，一个字符串str2，求解str1中是否包含str2子串<br>eg:<br>String str1 = “BBC ABCDAB ABCDABCDABDE”;<br>String str2 = “ABCDABD”;</p>
 <h3 id="暴力匹配"><a href="#暴力匹配" class="headerlink" title="暴力匹配"></a>暴力匹配</h3><p><img src="https://img-blog.csdnimg.cn/83bc4862b63848b5967fbeee998d12c8.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
@@ -1395,15 +1395,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">他人好文</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1423,11 +1423,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+                <a href="javascript:void(0)" class="js-tag color3">测试</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">测试</a>
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1439,11 +1439,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+                <a href="javascript:void(0)" class="js-tag color5">Dynamic Programming</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1523,11 +1523,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
+                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">工具使用</a>
+                <a href="javascript:void(0)" class="js-tag color1">shiro</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1539,11 +1539,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1551,7 +1551,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
