@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Flink table Store quick start | yueyan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Flink Table Store 是一个统一的流式和批处理式存储，用于在 Apache Flink 上构建动态表。Flink Table Store 作为 Flink SQL Managed Table 背后的存储引擎。 Flink Table 和 SQL在 Flink 提供的多层级 API 中，核心是 DataStream API，这是我们开发流处理应用的基本途径；底层则是所谓的处理函数（pr">
+  <meta name="description" content="Flink Table Store 是一个统一的流式和批处理式存储，用于在 Apache Flink 上构建动态表。Flink Table Store 作为 Flink SQL Managed Table 背后的存储引擎。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flink table Store quick start">
 <meta property="og:url" content="http://example.com/2022/05/21/Flink%20table%20Store%20quick%20start/index.html">
 <meta property="og:site_name" content="yueyan">
-<meta property="og:description" content="Flink Table Store 是一个统一的流式和批处理式存储，用于在 Apache Flink 上构建动态表。Flink Table Store 作为 Flink SQL Managed Table 背后的存储引擎。 Flink Table 和 SQL在 Flink 提供的多层级 API 中，核心是 DataStream API，这是我们开发流处理应用的基本途径；底层则是所谓的处理函数（pr">
+<meta property="og:description" content="Flink Table Store 是一个统一的流式和批处理式存储，用于在 Apache Flink 上构建动态表。Flink Table Store 作为 Flink SQL Managed Table 背后的存储引擎。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/77295830e62ddc07a2718333f4083ffd.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/1c6718710e4c1fbd198b67b474900cf7.png">
@@ -21,8 +21,9 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/8ee82409738551a06be5e2c7453c7427.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/d887e87be834ce51c9786bf929b47876.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/cd1a7f8f85aa671fc97cfa31fc8c70bc.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f6f59eb1f2264d17aaf79eda3c603aaf.png">
 <meta property="article:published_time" content="2022-05-21T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-05-23T09:23:05.146Z">
+<meta property="article:modified_time" content="2022-05-25T04:35:45.768Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="Flink">
 <meta name="twitter:card" content="summary">
@@ -305,6 +306,8 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>Flink Table Store 是一个统一的流式和批处理式存储，用于在 Apache Flink 上构建动态表。Flink Table Store 作为 Flink SQL Managed Table 背后的存储引擎。</p>
+<span id="more"></span>
+
 <h2 id="Flink-Table-和-SQL"><a href="#Flink-Table-和-SQL" class="headerlink" title="Flink Table 和 SQL"></a>Flink Table 和 SQL</h2><p>在 Flink 提供的多层级 API 中，核心是 DataStream API，这是我们开发流处理应用的基本途径；底层则是所谓的处理函数（process function），可以访问事件的时间信息、注册定时器、自定义状态，进行有状态的流处理。DataStream API 和处理函数比较通用，有了这些 API，理论上我们就可以实现所有场景的需求了。Flink 同样提供了对于“表”处理的支持，这就是更高层级的应用 API，在 Flink 中被称为Table API 和 SQL。Flink 是批流统一的处理框架，无论是批处理（DataSet API）还是流处理（DataStream API），在上层应用中都可以直接使用 Table API 或者 SQL 来实现；这两种 API 对于一张表执行相同的查询操作，得到的结果是完全一样的。</p>
 <p>自定义（一般是表环境创建输入表连接外部系统，从外部系统读取数据）一些 Event 类型（包含了 user、url 和 timestamp 三个字段，参考 5.2.1 小节中的定义）的用户访问事件，作为输入的数据源；而后从中提取 url 地址和用户名 user 两个字段作为输出。如果使用 DataStream API，我们可以直接读取数据源后，用一个简单转换算子 map 来做字段的提取。而这个需求直接写 SQL 的话，实现会更加简单。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TableExample</span> </span>&#123;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">     <span class="comment">// 获取流执行环境</span></span><br><span class="line">     StreamExecutionEnvironment env = </span><br><span class="line">     StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">     env.setParallelism(<span class="number">1</span>);</span><br><span class="line">     <span class="comment">// 读取数据源</span></span><br><span class="line">     SingleOutputStreamOperator&lt;Event&gt; eventStream = env</span><br><span class="line">     .fromElements(</span><br><span class="line">         <span class="keyword">new</span> Event(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;./home&quot;</span>, <span class="number">1000L</span>),</span><br><span class="line">         <span class="keyword">new</span> Event(<span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;./cart&quot;</span>, <span class="number">1000L</span>),</span><br><span class="line">         <span class="keyword">new</span> Event(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;./prod?id=1&quot;</span>, <span class="number">5</span> * <span class="number">1000L</span>),</span><br><span class="line">         <span class="keyword">new</span> Event(<span class="string">&quot;Cary&quot;</span>, <span class="string">&quot;./home&quot;</span>, <span class="number">60</span> * <span class="number">1000L</span>),</span><br><span class="line">         <span class="keyword">new</span> Event(<span class="string">&quot;Bob&quot;</span>, <span class="string">&quot;./prod?id=3&quot;</span>, <span class="number">90</span> * <span class="number">1000L</span>),</span><br><span class="line">         <span class="keyword">new</span> Event(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;./prod?id=7&quot;</span>, <span class="number">105</span> * <span class="number">1000L</span>)</span><br><span class="line">     );</span><br><span class="line">     <span class="comment">// 获取表环境</span></span><br><span class="line">     StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);</span><br><span class="line">     <span class="comment">// 将数据流转换成表</span></span><br><span class="line">     Table eventTable = tableEnv.fromDataStream(eventStream);</span><br><span class="line">     <span class="comment">// 用执行 SQL 的方式提取数据</span></span><br><span class="line">     Table visitTable = tableEnv.sqlQuery(<span class="string">&quot;select url, user from &quot;</span> + eventTable);</span><br><span class="line">     <span class="comment">// 将表转换成数据流，打印输出</span></span><br><span class="line">     tableEnv.toDataStream(visitTable).print();</span><br><span class="line">     <span class="comment">// 执行程序</span></span><br><span class="line">     env.execute();</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -389,6 +392,18 @@
 <p>而 LSM tree 则避免了频繁写场景下的磁盘 IO 开销，尽管其查询效率无法达到理想的O（logn），但依然非常快，可以接受。所以从本质上来说，LSM tree 相当于牺牲了一部分查询性能，换取了可观的写入性能。这对于 key-value 型或日志型数据库是非常重要的。</p>
 <p>LSM tree 存储引擎的工作原理包含以下几个要点：</p>
 <p>写数据时，首先将数据缓存到内存中的一个有序树（比如红黑树）结构中（称为 memtable）。同时触发相关结构的更新，例如布隆过滤器、稀疏索引。<br>当 memtable 积累到足够大时，会一次性写入磁盘中，生成一个内部有序的 segment 文件。该过程为连续写，因此效率极高。<br>进行查询时，首先检查布隆过滤器。如果布隆过滤器报告数据不存在，则直接返回不存在。否则，按照从新到老的顺序依次查询每个 segment。<br>在查询每个 segment 时，首先使用二分搜索检索对应的稀疏索引，找到数据所在的 offset 范围。然后读取磁盘上该范围内的数据，再次进行二分查找并获得结果。<br>对于大量的 segment 文件，定期在后台执行 compaction 操作，将多个文件合并为更大的文件，以保证查询效率不衰减。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://nightlies.apache.org/flink/flink-table-store-docs-master/docs/development/overview/">https://nightlies.apache.org/flink/flink-table-store-docs-master/docs/development/overview/</a></p>
+</blockquote>
+<p>Flink Table Store 由两部分组成，LogStore 和 FileStore。LogStore 将服务于消息系统的需求，而 FileStore 将扮演具有列格式的文件系统的角色。在每个时间点，LogStore 和 FileStore 都会为最新写入的数据存储完全相同的数据（LogStore 有 TTL），但物理布局不同。Flink Table Store 旨在弥合批处理表和流式变更日志之间的存储布局差距，以提供与 Flink SQL 一样的统一体验：</p>
+<ul>
+<li>LogStore：存储最新数据，支持秒级流式增量消费，默认使用Kafka。</li>
+<li>FileStore：存储最新数据+历史数据，提供批量Ad-Hoc分析。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/f6f59eb1f2264d17aaf79eda3c603aaf.png" alt="在这里插入图片描述"></p>
+<p>manifest 文件用于记录对 SST 文件的更改，多个 manifest 文件组成一个快照。</p>
+<p>FileStore 中的数据被划分为桶，每个桶是一个单独的 LSM（日志结构化合并树）。</p>
+<p>LSM 内部的文件称为 SST（排序字符串表）。默认情况下，文件以列格式 (Apache ORC) 存储，以实现高性能的分析和存储压缩。</p>
 
       
 
@@ -527,7 +542,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Flink-Table-%E5%92%8C-SQL"><span class="toc-number">1.</span> <span class="toc-text">Flink Table 和 SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-number">2.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-1-Downloading-Flink"><span class="toc-number">2.1.</span> <span class="toc-text">Step 1: Downloading Flink</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-2-Copy-Table-Store-Bundle-Jar"><span class="toc-number">2.2.</span> <span class="toc-text">Step 2: Copy Table Store Bundle Jar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Errors-amp-Solution"><span class="toc-number">2.3.</span> <span class="toc-text">Errors &amp; Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-3-Copy-Hadoop-Bundle-Jar"><span class="toc-number">2.4.</span> <span class="toc-text">Step 3: Copy Hadoop Bundle Jar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-4-Start-Flink-Local-Cluster"><span class="toc-number">2.5.</span> <span class="toc-text">Step 4: Start Flink Local Cluster</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-5-Create-Dynamic-Table"><span class="toc-number">2.6.</span> <span class="toc-text">Step 5: Create Dynamic Table</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LSM"><span class="toc-number">3.</span> <span class="toc-text">LSM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSTable"><span class="toc-number">3.1.</span> <span class="toc-text">SSTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="toc-number">3.2.</span> <span class="toc-text">写入数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96-%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE"><span class="toc-number">3.3.</span> <span class="toc-text">读取&#x2F;查询数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%90%88%E5%B9%B6%EF%BC%88Compaction%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">文件合并（Compaction）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="toc-number">3.5.</span> <span class="toc-text">删除数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LSM-tree-%E4%B8%8E-B-tree-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.6.</span> <span class="toc-text">LSM tree 与 B tree 的对比</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Flink-Table-%E5%92%8C-SQL"><span class="toc-number">1.</span> <span class="toc-text">Flink Table 和 SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-number">2.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-1-Downloading-Flink"><span class="toc-number">2.1.</span> <span class="toc-text">Step 1: Downloading Flink</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-2-Copy-Table-Store-Bundle-Jar"><span class="toc-number">2.2.</span> <span class="toc-text">Step 2: Copy Table Store Bundle Jar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Errors-amp-Solution"><span class="toc-number">2.3.</span> <span class="toc-text">Errors &amp; Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-3-Copy-Hadoop-Bundle-Jar"><span class="toc-number">2.4.</span> <span class="toc-text">Step 3: Copy Hadoop Bundle Jar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-4-Start-Flink-Local-Cluster"><span class="toc-number">2.5.</span> <span class="toc-text">Step 4: Start Flink Local Cluster</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-5-Create-Dynamic-Table"><span class="toc-number">2.6.</span> <span class="toc-text">Step 5: Create Dynamic Table</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LSM"><span class="toc-number">3.</span> <span class="toc-text">LSM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSTable"><span class="toc-number">3.1.</span> <span class="toc-text">SSTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="toc-number">3.2.</span> <span class="toc-text">写入数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96-%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE"><span class="toc-number">3.3.</span> <span class="toc-text">读取&#x2F;查询数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%90%88%E5%B9%B6%EF%BC%88Compaction%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">文件合并（Compaction）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="toc-number">3.5.</span> <span class="toc-text">删除数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LSM-tree-%E4%B8%8E-B-tree-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.6.</span> <span class="toc-text">LSM tree 与 B tree 的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-number">4.</span> <span class="toc-text">架构</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -651,11 +666,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">前端</a>
+                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">分布式</a>
+                <a href="javascript:void(0)" class="js-tag color3">前端</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -707,11 +722,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -803,11 +818,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+                <a href="javascript:void(0)" class="js-tag color3">网络</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">网络</a>
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
