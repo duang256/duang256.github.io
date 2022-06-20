@@ -17,7 +17,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/ddcd357fdf3e4c7a82136f7eab498461.png">
 <meta property="article:published_time" content="2022-05-05T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-05-05T04:41:29.835Z">
+<meta property="article:modified_time" content="2022-06-02T08:24:15.620Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="数组">
 <meta name="twitter:card" content="summary">
@@ -303,7 +303,7 @@
 <span id="more"></span>
 
 <p><img src="https://img-blog.csdnimg.cn/ddcd357fdf3e4c7a82136f7eab498461.png" alt="在这里插入图片描述"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">reverseStr</span><span class="params">(String s, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            题意</span></span><br><span class="line"><span class="comment">            字符串s</span></span><br><span class="line"><span class="comment">            每2k个，反转前j个，不反转后j个，剩余字符少于k，全部反转，</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">         <span class="keyword">char</span>[] arr = s.toCharArray();</span><br><span class="line">         <span class="keyword">int</span> len = arr.length;</span><br><span class="line">         <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">         <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">             <span class="keyword">if</span>(len - count &gt;= <span class="number">2</span> * k)&#123;  <span class="comment">//2k</span></span><br><span class="line">                swap(arr,count,count + k - <span class="number">1</span>);</span><br><span class="line">                count += <span class="number">2</span> * k;</span><br><span class="line">             &#125;<span class="keyword">else</span> <span class="keyword">if</span>(len - count &gt;= k &amp;&amp; len - count &lt; <span class="number">2</span> * k)&#123;<span class="comment">// 1~2k</span></span><br><span class="line">                swap(arr,count,count + k - <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">             &#125;<span class="keyword">else</span> <span class="keyword">if</span>(len - count &lt; k)&#123; <span class="comment">// &lt;1k</span></span><br><span class="line">                swap(arr,count,arr.length - <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">             &#125;</span><br><span class="line">             <span class="keyword">if</span>(count &gt;= len) <span class="keyword">break</span>;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">new</span> String(arr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">char</span>[] arr,<span class="keyword">int</span> count,<span class="keyword">int</span> end)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt;= (end - count) / <span class="number">2</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">char</span> temp = arr[count + i];  <span class="comment">//头</span></span><br><span class="line">            arr[count + i] = arr[end - i];  <span class="comment">//尾</span></span><br><span class="line">            arr[end - i] = temp;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">reverseStr</span><span class="params">(String s, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">char</span>[] arr = s.toCharArray();</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(arr.length - i &gt;= <span class="number">2</span> * k)&#123;</span><br><span class="line">            reverse(arr,i,i + k - <span class="number">1</span>);</span><br><span class="line">            i = i + <span class="number">2</span> * k;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(arr.length - i  &gt;= k) reverse(arr,i,i + k - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span>(arr.length - i &gt; <span class="number">0</span> &amp;&amp; arr.length - i  &lt; k) reverse(arr,i,arr.length - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String(arr);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reverse</span><span class="params">(<span class="keyword">char</span>[] arr,<span class="keyword">int</span> left,<span class="keyword">int</span> right)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(left &lt; right)&#123;</span><br><span class="line">            <span class="keyword">char</span> c = arr[left];</span><br><span class="line">            arr[left] = arr[right];</span><br><span class="line">            arr[right] = c;</span><br><span class="line">            left++;</span><br><span class="line">            right--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>时间复杂度O(n) 空间复杂度O(n)</p>
 <p>根据剩余的字符个数进行分类</p>
@@ -430,8 +430,8 @@
     </a>
   
   
-    <a href="/2022/05/05/LeetCode-575%E5%88%86%E7%B3%96%E6%9E%9C/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">LeetCode-575分糖果</div>
+    <a href="/2022/05/05/LeetCode-566%E9%87%8D%E5%A1%91%E7%9F%A9%E9%98%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LeetCode-566重塑矩阵</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -638,11 +638,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -730,15 +730,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
