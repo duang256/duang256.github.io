@@ -17,7 +17,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/12ae5f38e47f46abba47741f8b25e2c0.png">
 <meta property="article:published_time" content="2022-05-04T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-05-04T14:12:30.992Z">
+<meta property="article:modified_time" content="2022-06-27T12:39:09.033Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="链表">
 <meta name="twitter:card" content="summary">
@@ -219,7 +219,7 @@
 <span id="more"></span>
 
 <p><img src="https://img-blog.csdnimg.cn/12ae5f38e47f46abba47741f8b25e2c0.png" alt="在这里插入图片描述"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">removeNthFromEnd</span><span class="params">(ListNode head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            指针A先走k - 1步，然后AB一起走，当A到达末尾时，B到达倒数k处</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">         </span><br><span class="line">         ListNode A = head;</span><br><span class="line">         ListNode B = head;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n ;i++)&#123;  <span class="comment">//删除4，先找到3  即倒数n+1个 </span></span><br><span class="line">             A = A.next;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span>(A == <span class="keyword">null</span>)&#123;</span><br><span class="line">             ListNode cur = head.next;</span><br><span class="line">             head.next = <span class="keyword">null</span>;</span><br><span class="line">             <span class="keyword">return</span> cur;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">while</span>(A.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            A = A.next;</span><br><span class="line">            B = B.next;             </span><br><span class="line">         &#125;</span><br><span class="line">         ListNode next = <span class="keyword">null</span>;</span><br><span class="line">         <span class="keyword">if</span>(B.next != <span class="keyword">null</span>)  next = B.next.next;</span><br><span class="line">         B.next = next; </span><br><span class="line">         <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">removeNthFromEnd</span><span class="params">(ListNode head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        ListNode A = head;</span><br><span class="line">         ListNode B = head;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n ;i++)&#123;  <span class="comment">//删除4，先找到3  即倒数n+1个 </span></span><br><span class="line">             A = A.next;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span>(A == <span class="keyword">null</span>)&#123;</span><br><span class="line">             ListNode cur = head.next;</span><br><span class="line">             head.next = <span class="keyword">null</span>;</span><br><span class="line">             <span class="keyword">return</span> cur;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">while</span>(A.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            A = A.next;</span><br><span class="line">            B = B.next;             </span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span>(B.next != <span class="keyword">null</span>)  B.next = B.next.next;</span><br><span class="line">         <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>时间复杂度O(n) 空间复杂度O(1)</p>
 
@@ -637,15 +637,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">职业发展</a>
               </li>
              
               <li class="article-tag-list-item">
