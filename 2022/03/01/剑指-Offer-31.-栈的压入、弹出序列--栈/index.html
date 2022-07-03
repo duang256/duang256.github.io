@@ -17,7 +17,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/9a69d214a1b4435cb9c1f6defacddbaa.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_19,color_FFFFFF,t_70,g_se,x_16">
 <meta property="article:published_time" content="2022-03-01T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-05-05T05:03:48.269Z">
+<meta property="article:modified_time" content="2022-07-03T01:44:17.591Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="栈、队列、堆">
 <meta name="twitter:card" content="summary">
@@ -221,7 +221,7 @@
 <p>eg：pushed = [1,2,3,4,5]   popped = [4,5,3,2,1]</p>
 <p>对pushed进行遍历，遍历过程中将数加入栈中，如果该数字与指针 j（指向popped）数字相同，则弹出栈（使用一个循环，如果后面栈中数字和指针j 相同，也弹出），这样一个遍历结束后，如果是正确的，栈为空。</p>
 <p>eg1：<br>push 1，2，3<br>push 4，4弹出<br>push 5，5弹出，3弹出，2弹出，1弹出</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">validateStackSequences</span><span class="params">(<span class="keyword">int</span>[] pushed, <span class="keyword">int</span>[] popped)</span> </span>&#123;</span><br><span class="line">        Deque&lt;Integer&gt; stack = <span class="keyword">new</span> LinkedList();</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; pushed.length;i++)&#123;</span><br><span class="line">            stack.push(pushed[i]);</span><br><span class="line">            <span class="keyword">while</span>(!stack.isEmpty() &amp;&amp; stack.peek() == popped[j])&#123;</span><br><span class="line">                stack.pop();</span><br><span class="line">                j++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> j == pushed.length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">validateStackSequences</span><span class="params">(<span class="keyword">int</span>[] pushed, <span class="keyword">int</span>[] popped)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//压入弹出序列</span></span><br><span class="line">        Deque&lt;Integer&gt; stack = <span class="keyword">new</span> LinkedList();</span><br><span class="line">        <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>(pushed.length == <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; pushed.length;i++)&#123;</span><br><span class="line">            stack.push(pushed[i]);</span><br><span class="line">            <span class="keyword">while</span>(!stack.isEmpty() &amp;&amp; stack.peek() == popped[k])&#123;</span><br><span class="line">                 stack.pop();</span><br><span class="line">                 k++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stack.isEmpty();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>时间复杂度O(n) 空间复杂度O(n)</strong></p>
 
       
@@ -546,11 +546,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">

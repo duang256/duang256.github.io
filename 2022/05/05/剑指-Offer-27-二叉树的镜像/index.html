@@ -15,13 +15,13 @@
 <meta property="og:site_name" content="yueyan">
 <meta property="og:description" content="剑指 Offer 27 二叉树的镜像">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/1ceb8c1879424ed3bdbd2e59a2905b5c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cd626773a19142e78b6bdbbdefab4b71.png">
 <meta property="article:published_time" content="2022-05-05T15:26:27.000Z">
-<meta property="article:modified_time" content="2022-05-05T05:16:30.257Z">
+<meta property="article:modified_time" content="2022-07-03T02:50:55.225Z">
 <meta property="article:author" content="yueyan">
 <meta property="article:tag" content="Tree">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/1ceb8c1879424ed3bdbd2e59a2905b5c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/cd626773a19142e78b6bdbbdefab4b71.png">
   
     <link rel="alternative" href="/atom.xml" title="yueyan" type="application/atom+xml">
   
@@ -218,7 +218,7 @@
         <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/er-cha-shu-de-jing-xiang-lcof/">剑指 Offer 27 二叉树的镜像</a></p>
 <span id="more"></span>
 
-<p><img src="https://img-blog.csdnimg.cn/1ceb8c1879424ed3bdbd2e59a2905b5c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAX-WHjOaZqOS4pOeCueWNil8=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/cd626773a19142e78b6bdbbdefab4b71.png" alt="在这里插入图片描述"></p>
 <p>递归<br>左节点，右节点互换后，将左节点、右节点也镜像。<br>结束条件：node == null</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"> * public class TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode left;</span></span><br><span class="line"><span class="comment"> *     TreeNode right;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int x) &#123; val = x; &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TreeNode <span class="title">mirrorTree</span><span class="params">(TreeNode node)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//将左子树和右子树交换，递归过程</span></span><br><span class="line">        <span class="keyword">if</span>(node == <span class="keyword">null</span>)<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        TreeNode left = node.left;</span><br><span class="line">        TreeNode right = node.right;</span><br><span class="line">        node.left = right;</span><br><span class="line">        node.right = left;</span><br><span class="line">        mirrorTree(left);</span><br><span class="line">        mirrorTree(right);</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
@@ -329,18 +329,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2022/05/05/%E5%89%91%E6%8C%87-Offer-16-%E6%95%B0%E5%80%BC%E7%9A%84%E6%95%B4%E6%95%B0%E6%AC%A1%E6%96%B9/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/05/05/%E5%89%91%E6%8C%87-Offer-26-%E6%A0%91%E7%9A%84%E5%AD%90%E7%BB%93%E6%9E%84/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          剑指 Offer 16 数值的整数次方
+          剑指 Offer 26 树的子结构
         
       </div>
     </a>
   
   
-    <a href="/2022/05/05/%E5%89%91%E6%8C%87-Offer-26-%E6%A0%91%E7%9A%84%E5%AD%90%E7%BB%93%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">剑指 Offer 26 树的子结构</div>
+    <a href="/2022/05/05/%E5%89%91%E6%8C%87-Offer-30-%E5%8C%85%E5%90%ABmin%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">剑指 Offer 30 包含min函数的栈</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -543,11 +543,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">查找</a>
+                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">贪心</a>
+                <a href="javascript:void(0)" class="js-tag color3">查找</a>
               </li>
              
               <li class="article-tag-list-item">
